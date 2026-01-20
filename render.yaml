@@ -4,12 +4,12 @@ services:
     name: eqb-api
     runtime: node
     rootDir: apps/api
-    buildCommand: npm install && npx prisma generate
-    startCommand: npm start
+    buildCommand: npm run build --workspace=@eqb/api
+    startCommand: npm --prefix apps/api start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
+      - key: API_PORT
         value: 3001
       - key: DATABASE_URL
         fromDatabase:
@@ -18,11 +18,16 @@ services:
       - key: JWT_SECRET
         generateValue: true
         sync: false
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: eqb-redis
-          property: connectionString
+      - key: AUTH0_DOMAIN
+        sync: false
+      - key: AUTH0_CLIENT_ID
+        sync: false
+      - key: AUTH0_CLIENT_SECRET
+        sync: false
+      - key: AUTH0_M2M_CLIENT_ID
+        sync: false
+      - key: AUTH0_M2M_CLIENT_SECRET
+        sync: false
       - key: SENDGRID_API_KEY
         sync: false
       - key: FROM_EMAIL
@@ -38,10 +43,11 @@ services:
       - key: AWS_S3_BUCKET_NAME
         value: eqb-platform-documents
       - key: WEB_BASE_URL
-        sync: false
+        value: https://eqb-platform-web.vercel.app
       - key: LOG_LEVEL
         value: info
-    healthCheckPath: /health
+    healthCheckPath: /
+    autoDeploy: true
 
 databases:
   - name: eqb-db
