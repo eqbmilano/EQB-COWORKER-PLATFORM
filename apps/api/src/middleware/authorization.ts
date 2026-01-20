@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Role } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 /**
  * Extend Express Request type to include user
@@ -10,7 +10,7 @@ declare global {
       user?: {
         id: string;
         email: string;
-        role: Role;
+        role: UserRole;
         coworkerId?: string;
       };
     }
@@ -20,7 +20,7 @@ declare global {
 /**
  * Middleware to require a specific role or higher
  */
-export function requireRole(...allowedRoles: Role[]) {
+export function requireRole(...allowedRoles: UserRole[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({

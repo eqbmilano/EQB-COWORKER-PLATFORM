@@ -8,6 +8,19 @@ import pino from 'pino';
 
 const logger = pino();
 
+// Extend Express Request to allow auth0 user structure
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        sub: string;
+        email: string;
+        role: string;
+      };
+    }
+  }
+}
+
 export interface AuthenticatedRequest extends Request {
   user?: {
     sub: string;
@@ -86,9 +99,9 @@ export const adminOnlyMiddleware = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   if (!req.user || req.user.role !== 'ADMIN') {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       error: {
         code: 'FORBIDDEN',
@@ -96,6 +109,7 @@ export const adminOnlyMiddleware = (
       },
       statusCode: 403,
     });
+    return;
   }
 
   next();
@@ -108,9 +122,9 @@ export const coworkerOnlyMiddleware = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   if (!req.user || req.user.role !== 'COWORKER') {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       error: {
         code: 'FORBIDDEN',
@@ -118,6 +132,7 @@ export const coworkerOnlyMiddleware = (
       },
       statusCode: 403,
     });
+    return;
   }
 
   next();

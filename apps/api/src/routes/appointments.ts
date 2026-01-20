@@ -6,7 +6,6 @@ import { z } from 'zod';
 import {
   authMiddleware,
   AuthenticatedRequest,
-  coworkerOnlyMiddleware,
 } from '../middleware/auth';
 import appointmentService from '../services/appointmentService';
 import { emailService } from '../services/emailService';
@@ -30,10 +29,6 @@ const CreateAppointmentSchema = z.object({
   roomType: z.enum(['Training', 'Treatment']),
   roomNumber: z.number().optional(),
   notes: z.string().optional(),
-});
-
-const CancelAppointmentSchema = z.object({
-  appointmentId: z.string(),
 });
 
 // ============================================================================
@@ -121,7 +116,7 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res: Response
     // Send confirmation email if client has email
     const client = await prisma.client.findUnique({
       where: { id: clientId },
-      select: { email: true, firstName: true, lastName: true },
+      select: { email: true, name: true },
     });
 
     const coworker = await prisma.coworker.findUnique({
@@ -130,8 +125,8 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res: Response
     });
 
     if (client?.email && coworker) {
-      const clientName = `${client.firstName} ${client.lastName}`;
-      const coworkerName = `${coworker.user.firstName} ${coworker.user.lastName}`;
+      const clientName = client.name;
+      const coworkerName = coworker.user.name || 'Operatore';
       
       emailService.sendAppointmentConfirmation(
         client.email,

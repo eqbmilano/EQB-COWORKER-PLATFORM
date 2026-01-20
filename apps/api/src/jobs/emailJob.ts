@@ -2,7 +2,7 @@ import { backlogQueue } from '../config/queue';
 import { emailService } from '../services/emailService';
 import prisma from '../database/prisma';
 import { logger } from '../utils/logger';
-import { addDays, subHours, startOfDay, endOfDay } from 'date-fns';
+import { addDays, subHours } from 'date-fns';
 
 /**
  * Send appointment reminders for appointments happening in 24 hours
@@ -46,14 +46,14 @@ export async function sendAppointmentReminders(): Promise<any> {
         continue;
       }
 
-      const clientName = `${appointment.client.firstName} ${appointment.client.lastName}`;
-      const coworkerName = `${appointment.coworker.user.firstName} ${appointment.coworker.user.lastName}`;
+      const clientName = appointment.client.name;
+      const coworkerName = appointment.coworker.user.name || 'Operatore';
 
       const success = await emailService.sendAppointmentReminder(
         appointment.client.email,
         clientName,
         appointment.startTime,
-        appointment.duration,
+        appointment.durationHours,
         coworkerName
       );
 
