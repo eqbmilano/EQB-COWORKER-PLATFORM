@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "turbo run dev --parallel",
-    "build": "turbo run build",
+    "build": "npm run build --workspace=@eqb/web",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
