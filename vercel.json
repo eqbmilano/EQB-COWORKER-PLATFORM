@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm --workspace @eqb/web run build",
+  "buildCommand": "npm run build --prefix apps/web",
   "installCommand": "npm install --legacy-peer-deps",
-  "outputDirectory": ".next"
+  "outputDirectory": "apps/web/.next"
 }
