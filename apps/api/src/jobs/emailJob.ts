@@ -1,3 +1,4 @@
+import sgMail from '@sendgrid/mail';
 import { backlogQueue } from '../config/queue';
 import { emailService } from '../services/emailService';
 import prisma from '../database/prisma';
@@ -83,23 +84,36 @@ export async function sendAppointmentReminders(): Promise<any> {
  * Initialize email notification jobs
  */
 export function initializeEmailJobs(): void {
-  // Process appointment reminder job
-  backlogQueue.process('appointment-reminders', async (job) => {
-    logger.info('Processing appointment reminders job:', job.id);
-    return await sendAppointmentReminders();
-  });
+  const apiKey = process.env.SENDGRID_API_KEY;
 
-  // Schedule reminder job to run every hour
-  backlogQueue.add(
-    'appointment-reminders',
-    {},
-    {
-      repeat: {
-        cron: '0 * * * *', // Every hour at minute 0
-      },
-      jobId: 'appointment-reminders-job',
-    }
-  );
+  // If no valid SendGrid key, skip scheduling to avoid runtime errors
+  if (!apiKey || !apiKey.startsWith('SG.')) {
+    logger.warn('SendGrid disabled: invalid or missing SENDGRID_API_KEY');
+    return;
+  }
 
-  logger.info('Email notification jobs initialized - Reminders run every hour');
+  try {
+    sgMail.setApiKey(apiKey);
+    logger.info('SendGrid initialized');
+
+    backlogQueue.process('appointment-reminders', async (job) => {
+      logger.info('Processing appointment reminders job:', job.id);
+      return await sendAppointmentReminders();
+    });
+
+    backlogQueue.add(
+      'appointment-reminders',
+      {},
+      {
+        repeat: {
+          cron: '0 * * * *', // Every hour at minute 0
+        },
+        jobId: 'appointment-reminders-job',
+      }
+    );
+
+    logger.info('Email notification jobs initialized - Reminders run every hour');
+  } catch (error) {
+    logger.error('Failed to initialize email jobs:', error);
+  }
 }

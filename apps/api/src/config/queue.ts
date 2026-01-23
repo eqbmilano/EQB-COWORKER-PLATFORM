@@ -1,39 +1,54 @@
 import Queue from 'bull';
 import { logger } from '../utils/logger';
 
-// Redis connection configuration
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+// If no REDIS_URL is provided, export a no-op queue to avoid runtime errors
+const REDIS_URL = process.env.REDIS_URL;
 
-// Create queues
-export const backlogQueue = new Queue('backlog', REDIS_URL, {
-  defaultJobOptions: {
-    removeOnComplete: 100, // Keep last 100 completed jobs
-    removeOnFail: 500, // Keep last 500 failed jobs
-    attempts: 3, // Retry failed jobs 3 times
-    backoff: {
-      type: 'exponential',
-      delay: 5000, // Initial delay of 5 seconds
-    },
-  },
-});
+class NoopQueue {
+  process() {
+    logger.warn('Queue disabled: no REDIS_URL configured');
+  }
+  add() {
+    logger.warn('Queue disabled: job not queued because REDIS_URL is missing');
+  }
+  on() {
+    /* no-op */
+  }
+  clean() {
+    /* no-op */
+  }
+}
 
-// Queue event handlers
-backlogQueue.on('completed', (job, result) => {
-  logger.info(`Job ${job.id} completed:`, result);
-});
+export const backlogQueue = REDIS_URL
+  ? new Queue('backlog', REDIS_URL, {
+      defaultJobOptions: {
+        removeOnComplete: 100,
+        removeOnFail: 500,
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 5000 },
+      },
+    })
+  : (new NoopQueue() as unknown as Queue.Queue<any>);
 
-backlogQueue.on('failed', (job, err) => {
-  logger.error(`Job ${job?.id} failed:`, err);
-});
+if (REDIS_URL) {
+  backlogQueue.on('completed', (job, result) => {
+    logger.info(`Job ${job.id} completed:`, result);
+  });
 
-backlogQueue.on('error', (error) => {
-  logger.error('Queue error:', error);
-});
+  backlogQueue.on('failed', (job, err) => {
+    logger.error(`Job ${job?.id} failed:`, err);
+  });
 
-// Clean up old jobs periodically
-backlogQueue.clean(24 * 60 * 60 * 1000, 'completed'); // Remove completed jobs older than 24h
-backlogQueue.clean(7 * 24 * 60 * 60 * 1000, 'failed'); // Remove failed jobs older than 7 days
+  backlogQueue.on('error', (error) => {
+    logger.error('Queue error:', error);
+  });
 
-logger.info('Bull queues initialized');
+  backlogQueue.clean(24 * 60 * 60 * 1000, 'completed');
+  backlogQueue.clean(7 * 24 * 60 * 60 * 1000, 'failed');
+
+  logger.info('Bull queues initialized');
+} else {
+  logger.warn('Bull queues disabled: set REDIS_URL to enable background jobs');
+}
 
 export default backlogQueue;
