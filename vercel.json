@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "turbo run build --filter=@eqb/web",
+  "buildCommand": "npm --workspace @eqb/web run build",
   "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": ".next"
 }
