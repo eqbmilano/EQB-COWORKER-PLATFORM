@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 import {
   Home,
   Calendar,
@@ -26,6 +27,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const { logout } = useAuthStore();
+  const { isAdmin } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -37,6 +39,7 @@ export default function DashboardLayout({
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/dashboard/appointments', label: 'Appuntamenti', icon: Calendar },
     { href: '/dashboard/clients', label: 'Clienti', icon: Users },
+    { href: '/dashboard/calendar', label: 'Calendario', icon: Calendar },
     { href: '/dashboard/invoices', label: 'Fatture', icon: FileText },
     { href: '/dashboard/profile', label: 'Profilo', icon: User },
   ];
@@ -59,6 +62,11 @@ export default function DashboardLayout({
                 )}
               </button>
               <h1 className="text-xl font-bold text-white">EQB Platform</h1>
+              {isAdmin() && (
+                <span className="ml-2 px-2 py-1 bg-red-500/30 border border-red-500/50 text-red-300 text-xs rounded font-medium">
+                  ADMIN
+                </span>
+              )}
             </div>
 
             <button
