@@ -29,7 +29,7 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
   const { loginWithGoogle, setError } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Load Google Sign-In script
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';

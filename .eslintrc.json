@@ -3,10 +3,23 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "next/core-web-vitals"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
+  "settings": {
+    "react": {
+      "version": "18"
+    }
+  },
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -16,20 +29,13 @@
       }
     ],
     "@typescript-eslint/no-explicit-any": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
     "no-console": [
       "warn",
       {
         "allow": ["warn", "error"]
       }
     ]
-  },
-  "overrides": [
-    {
-      "files": ["*.tsx"],
-      "extends": ["plugin:react/recommended", "plugin:react-hooks/recommended"],
-      "rules": {
-        "react/react-in-jsx-scope": "off"
-      }
-    }
-  ]
+  }
 }
