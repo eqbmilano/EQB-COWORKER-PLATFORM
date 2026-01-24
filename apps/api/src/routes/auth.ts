@@ -35,9 +35,9 @@ const SignupSchema = z.object({
 // HELPERS
 // ============================================================================
 
-const generateToken = (userId: string): string => {
+const generateToken = (user: { id: string; email: string; role?: string }): string => {
   return jwt.sign(
-    { sub: userId },
+    { sub: user.id, email: user.email, role: user.role || 'COWORKER' },
     process.env.JWT_SECRET || 'your-secret-key-change-in-production',
     { expiresIn: '7d' }
   );
@@ -93,7 +93,7 @@ router.post('/login', async (req, res: Response) => {
     }
 
     // Generate token
-    const token = generateToken(user.id);
+    const token = generateToken({ id: user.id, email: user.email, role: user.role });
 
     logger.info(`User logged in: ${user.email}`);
 
@@ -164,12 +164,13 @@ router.post('/signup', async (req, res: Response) => {
         password: hashedPassword,
         firstName,
         lastName,
-        role: 'OPERATOR',
+        name: `${firstName} ${lastName}`.trim(),
+        role: 'COWORKER',
       },
     });
 
     // Generate token
-    const token = generateToken(user.id);
+    const token = generateToken({ id: user.id, email: user.email, role: user.role });
 
     logger.info(`User signed up: ${user.email}`);
 

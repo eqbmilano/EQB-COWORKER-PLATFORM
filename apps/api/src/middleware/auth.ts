@@ -1,6 +1,6 @@
 /**
- * Auth0 Middleware for JWT verification
- * Validates JWT tokens and attaches user info to request
+ * JWT Middleware for custom authentication
+ * Validates JWT tokens signed with our server secret and attaches user info to request
  */
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
@@ -8,7 +8,7 @@ import pino from 'pino';
 
 const logger = pino();
 
-// Extend Express Request to allow auth0 user structure
+// Extend Express Request to allow user structure from our JWT payload
 declare global {
   namespace Express {
     interface Request {
@@ -30,7 +30,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 /**
- * Middleware to verify JWT token from Auth0
+ * Middleware to verify JWT token signed by our API
  */
 export const authMiddleware = async (
   req: AuthenticatedRequest,
@@ -53,11 +53,11 @@ export const authMiddleware = async (
 
     const token = authHeader.substring(7);
 
-    // Note: In production, verify against Auth0 public key
-    // For now, we'll just decode the token
-    const decoded = jwt.decode(token) as {
+    const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
+    const decoded = jwt.verify(token, secret) as {
       sub: string;
-      email: string;
+      email?: string;
       role?: string;
     } | null;
 
@@ -74,7 +74,7 @@ export const authMiddleware = async (
 
     req.user = {
       sub: decoded.sub,
-      email: decoded.email,
+      email: decoded.email || 'unknown',
       role: decoded.role || 'COWORKER',
     };
 

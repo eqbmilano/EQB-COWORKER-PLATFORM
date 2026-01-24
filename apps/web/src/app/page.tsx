@@ -1,12 +1,12 @@
 'use client';
 
-import { useAuth0 } from '@auth0/auth0-react';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { useAuthStore } from '@/store/authStore';
 
 export default function Home() {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -65,11 +65,11 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="space-y-3 pt-8">
-            <Button href="/login" className="w-full py-4 text-lg">
+            <Button href="/auth/login" className="w-full py-4 text-lg">
               Accedi
             </Button>
 
-            <Button href="/signup" variant="secondary" className="w-full py-4 text-lg">
+            <Button href="/auth/signup" variant="secondary" className="w-full py-4 text-lg">
               Registrati
             </Button>
           </div>

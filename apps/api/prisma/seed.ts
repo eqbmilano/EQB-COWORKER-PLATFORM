@@ -3,6 +3,7 @@
  * Run with: pnpm run db:seed
  */
 import { PrismaClient, UserRole } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -12,11 +13,17 @@ async function main() {
   // Clear existing data
   await prisma.user.deleteMany();
 
+  // Shared demo password
+  const demoPassword = await bcrypt.hash('password123', 10);
+
   // Create admin user
   const adminUser = await prisma.user.create({
     data: {
       email: 'admin@eqb.it',
       name: 'Admin EQB',
+      firstName: 'Admin',
+      lastName: 'EQB',
+      password: demoPassword,
       role: UserRole.ADMIN,
       auth0Id: 'auth0|admin',
       adminProfile: {
@@ -34,6 +41,9 @@ async function main() {
     data: {
       email: 'coworker1@eqb.it',
       name: 'Marco Rossi',
+      firstName: 'Marco',
+      lastName: 'Rossi',
+      password: demoPassword,
       role: UserRole.COWORKER,
       auth0Id: 'auth0|coworker1',
       coworkerProfile: {

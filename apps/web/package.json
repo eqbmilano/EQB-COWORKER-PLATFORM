@@ -13,7 +13,6 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.2.4",
     "@eqb/shared-types": "*",
     "@hookform/resolvers": "^3.3.4",
     "@tanstack/react-query": "^5.28.0",
