@@ -26,8 +26,10 @@ interface AuthState {
   setToken: (token: string | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  clearError: () => void;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -44,6 +46,7 @@ export const useAuthStore = create<AuthState>()(
       setToken: (token) => set({ token }),
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
+      clearError: () => set({ error: null }),
 
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
@@ -110,6 +113,35 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
           error: null,
         });
+      },
+
+      loginWithGoogle: async (idToken: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          const response = await fetch(`${apiUrl}/api/auth/google`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'Google login failed');
+          }
+
+          const data = await response.json();
+          set({
+            user: data.user,
+            token: data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Google login failed';
+          set({ error: message, isLoading: false });
+          throw error;
+        }
       },
     }),
     {

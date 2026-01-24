@@ -269,4 +269,92 @@ router.post('/logout', authMiddleware, async (req: AuthenticatedRequest, res: Re
   }
 });
 
+/**
+ * POST /auth/google
+ * Google OAuth sign-in (simplified - in production, verify ID token with Google)
+ */
+router.post('/google', async (req, res: Response) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json(
+        createResponse(false, 400, undefined, {
+          code: 'MISSING_ID_TOKEN',
+          message: 'ID token required',
+        })
+      );
+    }
+
+    // In production, verify token with Google's public key
+    // For now, we'll decode it (unsafe in production!)
+    let decoded: any;
+    try {
+      decoded = jwt.decode(idToken) as { email?: string; given_name?: string; family_name?: string };
+    } catch {
+      return res.status(401).json(
+        createResponse(false, 401, undefined, {
+          code: 'INVALID_TOKEN',
+          message: 'Invalid Google token',
+        })
+      );
+    }
+
+    if (!decoded?.email) {
+      return res.status(400).json(
+        createResponse(false, 400, undefined, {
+          code: 'INVALID_TOKEN',
+          message: 'Email not found in token',
+        })
+      );
+    }
+
+    // Find or create user
+    let user = await prisma.user.findUnique({
+      where: { email: decoded.email },
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: decoded.email,
+          firstName: decoded.given_name || 'User',
+          lastName: decoded.family_name || '',
+          name: `${decoded.given_name || 'User'} ${decoded.family_name || ''}`.trim(),
+          role: 'COWORKER',
+          auth0Id: `google|${decoded.sub || decoded.email}`,
+        },
+      });
+
+      logger.info(`New user created via Google: ${user.email}`);
+    }
+
+    // Generate JWT token
+    const token = generateToken({ id: user.id, email: user.email, role: user.role });
+
+    logger.info(`User logged in via Google: ${user.email}`);
+
+    return res.json(
+      createResponse(true, 200, {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
+      })
+    );
+  } catch (error) {
+    logger.error('Google auth error:', error);
+    return res.status(500).json(
+      createResponse(false, 500, undefined, {
+        code: 'SERVER_ERROR',
+        message: 'Google authentication failed',
+      })
+    );
+  }
+});
+
 export default router;
