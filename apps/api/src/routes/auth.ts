@@ -357,4 +357,139 @@ router.post('/google', async (req, res: Response) => {
   }
 });
 
+/**
+ * PATCH /auth/me
+ * Update user profile (firstName, lastName)
+ */
+router.patch('/me', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json(
+        createResponse(false, 401, undefined, {
+          code: 'UNAUTHORIZED',
+          message: 'User not authenticated',
+        })
+      );
+    }
+
+    const { firstName, lastName } = req.body;
+    const updateData: any = {};
+
+    if (firstName) updateData.firstName = firstName;
+    if (lastName) updateData.lastName = lastName;
+
+    const updated = await prisma.user.update({
+      where: { id: req.user.sub },
+      data: updateData,
+    });
+
+    return res.json(
+      createResponse(true, 200, {
+        user: {
+          id: updated.id,
+          email: updated.email,
+          firstName: updated.firstName,
+          lastName: updated.lastName,
+          role: updated.role,
+        },
+      })
+    );
+  } catch (error) {
+    logger.error('Error updating profile:', error);
+    return res.status(500).json(
+      createResponse(false, 500, undefined, {
+        code: 'SERVER_ERROR',
+        message: 'Failed to update profile',
+      })
+    );
+  }
+});
+
+/**
+ * POST /auth/change-password
+ * Change user password
+ */
+router.post('/change-password', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json(
+        createResponse(false, 401, undefined, {
+          code: 'UNAUTHORIZED',
+          message: 'User not authenticated',
+        })
+      );
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json(
+        createResponse(false, 400, undefined, {
+          code: 'VALIDATION_ERROR',
+          message: 'Current and new password required',
+        })
+      );
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json(
+        createResponse(false, 400, undefined, {
+          code: 'VALIDATION_ERROR',
+          message: 'New password must be at least 8 characters',
+        })
+      );
+    }
+
+    // Get user
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.sub },
+    });
+
+    if (!user || !user.password) {
+      return res.status(400).json(
+        createResponse(false, 400, undefined, {
+          code: 'INVALID_REQUEST',
+          message: 'User does not have a password',
+        })
+      );
+    }
+
+    // Verify current password
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      return res.status(401).json(
+        createResponse(false, 401, undefined, {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Current password is incorrect',
+        })
+      );
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: req.user.sub },
+      data: { password: hashedPassword },
+    });
+
+    logger.info(`User ${user.email} changed password`);
+
+    return res.json(
+      createResponse(true, 200, {
+        message: 'Password changed successfully',
+      })
+    );
+  } catch (error) {
+    logger.error('Error changing password:', error);
+    return res.status(500).json(
+      createResponse(false, 500, undefined, {
+        code: 'SERVER_ERROR',
+        message: 'Failed to change password',
+      })
+    );
+  }
+});
+
 export default router;
