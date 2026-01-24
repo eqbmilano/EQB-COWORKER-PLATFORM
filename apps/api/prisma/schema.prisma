@@ -207,6 +207,7 @@ model Appointment {
   // Relations
   modificationRequests ModificationRequest[]
   backlogEntry  BacklogEntry?
+  invoices      AppointmentInvoice[]
 
   @@index([coworkerId])
   @@index([clientId])
@@ -382,6 +383,39 @@ model Invoice {
   @@unique([coworkerId, year, month])
   @@index([status])
   @@index([paymentStatus])
+}
+
+/**
+ * AppointmentInvoice - Maps appointments to invoices
+ * Allows charging clients for specific appointments
+ */
+model AppointmentInvoice {
+  id              String @id @default(cuid())
+  appointmentId   String @unique
+  appointment     Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  // Invoice details
+  amount          Float
+  currency        String @default("EUR")
+  issueDate       DateTime
+  dueDate         DateTime
+  status          AppointmentInvoiceStatus @default(DRAFT)
+  notes           String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([appointmentId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+enum AppointmentInvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
 }
 
 enum InvoiceStatus {

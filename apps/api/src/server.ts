@@ -11,6 +11,7 @@ config();
 import authRouter from './routes/auth';
 import appointmentsRouter from './routes/appointments';
 import clientsRouter from './routes/clients';
+import invoicesRouter from './routes/invoices';
 import backlogRouter from './routes/backlog';
 import adminRouter from './routes/admin';
 
@@ -72,6 +73,7 @@ app.get('/health', (_req: Request, res: Response) => {
 app.use('/api/auth', authRouter);
 app.use('/api/appointments', appointmentsRouter);
 app.use('/api/clients', clientsRouter);
+app.use('/api/invoices', invoicesRouter);
 app.use('/api/backlog', backlogRouter);
 app.use('/api/admin', adminRouter);
 
