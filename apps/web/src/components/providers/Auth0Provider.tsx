@@ -13,6 +13,7 @@ export function Auth0Provider({ children }: Auth0ProviderProps) {
   const domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN;
   const clientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID;
   const audience = process.env.NEXT_PUBLIC_AUTH0_AUDIENCE;
+  const baseUrl = process.env.NEXT_PUBLIC_AUTH0_BASE_URL;
 
   if (!domain || !clientId) {
     console.error('Auth0 configuration missing');
@@ -28,7 +29,7 @@ export function Auth0Provider({ children }: Auth0ProviderProps) {
       domain={domain}
       clientId={clientId}
       authorizationParams={{
-        redirect_uri: typeof window !== 'undefined' ? window.location.origin : '',
+        redirect_uri: baseUrl || (typeof window !== 'undefined' ? window.location.origin : ''),
         audience: audience,
         scope: 'openid profile email',
       }}
