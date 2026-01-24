@@ -1,13 +1,16 @@
 /**
  * Authentication Routes
- * Handles login, signup, and token refresh
+ * Handles JWT-based login, signup, and refresh
  */
 import { Router, Response } from 'express';
 import { z } from 'zod';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { authMiddleware, AuthenticatedRequest } from '../middleware/auth';
 import authService from '../services/authService';
 import { createResponse } from '../types/api';
 import pino from 'pino';
+import prisma from '../database/prisma';
 
 const logger = pino();
 const router = Router();
@@ -16,26 +19,114 @@ const router = Router();
 // VALIDATION SCHEMAS
 // ============================================================================
 
-const CallbackSchema = z.object({
-  profile: z.object({
-    sub: z.string(),
-    email: z.string().email(),
-    name: z.string().optional(),
-    picture: z.string().optional(),
-  }),
+const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
 });
+
+const SignupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+});
+
+// ============================================================================
+// HELPERS
+// ============================================================================
+
+const generateToken = (userId: string): string => {
+  return jwt.sign(
+    { sub: userId },
+    process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+    { expiresIn: '7d' }
+  );
+};
 
 // ============================================================================
 // ROUTES
 // ============================================================================
 
 /**
- * POST /auth/callback
- * Called by Auth0 after successful authentication
+ * POST /auth/login
+ * Login with email and password
  */
-router.post('/callback', async (req, res: Response) => {
+router.post('/login', async (req, res: Response) => {
   try {
-    const validation = CallbackSchema.safeParse(req.body);
+    const validation = LoginSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(400).json(
+        createResponse(false, 400, undefined, {
+          code: 'VALIDATION_ERROR',
+          message: 'Email and password required',
+        })
+      );
+    }
+
+    const { email, password } = validation.data;
+
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(401).json(
+        createResponse(false, 401, undefined, {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password',
+        })
+      );
+    }
+
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password || '');
+
+    if (!isValidPassword) {
+      return res.status(401).json(
+        createResponse(false, 401, undefined, {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password',
+        })
+      );
+    }
+
+    // Generate token
+    const token = generateToken(user.id);
+
+    logger.info(`User logged in: ${user.email}`);
+
+    return res.json(
+      createResponse(true, 200, {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
+      })
+    );
+  } catch (error) {
+    logger.error('Login error:', error);
+    return res.status(500).json(
+      createResponse(false, 500, undefined, {
+        code: 'SERVER_ERROR',
+        message: 'Login failed',
+      })
+    );
+  }
+});
+
+/**
+ * POST /auth/signup
+ * Register new user
+ */
+router.post('/signup', async (req, res: Response) => {
+  try {
+    const validation = SignupSchema.safeParse(req.body);
 
     if (!validation.success) {
       return res.status(400).json(
@@ -47,25 +138,59 @@ router.post('/callback', async (req, res: Response) => {
       );
     }
 
-    const { profile } = validation.data;
+    const { email, password, firstName, lastName } = validation.data;
 
-    // Get or create user
-    const user = await authService.getOrCreateUser(profile);
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-    logger.info(`User authenticated: ${user.email}`);
+    if (existingUser) {
+      return res.status(409).json(
+        createResponse(false, 409, undefined, {
+          code: 'USER_EXISTS',
+          message: 'Email already registered',
+        })
+      );
+    }
 
-    return res.json(
-      createResponse(true, 200, {
-        user,
-        message: 'Authentication successful',
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        role: 'OPERATOR',
+      },
+    });
+
+    // Generate token
+    const token = generateToken(user.id);
+
+    logger.info(`User signed up: ${user.email}`);
+
+    return res.status(201).json(
+      createResponse(true, 201, {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
       })
     );
   } catch (error) {
-    logger.error('Auth callback error:', error);
+    logger.error('Signup error:', error);
     return res.status(500).json(
       createResponse(false, 500, undefined, {
-        code: 'AUTH_ERROR',
-        message: 'Authentication failed',
+        code: 'SERVER_ERROR',
+        message: 'Signup failed',
       })
     );
   }
@@ -86,7 +211,9 @@ router.get('/me', authMiddleware, async (req: AuthenticatedRequest, res: Respons
       );
     }
 
-    const user = await authService.getUserById(req.user.sub);
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.sub },
+    });
 
     if (!user) {
       return res.status(404).json(
@@ -98,7 +225,15 @@ router.get('/me', authMiddleware, async (req: AuthenticatedRequest, res: Respons
     }
 
     return res.json(
-      createResponse(true, 200, { user })
+      createResponse(true, 200, {
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
+      })
     );
   } catch (error) {
     logger.error('Get me error:', error);
