@@ -3,11 +3,19 @@
  */
 'use client';
 
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore, type User } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export function useAuth() {
+interface UseAuthReturn {
+  user: User | null;
+  isAuthenticated: boolean;
+  hasRole: (roles: string[]) => boolean;
+  isAdmin: () => boolean;
+  canAccess: (requiredRoles: string[]) => boolean;
+}
+
+export function useAuth(): UseAuthReturn {
   const { user, isAuthenticated } = useAuthStore();
   const router = useRouter();
 
