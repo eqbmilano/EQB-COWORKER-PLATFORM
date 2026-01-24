@@ -4,7 +4,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, addDays } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { useAppointments } from '@/hooks/useAppointments';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

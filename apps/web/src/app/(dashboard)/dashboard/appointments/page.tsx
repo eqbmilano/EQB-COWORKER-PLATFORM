@@ -236,7 +236,7 @@ function AppointmentCard({ appointment, onEdit, onDelete }: AppointmentCardProps
 
           {/* Notes */}
           {appointment.notes && (
-            <p className="text-sm text-slate-400 italic">"{appointment.notes}"</p>
+            <p className="text-sm text-slate-400 italic">&quot;{appointment.notes}&quot;</p>
           )}
         </div>
 
