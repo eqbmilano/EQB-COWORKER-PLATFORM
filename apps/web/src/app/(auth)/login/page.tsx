@@ -1,98 +1,84 @@
 /**
- * Login Page
+ * Login Page - Auth0 Integration
  */
 'use client';
 
-import { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    try {
-      // TODO: Implement actual Auth0 login
-      console.log('Login attempt:', { email, password });
-      
-      // For now, just show a message
-      setError('Auth0 integration coming soon');
-    } catch (err) {
-      setError('Failed to login. Please try again.');
-      console.error('Login error:', err);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
     }
+  }, [isAuthenticated, router]);
+
+  const handleLogin = () => {
+    loginWithRedirect({
+      appState: {
+        returnTo: '/dashboard',
+      },
+    });
   };
 
+  if (isLoading) {
+    return (
+      <Card className="p-8 max-w-md mx-auto">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Caricamento...</p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="p-8">
+    <Card className="p-8 sm:p-10 max-w-md mx-auto">
+      {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">EQB Platform</h1>
-        <p className="text-gray-600 mt-2">Accedi al tuo account</p>
+        <div className="mx-auto h-16 w-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
+          <span className="text-3xl">🚀</span>
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900">Accedi</h1>
+        <p className="text-gray-600 mt-2">Benvenuto in EQB Platform</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="tuo@email.com"
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="••••••••"
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-            {error}
-          </div>
-        )}
-
+      {/* Login Button */}
+      <div className="space-y-4">
         <Button
-          type="submit"
-          className="w-full"
+          onClick={handleLogin}
+          className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all"
           disabled={isLoading}
         >
-          {isLoading ? 'Accesso in corso...' : 'Accedi'}
+          Accedi con Auth0
         </Button>
-      </form>
 
-      <div className="mt-6 pt-6 border-t border-gray-200">
+        {/* Info */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-800 text-center">
+            🔒 Accesso sicuro tramite Auth0
+          </p>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 pt-6 border-t border-gray-200">
         <p className="text-center text-gray-600">
           Non hai un account?{' '}
           <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
             Registrati
+          </Link>
+        </p>
+        <p className="text-center text-sm text-gray-500 mt-4">
+          <Link href="/" className="hover:text-gray-700">
+            ← Torna alla home
           </Link>
         </p>
       </div>
