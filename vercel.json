@@ -1,7 +1,7 @@
 
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "ROOT=$(git rev-parse --show-toplevel) && npm install --prefix \"$ROOT/apps/web\" && npx -y next@14.1.0 build \"$ROOT/apps/web\"",
+  "buildCommand": "ROOT=$(git rev-parse --show-toplevel) && npx -y next@14.1.0 build \"$ROOT/apps/web\"",
   "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "apps/web/.next"
 }
