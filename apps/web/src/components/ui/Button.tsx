@@ -4,16 +4,16 @@ import Link from 'next/link';
 interface BaseButtonProps {
   variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
   className?: string;
 }
 
-interface ButtonAsButton extends BaseButtonProps, React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonAsButton extends BaseButtonProps, Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
   href?: never;
 }
 
 interface ButtonAsLink extends BaseButtonProps {
   href: string;
+  children: React.ReactNode;
   onClick?: never;
   type?: never;
   disabled?: never;
