@@ -28,8 +28,16 @@ const PORT = process.env.API_PORT || 3001;
 // ============================================================================
 
 // CORS
+const allowedOrigins = (process.env.WEB_ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
 app.use(cors({
-  origin: process.env.WEB_BASE_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    // If no allowlist is provided, allow all origins (useful for initial setup)
+    if (allowedOrigins.length === 0) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
   credentials: true,
 }));
 
