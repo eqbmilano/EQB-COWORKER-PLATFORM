@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Auth0Provider } from '@/components/providers/Auth0Provider';
 
 export const metadata: Metadata = {
   title: 'EQB Platform - Appointment Booking & Invoice Management',
@@ -28,9 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it">
-      <body className="bg-gray-50">
-        <Auth0Provider>{children}</Auth0Provider>
-      </body>
+      <body className="bg-gray-50">{children}</body>
     </html>
   );
 }

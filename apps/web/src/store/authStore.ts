@@ -1,31 +1,120 @@
 /**
- * Auth Context Hook for managing authentication state
+ * Auth Store for JWT-based authentication
  */
 'use client';
 
 import { create } from 'zustand';
-import type { User } from '@eqb/shared-types';
+import { persist } from 'zustand/middleware';
 
-interface AuthStore {
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
+interface AuthState {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  error: string | null;
+
+  // Actions
   setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  isLoading: false,
-  setUser: (user) =>
-    set({
-      user,
-      isAuthenticated: !!user,
-    }),
-  logout: () =>
-    set({
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
+      isLoading: false,
+      error: null,
+
+      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      setToken: (token) => set({ token }),
+      setLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+
+      login: async (email: string, password: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          const response = await fetch(`${apiUrl}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Login failed');
+          }
+
+          const data = await response.json();
+          set({
+            user: data.user,
+            token: data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Login failed';
+          set({ error: message, isLoading: false });
+          throw error;
+        }
+      },
+
+      signup: async (email: string, password: string, firstName: string, lastName: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          const response = await fetch(`${apiUrl}/api/auth/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, firstName, lastName }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Signup failed');
+          }
+
+          const data = await response.json();
+          set({
+            user: data.user,
+            token: data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Signup failed';
+          set({ error: message, isLoading: false });
+          throw error;
+        }
+      },
+
+      logout: () => {
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          error: null,
+        });
+      },
     }),
-}));
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({ token: state.token, user: state.user }),
+    }
+  )
+);
