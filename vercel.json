@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "next build",
+  "buildCommand": "npx turbo run build --filter=@eqb/web",
   "installCommand": "npm install --legacy-peer-deps",
-  "outputDirectory": ".next"
+  "outputDirectory": "apps/web/.next"
 }
