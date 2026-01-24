@@ -27,72 +27,58 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full text-center space-y-8">
-        {/* Logo/Icon */}
-        <div>
-          <div className="mx-auto h-20 w-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-4xl">🚀</span>
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 text-slate-50 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-xl w-full space-y-8">
+        <div className="rounded-3xl border border-white/10 bg-white/10 backdrop-blur-2xl shadow-[0_25px_80px_rgba(0,0,0,0.35)] p-8 sm:p-10">
+          {/* Logo/Icon */}
+          <div className="text-center mb-6">
+            <div className="mx-auto h-20 w-20 bg-gradient-to-br from-indigo-500 via-purple-500 to-sky-500 rounded-2xl flex items-center justify-center shadow-2xl">
+              <span className="text-4xl">🚀</span>
+            </div>
           </div>
-        </div>
 
-        {/* Heading */}
-        <div className="space-y-3">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight">
-            EQB Platform
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-600">
-            Gestione Appuntamenti e Fatture
+          {/* Heading */}
+          <div className="space-y-2 text-center">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">EQB Platform</h1>
+            <p className="text-base sm:text-lg text-slate-200/80">
+              Gestione Appuntamenti e Fatture con un tocco premium
+            </p>
+          </div>
+
+          {/* Features */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+            {[
+              { icon: '📅', title: 'Appuntamenti', desc: 'Prenota e gestisci facilmente' },
+              { icon: '👥', title: 'Clienti', desc: 'Profili e storico completi' },
+              { icon: '💼', title: 'Fatture', desc: 'Automatizza e controlla i pagamenti' },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-inner"
+              >
+                <div className="text-2xl mb-2">{item.icon}</div>
+                <h3 className="font-semibold text-slate-50">{item.title}</h3>
+                <p className="text-sm text-slate-200/80">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="space-y-3 pt-8">
+            <Button href="/login" className="w-full py-4 text-lg">
+              Accedi
+            </Button>
+
+            <Button href="/signup" variant="secondary" className="w-full py-4 text-lg">
+              Registrati
+            </Button>
+          </div>
+
+          {/* Footer */}
+          <p className="text-sm text-slate-200/70 pt-6 text-center">
+            Ottimizzato per dispositivi mobili 📱
           </p>
         </div>
-
-        {/* Features */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 space-y-3 text-left">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">📅</span>
-            <div>
-              <h3 className="font-semibold text-gray-900">Appuntamenti</h3>
-              <p className="text-sm text-gray-600">Prenota e gestisci i tuoi appuntamenti</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">👥</span>
-            <div>
-              <h3 className="font-semibold text-gray-900">Clienti</h3>
-              <p className="text-sm text-gray-600">Profili e storico completi</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">💼</span>
-            <div>
-              <h3 className="font-semibold text-gray-900">Fatturazione</h3>
-              <p className="text-sm text-gray-600">Gestione automatica delle fatture</p>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="space-y-3 pt-4">
-          <Button 
-            href="/login"
-            className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all"
-          >
-            Accedi
-          </Button>
-          
-          <Button
-            href="/signup"
-            variant="outline"
-            className="w-full py-4 text-lg font-semibold border-2 border-gray-300 hover:border-gray-400 text-gray-700 transition-all"
-          >
-            Registrati
-          </Button>
-        </div>
-
-        {/* Footer */}
-        <p className="text-sm text-gray-500 pt-4">
-          Ottimizzato per dispositivi mobili 📱
-        </p>
       </div>
     </main>
   );
