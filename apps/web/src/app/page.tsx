@@ -65,11 +65,11 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="space-y-3 pt-8">
-            <Button href="/auth/login" className="w-full py-4 text-lg">
+            <Button href="/login" className="w-full py-4 text-lg">
               Accedi
             </Button>
 
-            <Button href="/auth/signup" variant="secondary" className="w-full py-4 text-lg">
+            <Button href="/signup" variant="secondary" className="w-full py-4 text-lg">
               Registrati
             </Button>
           </div>
