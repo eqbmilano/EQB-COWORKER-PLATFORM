@@ -1,18 +1,19 @@
-# 🚀 Setup Completo EQB Coworker Platform
+# 🚀 EQB Platform - Deploy Ready
 
-## ✅ Deployment Status
+**Last Updated:** Commit `944f10a` - Admin panel + PDF generation complete
 
-### Frontend (Vercel)
-- **URL**: https://eqb-platform-web.vercel.app
-- **Repository**: https://github.com/eqbmilano/EQB-COWORKER-PLATFORM
-- **Status**: ✅ Live
-- **Auto-deploy**: Attivo su push a `main`
+## ✅ What's Completed
 
-### Backend API (Render)
-- **URL**: https://eqb-coworker-platform.onrender.com
-- **Repository**: https://github.com/eqbmilano/EQB-COWORKER-PLATFORM
-- **Status**: ✅ Live (Starter Instance)
-- **Auto-deploy**: Attivo su push a `main`
+- ✅ Custom JWT authentication (bcrypt + 7-day tokens)
+- ✅ Admin user management panel
+- ✅ PDF invoice generation (pdf-lib)
+- ✅ EQB brand theme (wood palette, Manrope font)
+- ✅ Database seed with test data:
+  - admin@eqb.it / AdminEQB2026!
+  - coworker@eqb.it / CoworkerEQB2026!
+  - 3 clients + 3 appointments + 2 invoices
+- ✅ Dashboard modules: Appointments, Clients, Profile, Calendar, Invoices
+- ✅ RBAC middleware (Admin/Coworker roles)
 
 ---
 
