@@ -209,7 +209,7 @@ export function useAppointments(): UseAppointmentsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl, appointments]
+    [token, apiUrl, appointments, headers]
   );
 
   const clearError = useCallback(() => setError(null), []);

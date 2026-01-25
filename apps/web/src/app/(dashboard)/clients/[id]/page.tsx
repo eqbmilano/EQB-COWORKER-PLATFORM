@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
@@ -29,11 +29,26 @@ interface ClientStatistics {
 
 interface ClientData {
   id: string;
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
   phone: string;
+  status?: 'ACTIVE' | 'INACTIVE';
   companyName?: string;
+  coworkers?: CoworkerRelationship[];
   [key: string]: unknown;
+}
+
+interface CoworkerRelationship {
+  id: string;
+  coworker?: {
+    id: string;
+    user?: {
+      firstName: string;
+      lastName: string;
+    };
+  };
 }
 
 export default function ClientDetailPage() {
@@ -48,13 +63,7 @@ export default function ClientDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    if (clientId) {
-      fetchClientData();
-    }
-  }, [clientId]);
-
-  const fetchClientData = async () => {
+  const fetchClientData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -105,7 +114,13 @@ export default function ClientDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [clientId]);
+
+  useEffect(() => {
+    if (clientId) {
+      fetchClientData();
+    }
+  }, [clientId, fetchClientData]);
 
   const handleDeleteDocument = async (documentId: string) => {
     if (!confirm('Sei sicuro di voler eliminare questo documento?')) {
@@ -407,7 +422,7 @@ export default function ClientDetailPage() {
               <div className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Operatori</h2>
                 <div className="space-y-3">
-                  {client.coworkers.map((rel: any) => (
+                  {client.coworkers.map((rel: CoworkerRelationship) => (
                     <div
                       key={rel.id}
                       className="flex items-center justify-between"

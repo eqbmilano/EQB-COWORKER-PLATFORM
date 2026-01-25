@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -28,11 +28,7 @@ export default function UserManagement() {
   const [error, setError] = useState<string | null>(null);
   const [includeInactive, setIncludeInactive] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [includeInactive]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -58,6 +54,11 @@ export default function UserManagement() {
     } finally {
       setLoading(false);
     }
+  }, [includeInactive]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [includeInactive, fetchUsers]);
   };
 
   const handleActivateUser = async (userId: string) => {

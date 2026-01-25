@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 
@@ -28,11 +28,7 @@ export default function BacklogDashboard() {
   );
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'));
 
-  useEffect(() => {
-    fetchBacklogData();
-  }, [startDate, endDate]);
-
-  const fetchBacklogData = async () => {
+  const fetchBacklogData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -67,7 +63,11 @@ export default function BacklogDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [startDate, endDate]);
+
+  useEffect(() => {
+    fetchBacklogData();
+  }, [startDate, endDate, fetchBacklogData]);
 
   if (loading) {
     return (

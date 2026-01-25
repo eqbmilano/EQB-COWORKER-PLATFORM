@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -18,11 +18,7 @@ export default function ClientList({ coworkerId }: ClientListProps) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchClients();
-  }, [page, searchTerm, coworkerId]);
-
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -56,7 +52,11 @@ export default function ClientList({ coworkerId }: ClientListProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchTerm, coworkerId]);
+
+  useEffect(() => {
+    fetchClients();
+  }, [page, searchTerm, coworkerId, fetchClients]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

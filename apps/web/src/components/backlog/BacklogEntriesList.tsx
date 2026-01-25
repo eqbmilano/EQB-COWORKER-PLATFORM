@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { format } from 'date-fns';
 
@@ -30,11 +30,7 @@ export default function BacklogEntriesList({
   const [entries, setEntries] = useState<BacklogEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchEntries();
-  }, [startDate, endDate]);
-
-  const fetchEntries = async () => {
+  const fetchEntries = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -56,7 +52,11 @@ export default function BacklogEntriesList({
     } finally {
       setLoading(false);
     }
-  };
+  }, [startDate, endDate]);
+
+  useEffect(() => {
+    fetchEntries();
+  }, [startDate, endDate, fetchEntries]);
 
   if (loading) {
     return (

@@ -77,7 +77,7 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
       setError(error instanceof Error ? error.message : 'Google sign-in failed');
       setIsLoading(false);
     }
-  }, [loginWithGoogle, router, setError]);
+  }, [loginWithGoogle, router, setError, onSuccess]);
 
   if (isLoading) {
     return (
