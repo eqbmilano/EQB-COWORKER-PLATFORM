@@ -17,6 +17,7 @@ import {
   LogOut,
   Menu,
   X,
+  Shield,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -42,6 +43,7 @@ export default function DashboardLayout({
     { href: '/dashboard/calendar', label: 'Calendario', icon: Calendar },
     { href: '/dashboard/invoices', label: 'Fatture', icon: FileText },
     { href: '/dashboard/profile', label: 'Profilo', icon: User },
+    ...(isAdmin() ? [{ href: '/dashboard/admin', label: 'Admin', icon: Shield }] : []),
   ];
 
   return (
