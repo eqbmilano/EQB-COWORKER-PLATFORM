@@ -59,7 +59,6 @@ export default function UserManagement() {
   useEffect(() => {
     fetchUsers();
   }, [includeInactive, fetchUsers]);
-  };
 
   const handleActivateUser = async (userId: string) => {
     try {
