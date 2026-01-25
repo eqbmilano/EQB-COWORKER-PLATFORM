@@ -3,7 +3,7 @@
  */
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 
 export interface Client {
@@ -54,10 +54,10 @@ export function useClients(): UseClientsReturn {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-  const headers = {
+  const headers = useMemo(() => ({
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
-  };
+  }), [token]);
 
   const fetchClients = useCallback(
     async (search?: string) => {
@@ -92,7 +92,7 @@ export function useClients(): UseClientsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl]
+    [token, apiUrl, headers]
   );
 
   const getClient = useCallback(
@@ -118,7 +118,7 @@ export function useClients(): UseClientsReturn {
         return null;
       }
     },
-    [token, apiUrl]
+    [token, apiUrl, headers]
   );
 
   const createClient = useCallback(
@@ -159,7 +159,7 @@ export function useClients(): UseClientsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl, clients]
+    [token, apiUrl, clients, headers]
   );
 
   const updateClient = useCallback(
@@ -200,7 +200,7 @@ export function useClients(): UseClientsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl, clients]
+    [token, apiUrl, clients, headers]
   );
 
   const deleteClient = useCallback(
@@ -234,7 +234,7 @@ export function useClients(): UseClientsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl, clients]
+    [token, apiUrl, clients, headers]
   );
 
   const clearError = useCallback(() => setError(null), []);

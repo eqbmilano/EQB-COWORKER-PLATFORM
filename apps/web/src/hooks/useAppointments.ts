@@ -3,7 +3,7 @@
  */
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 
 export interface Appointment {
@@ -54,10 +54,10 @@ export function useAppointments(): UseAppointmentsReturn {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-  const headers = {
+  const headers = useMemo(() => ({
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
-  };
+  }), [token]);
 
   const fetchAppointments = useCallback(
     async (filters?: { startDate?: string; endDate?: string }) => {
@@ -93,7 +93,7 @@ export function useAppointments(): UseAppointmentsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl]
+    [token, apiUrl, headers]
   );
 
   const createAppointment = useCallback(
@@ -134,7 +134,7 @@ export function useAppointments(): UseAppointmentsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl, appointments]
+    [token, apiUrl, appointments, headers]
   );
 
   const updateAppointment = useCallback(
@@ -175,7 +175,7 @@ export function useAppointments(): UseAppointmentsReturn {
         setLoading(false);
       }
     },
-    [token, apiUrl, appointments]
+    [token, apiUrl, appointments, headers]
   );
 
   const deleteAppointment = useCallback(
