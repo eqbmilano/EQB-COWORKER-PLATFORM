@@ -5,10 +5,25 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
-import type { Client } from '@eqb/shared-types';
+
+interface ClientFormData {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  birthDate?: Date | string;
+  address?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  taxCode?: string;
+  notes?: string;
+  [key: string]: unknown;
+}
 
 interface ClientFormProps {
-  initialData?: Partial<Client>;
+  initialData?: ClientFormData;
   clientId?: string;
 }
 
