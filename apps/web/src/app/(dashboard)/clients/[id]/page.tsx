@@ -34,9 +34,18 @@ interface ClientData {
   name: string;
   email: string;
   phone: string;
+  birthDate?: string;
+  address?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  taxCode?: string;
+  notes?: string;
   status?: 'ACTIVE' | 'INACTIVE';
   companyName?: string;
   coworkers?: CoworkerRelationship[];
+  createdAt?: string;
+  updatedAt?: string;
   [key: string]: unknown;
 }
 
