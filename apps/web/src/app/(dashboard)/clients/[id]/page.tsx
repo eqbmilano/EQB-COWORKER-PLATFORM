@@ -34,7 +34,7 @@ interface ClientData {
   name: string;
   email: string;
   phone: string;
-  birthDate?: string;
+  birthDate?: Date | string;
   address?: string;
   city?: string;
   province?: string;
