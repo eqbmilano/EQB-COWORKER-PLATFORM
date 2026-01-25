@@ -9,8 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#0066cc',
-        secondary: '#006666',
+        // EQB Brand Colors
+        eqb: {
+          wood: {
+            primary: '#27201B',    // Logo primary wood
+            secondary: '#382D28',  // Palette primary
+            dark: '#392D28',       // Palette secondary
+          },
+          neutral: {
+            warmWhite: '#F4F1EC',
+          },
+        },
+        // Legacy colors (fallback)
+        primary: '#382D28',
+        secondary: '#392D28',
+      },
+      fontFamily: {
+        // EQB Typography
+        'logo': ['Chopard', 'serif'],
+        'body': ['Manrope', 'sans-serif'],
       },
     },
   },
