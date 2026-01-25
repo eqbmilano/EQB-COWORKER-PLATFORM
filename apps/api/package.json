@@ -19,7 +19,6 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "tsx": "^4.21.0",
     "@aws-sdk/client-s3": "^3.971.0",
     "@prisma/client": "^5.7.1",
     "@sendgrid/mail": "^7.7.0",
@@ -35,9 +34,11 @@
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
+    "pdf-lib": "^1.17.1",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
     "redis": "^4.6.12",
+    "tsx": "^4.21.0",
     "uuid": "^8.3.2",
     "zod": "^3.22.4"
   },

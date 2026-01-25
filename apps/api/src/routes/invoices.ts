@@ -317,9 +317,11 @@ router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+import { generateInvoicePDF } from '../services/pdfService';
+
 /**
  * GET /api/invoices/:id/pdf
- * Download invoice as PDF (placeholder - implementation depends on pdf library)
+ * Download invoice as PDF
  */
 router.get('/:id/pdf', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -335,6 +337,7 @@ router.get('/:id/pdf', authMiddleware, async (req: Request, res: Response) => {
                 name: true,
                 email: true,
                 phone: true,
+                companyName: true,
                 address: true,
                 city: true,
                 zipCode: true,
@@ -354,11 +357,52 @@ router.get('/:id/pdf', authMiddleware, async (req: Request, res: Response) => {
       return res.status(403).json(createResponse(false, 'Unauthorized'));
     }
 
-    // TODO: Implement PDF generation
-    // For now, return a placeholder response
+    // Company data (from env or config)
+    const companyData = {
+      name: 'EQB Milano - Cinque Giornate',
+      address: 'Viale Regina Margherita, 43',
+      city: 'Milano',
+      zipCode: '20122',
+      email: 'info@eqbmilano.it',
+      phone: process.env.COMPANY_PHONE || '',
+      vat: process.env.COMPANY_VAT || '',
+    };
+
+    // Generate PDF
+    const pdfBytes = await generateInvoicePDF(
+      {
+        id: invoice.id,
+        amount: invoice.amount,
+        currency: invoice.currency,
+        issueDate: invoice.issueDate,
+        dueDate: invoice.dueDate,
+        status: invoice.status,
+        notes: invoice.notes || undefined,
+        appointment: {
+          type: invoice.appointment.type,
+          startTime: invoice.appointment.startTime,
+          endTime: invoice.appointment.endTime,
+          durationHours: invoice.appointment.durationHours,
+          roomType: invoice.appointment.roomType,
+          roomNumber: invoice.appointment.roomNumber || undefined,
+        },
+        client: {
+          name: invoice.appointment.client.name,
+          email: invoice.appointment.client.email,
+          phone: invoice.appointment.client.phone || undefined,
+          companyName: invoice.appointment.client.companyName || undefined,
+          address: invoice.appointment.client.address || undefined,
+          city: invoice.appointment.client.city || undefined,
+          zipCode: invoice.appointment.client.zipCode || undefined,
+        },
+      },
+      companyData
+    );
+
+    // Send PDF
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="invoice-${id}.pdf"`);
-    res.send(Buffer.from('PDF generation pending - implement with pdf-lib or pdfkit'));
+    res.setHeader('Content-Disposition', `attachment; filename="fattura-${invoice.id.substring(0, 8)}.pdf"`);
+    res.send(Buffer.from(pdfBytes));
   } catch (error) {
     logger.error('Error generating PDF:', error);
     res.status(500).json(createResponse(false, 'Failed to generate PDF'));
