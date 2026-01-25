@@ -15,6 +15,7 @@
     "lint": "eslint src --ext .ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "ts-node prisma/seed.ts",
+    "db:seed:admin": "ts-node scripts/seedAdmin.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {

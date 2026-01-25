@@ -385,10 +385,8 @@ model Invoice {
   @@index([paymentStatus])
 }
 
-/**
- * AppointmentInvoice - Maps appointments to invoices
- * Allows charging clients for specific appointments
- */
+// AppointmentInvoice - Maps appointments to invoices
+// Allows charging clients for specific appointments
 model AppointmentInvoice {
   id              String @id @default(cuid())
   appointmentId   String @unique
