@@ -51,6 +51,7 @@ interface ClientData {
 
 interface CoworkerRelationship {
   id: string;
+  isPrimary?: boolean;
   coworker?: {
     id: string;
     user?: {
@@ -438,8 +439,8 @@ export default function ClientDetailPage() {
                     >
                       <div>
                         <p className="font-medium text-gray-900">
-                          {rel.coworker.user.firstName}{' '}
-                          {rel.coworker.user.lastName}
+                          {rel.coworker?.user?.firstName}{' '}
+                          {rel.coworker?.user?.lastName}
                         </p>
                         {rel.isPrimary && (
                           <Badge variant="success" className="mt-1">

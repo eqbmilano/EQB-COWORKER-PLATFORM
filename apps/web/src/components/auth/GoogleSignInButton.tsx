@@ -35,6 +35,21 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
   const { loginWithGoogle, setError } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleCredentialResponse = useCallback(async (response: CredentialResponse) => {
+    setIsLoading(true);
+    try {
+      if (!response.credential) {
+        throw new Error('No credential received from Google');
+      }
+      await loginWithGoogle(response.credential);
+      onSuccess?.();
+      router.push('/dashboard');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Google sign-in failed');
+      setIsLoading(false);
+    }
+  }, [loginWithGoogle, router, setError, onSuccess]);
+
   useEffect(() => {
     // Load Google Sign-In script
     const script = document.createElement('script');
@@ -66,18 +81,6 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
       document.body.removeChild(script);
     };
   }, [handleCredentialResponse]);
-
-  const handleCredentialResponse = useCallback(async (response: CredentialResponse) => {
-    setIsLoading(true);
-    try {
-      await loginWithGoogle(response.credential);
-      onSuccess?.();
-      router.push('/dashboard');
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Google sign-in failed');
-      setIsLoading(false);
-    }
-  }, [loginWithGoogle, router, setError, onSuccess]);
 
   if (isLoading) {
     return (

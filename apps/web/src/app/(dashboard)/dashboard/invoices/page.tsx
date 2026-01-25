@@ -24,7 +24,7 @@ import { it } from 'date-fns/locale';
 
 type InvoiceStatus = 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
 
-const statusConfig: Record<InvoiceStatus, { color: string; icon: React.ComponentType; label: string }> = {
+const statusConfig: Record<InvoiceStatus, { color: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
   DRAFT: { color: 'bg-slate-500', icon: Clock, label: 'Bozza' },
   SENT: { color: 'bg-blue-500', icon: CheckCircle, label: 'Inviata' },
   PAID: { color: 'bg-green-500', icon: CheckCircle, label: 'Pagata' },
