@@ -52,8 +52,9 @@ export default function UserManagement() {
 
       const data = await response.json();
       setUsers(data.data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -73,8 +74,9 @@ export default function UserManagement() {
       }
 
       fetchUsers();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      alert(errorMessage);
     }
   };
 
@@ -96,8 +98,9 @@ export default function UserManagement() {
       }
 
       fetchUsers();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      alert(errorMessage);
     }
   };
 
@@ -124,8 +127,9 @@ export default function UserManagement() {
       }
 
       fetchUsers();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      alert(errorMessage);
     }
   };
 
@@ -156,8 +160,9 @@ export default function UserManagement() {
       }
 
       fetchUsers();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      alert(errorMessage);
     }
   };
 

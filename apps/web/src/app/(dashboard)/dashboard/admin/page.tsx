@@ -34,12 +34,12 @@ export default function AdminPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin()) {
       fetchUsers(includeInactive);
     }
   }, [isAdmin, fetchUsers, includeInactive]);
 
-  if (!isAdmin) {
+  if (!isAdmin()) {
     return (
       <div className="flex h-full items-center justify-center">
         <Card variant="solid" className="max-w-md p-8 text-center">

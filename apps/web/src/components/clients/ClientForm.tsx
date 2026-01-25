@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import type { Client } from '@eqb/shared-types';
 
 interface ClientFormProps {
-  initialData?: any;
+  initialData?: Partial<Client>;
   clientId?: string;
 }
 
@@ -70,8 +71,9 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
 
       const data = await response.json();
       router.push(`/dashboard/clients/${data.data.id}`);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

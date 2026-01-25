@@ -27,12 +27,21 @@ interface ClientStatistics {
   lastAppointmentDate: string | null;
 }
 
+interface ClientData {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  companyName?: string;
+  [key: string]: unknown;
+}
+
 export default function ClientDetailPage() {
   const params = useParams();
   const router = useRouter();
   const clientId = params.id as string;
 
-  const [client, setClient] = useState<any>(null);
+  const [client, setClient] = useState<ClientData | null>(null);
   const [documents, setDocuments] = useState<ClientDocument[]>([]);
   const [statistics, setStatistics] = useState<ClientStatistics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +49,9 @@ export default function ClientDetailPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    fetchClientData();
+    if (clientId) {
+      fetchClientData();
+    }
   }, [clientId]);
 
   const fetchClientData = async () => {
@@ -88,8 +99,9 @@ export default function ClientDetailPage() {
         const statsData = await statsResponse.json();
         setStatistics(statsData.data);
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -116,8 +128,9 @@ export default function ClientDetailPage() {
       }
 
       fetchClientData(); // Refresh data
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      alert(errorMessage);
     }
   };
 
@@ -143,8 +156,9 @@ export default function ClientDetailPage() {
       }
 
       router.push('/dashboard/clients');
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      alert(errorMessage);
     }
   };
 

@@ -54,8 +54,9 @@ export default function NewUserForm() {
       }
 
       router.push('/dashboard/admin/users');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

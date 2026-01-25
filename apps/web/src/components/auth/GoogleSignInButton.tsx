@@ -1,17 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { Loader2 } from 'lucide-react';
+
+interface CredentialResponse {
+  credential?: string;
+  clientId?: string;
+  select_by?: string;
+}
 
 declare global {
   interface Window {
     google?: {
       accounts?: {
         id?: {
-          initialize: (config: any) => void;
-          renderButton: (element: HTMLElement, options: any) => void;
+          initialize: (config: object) => void;
+          renderButton: (element: HTMLElement, options: object) => void;
           cancel: () => void;
         };
       };
@@ -59,9 +65,9 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [handleCredentialResponse]);
 
-  const handleCredentialResponse = async (response: any) => {
+  const handleCredentialResponse = useCallback(async (response: CredentialResponse) => {
     setIsLoading(true);
     try {
       await loginWithGoogle(response.credential);
@@ -71,7 +77,7 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
       setError(error instanceof Error ? error.message : 'Google sign-in failed');
       setIsLoading(false);
     }
-  };
+  }, [loginWithGoogle, router, setError]);
 
   if (isLoading) {
     return (
