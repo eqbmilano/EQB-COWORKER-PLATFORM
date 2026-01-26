@@ -57,7 +57,7 @@ export class AdminService {
     const users = await prisma.user.findMany({
       where: includeInactive ? {} : { status: 'ACTIVE' },
       include: {
-        coworker: {
+        coworkerProfile: {
           select: {
             id: true,
             specializations: true,
@@ -80,7 +80,7 @@ export class AdminService {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        coworker: {
+        coworkerProfile: {
           select: {
             id: true,
             specializations: true,
@@ -116,7 +116,6 @@ export class AdminService {
         password: hashedPassword,
         firstName: data.firstName,
         lastName: data.lastName,
-        phoneNumber: data.phoneNumber,
         role: data.role,
         status: 'ACTIVE',
       },

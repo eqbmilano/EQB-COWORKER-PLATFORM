@@ -179,8 +179,9 @@ export default function InvoicesPage() {
             <form onSubmit={handleCreateOrUpdate} className="space-y-4">
               {/* Appointment Select */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Appuntamento *</label>
+                <label htmlFor="appointmentId" className="block text-sm font-medium text-slate-300 mb-2">Appuntamento *</label>
                 <select
+                  id="appointmentId"
                   value={formData.appointmentId}
                   onChange={(e) => setFormData({ ...formData, appointmentId: e.target.value })}
                   disabled={!!selectedInvoice}
@@ -198,8 +199,9 @@ export default function InvoicesPage() {
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Importo (€) *</label>
+                <label htmlFor="amount" className="block text-sm font-medium text-slate-300 mb-2">Importo (€) *</label>
                 <input
+                  id="amount"
                   type="number"
                   step="0.01"
                   min="0"
@@ -212,8 +214,9 @@ export default function InvoicesPage() {
 
               {/* Issue Date */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Data Emissione *</label>
+                <label htmlFor="issueDate" className="block text-sm font-medium text-slate-300 mb-2">Data Emissione *</label>
                 <input
+                  id="issueDate"
                   type="date"
                   value={formData.issueDate}
                   onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
@@ -224,8 +227,9 @@ export default function InvoicesPage() {
 
               {/* Due Date */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Data Scadenza *</label>
+                <label htmlFor="dueDate" className="block text-sm font-medium text-slate-300 mb-2">Data Scadenza *</label>
                 <input
+                  id="dueDate"
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
@@ -236,8 +240,9 @@ export default function InvoicesPage() {
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Stato</label>
+                <label htmlFor="status" className="block text-sm font-medium text-slate-300 mb-2">Stato</label>
                 <select
+                  id="status"
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                   className="w-full px-4 py-2 bg-slate-800 border border-white/20 rounded-lg text-slate-50"

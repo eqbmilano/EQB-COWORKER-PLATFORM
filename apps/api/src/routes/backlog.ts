@@ -77,11 +77,19 @@ router.get('/statistics', async (req, res) => {
  * GET /api/backlog/monthly-recap/:month/:year
  * Get monthly recap for a specific month
  */
-router.get('/monthly-recap/:month/:year', async (req, res) => {
+router.get('/monthly-recap/:month/:year', async (req: any, res) => {
   try {
     const { month, year } = req.params;
+    const coworkerId = req.user?.sub; // Extract from JWT token
 
-    const recap = await backlogService.getMonthlyRecap(month, parseInt(year));
+    if (!coworkerId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized',
+      });
+    }
+
+    const recap = await backlogService.getMonthlyRecap(coworkerId, parseInt(month), parseInt(year));
 
     if (!recap) {
       return res.status(404).json({

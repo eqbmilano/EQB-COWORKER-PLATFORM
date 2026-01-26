@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { z } from 'zod';
 import clientService from '../services/clientService.js';
 import prisma from '../database/client.js';
@@ -183,7 +183,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const clientData = {
       name,
-      email: validatedData.email,
+      email: validatedData.email || `client-${Date.now()}@temp.local`,
       phone: validatedData.phone,
       address: validatedData.address,
       city: validatedData.city,
@@ -369,7 +369,7 @@ router.post(
   uploadSingleFile('document'),
   handleUploadError,
   validateFilePresence,
-  async (req, res) => {
+  async (req: any, res: Response) => {
     try {
       const { id: clientId } = req.params;
       const { documentType, notes } = req.body;
@@ -386,12 +386,6 @@ router.post(
           fileUrl: url,
           fileType: file.mimetype || 'application/octet-stream',
           category: documentType || 'Other',
-          fileName: file.originalname,
-          fileUrl: url,
-          fileKey: key,
-          fileSize: size,
-          mimeType: file.mimetype,
-          notes,
         },
       });
 

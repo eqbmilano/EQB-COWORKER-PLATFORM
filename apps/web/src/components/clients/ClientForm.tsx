@@ -103,10 +103,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
           <h3 className="text-lg font-semibold mb-4">Informazioni Personali</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                 Nome <span className="text-red-500">*</span>
               </label>
               <input
+                id="firstName"
                 type="text"
                 name="firstName"
                 value={formData.firstName}
@@ -117,10 +118,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
                 Cognome <span className="text-red-500">*</span>
               </label>
               <input
+                id="lastName"
                 type="text"
                 name="lastName"
                 value={formData.lastName}
@@ -131,10 +133,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -144,10 +147,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                 Telefono
               </label>
               <input
+                id="phone"
                 type="tel"
                 name="phone"
                 value={formData.phone}
@@ -157,10 +161,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
                 Data di Nascita
               </label>
               <input
+                id="birthDate"
                 type="date"
                 name="birthDate"
                 value={formData.birthDate}
@@ -170,10 +175,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="taxCode" className="block text-sm font-medium text-gray-700 mb-1">
                 Codice Fiscale
               </label>
               <input
+                id="taxCode"
                 type="text"
                 name="taxCode"
                 value={formData.taxCode}
@@ -191,10 +197,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
           <h3 className="text-lg font-semibold mb-4">Indirizzo</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                 Indirizzo
               </label>
               <input
+                id="address"
                 type="text"
                 name="address"
                 value={formData.address}
@@ -205,10 +212,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
                   Città
                 </label>
                 <input
+                  id="city"
                   type="text"
                   name="city"
                   value={formData.city}
@@ -218,10 +226,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1">
                   Provincia
                 </label>
                 <input
+                  id="province"
                   type="text"
                   name="province"
                   value={formData.province}
@@ -232,10 +241,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
                   CAP
                 </label>
                 <input
+                  id="postalCode"
                   type="text"
                   name="postalCode"
                   value={formData.postalCode}

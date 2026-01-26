@@ -127,10 +127,11 @@ export default function DocumentUpload({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="documentType" className="block text-sm font-medium text-gray-700 mb-1">
               Tipo di Documento <span className="text-red-500">*</span>
             </label>
             <select
+              id="documentType"
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
               required
@@ -146,7 +147,7 @@ export default function DocumentUpload({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-1">
               File <span className="text-red-500">*</span>
             </label>
             <input

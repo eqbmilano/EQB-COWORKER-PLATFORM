@@ -71,10 +71,11 @@ export default function NewUserForm() {
           <h3 className="text-lg font-semibold mb-4">Informazioni Account</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -85,10 +86,11 @@ export default function NewUserForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password <span className="text-red-500">*</span>
               </label>
               <input
+                id="password"
                 type="password"
                 name="password"
                 value={formData.password}
@@ -101,10 +103,11 @@ export default function NewUserForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                 Nome <span className="text-red-500">*</span>
               </label>
               <input
+                id="firstName"
                 type="text"
                 name="firstName"
                 value={formData.firstName}
@@ -115,10 +118,11 @@ export default function NewUserForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
                 Cognome <span className="text-red-500">*</span>
               </label>
               <input
+                id="lastName"
                 type="text"
                 name="lastName"
                 value={formData.lastName}
@@ -129,10 +133,11 @@ export default function NewUserForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
                 Telefono
               </label>
               <input
+                id="phoneNumber"
                 type="tel"
                 name="phoneNumber"
                 value={formData.phoneNumber}
@@ -142,10 +147,11 @@ export default function NewUserForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
                 Ruolo <span className="text-red-500">*</span>
               </label>
               <select
+                id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
@@ -168,10 +174,11 @@ export default function NewUserForm() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 mb-1">
                   Specializzazione
                 </label>
                 <input
+                  id="specialization"
                   type="text"
                   name="specialization"
                   value={formData.specialization}

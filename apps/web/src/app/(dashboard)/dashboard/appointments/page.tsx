@@ -126,6 +126,7 @@ export default function AppointmentsListPage() {
       <div className="flex items-center justify-between bg-white/10 backdrop-blur border border-white/20 rounded-lg p-4">
         <button
           onClick={goToPreviousDay}
+          title="Data precedente"
           className="p-2 hover:bg-white/10 rounded-lg transition"
         >
           <ChevronLeft className="w-5 h-5 text-slate-300" />
@@ -141,12 +142,14 @@ export default function AppointmentsListPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={goToToday}
+            title="Torna a oggi"
             className="px-3 py-1 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded transition"
           >
             Oggi
           </button>
           <button
             onClick={goToNextDay}
+            title="Data successiva"
             className="p-2 hover:bg-white/10 rounded-lg transition"
           >
             <ChevronRight className="w-5 h-5 text-slate-300" />
@@ -244,12 +247,14 @@ function AppointmentCard({ appointment, onEdit, onDelete }: AppointmentCardProps
         <div className="flex items-center gap-2 ml-4">
           <button
             onClick={onEdit}
+            title="Modifica appuntamento"
             className="p-2 hover:bg-blue-500/20 rounded-lg transition text-blue-400 hover:text-blue-300"
           >
             <Edit className="w-4 h-4" />
           </button>
           <button
             onClick={onDelete}
+            title="Elimina appuntamento"
             className="p-2 hover:bg-red-500/20 rounded-lg transition text-red-400 hover:text-red-300"
           >
             <Trash2 className="w-4 h-4" />
@@ -293,10 +298,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Client ID */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="clientId" className="block text-sm font-medium text-slate-300 mb-1">
               Cliente
             </label>
             <input
+              id="clientId"
               type="text"
               value={formData.clientId}
               onChange={(e) => setFormData({ ...formData, clientId: e.target.value })}
@@ -308,10 +314,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="appointmentType" className="block text-sm font-medium text-slate-300 mb-1">
               Tipo Appuntamento
             </label>
             <input
+              id="appointmentType"
               type="text"
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}

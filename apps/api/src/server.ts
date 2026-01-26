@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import 'express-async-errors';
 import pino from 'pino';
 import { config } from 'dotenv';
@@ -32,7 +32,7 @@ const PORT = process.env.API_PORT || 3001;
 const allowedOrigins = (process.env.WEB_ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
 const wildcardOrigins = allowedOrigins.filter(o => o.startsWith('*.')).map(o => o.replace(/^\*\./, ''));
 const corsMiddleware = cors({
-  origin: (origin, callback) => {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     // If no allowlist is provided, allow all origins (useful for initial setup)
