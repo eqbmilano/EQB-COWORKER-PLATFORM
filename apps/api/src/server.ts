@@ -30,17 +30,29 @@ const PORT = process.env.API_PORT || 3001;
 
 // CORS
 const allowedOrigins = (process.env.WEB_ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
-app.use(cors({
+const wildcardOrigins = allowedOrigins.filter(o => o.startsWith('*.')).map(o => o.replace(/^\*\./, ''));
+const corsMiddleware = cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     // If no allowlist is provided, allow all origins (useful for initial setup)
     if (allowedOrigins.length === 0) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    try {
+      const hostname = new URL(origin).hostname;
+      if (wildcardOrigins.some(suffix => hostname === suffix || hostname.endsWith(`.${suffix}`))) {
+        return callback(null, true);
+      }
+    } catch (err) {
+      return callback(err as Error);
+    }
     return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
-}));
+});
+app.use(corsMiddleware);
+// Ensure preflight (OPTIONS) requests are handled globally
+app.options('*', corsMiddleware);
 
 // Body parser
 app.use(express.json());

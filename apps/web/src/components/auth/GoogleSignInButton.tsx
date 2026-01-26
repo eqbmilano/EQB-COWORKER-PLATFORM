@@ -34,6 +34,9 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
   const router = useRouter();
   const { loginWithGoogle, setError } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  // Only enable Google button when explicitly marked production to avoid preview-origin 403s
+  const isProd = process.env.NEXT_PUBLIC_APP_ENV === 'production';
 
   const handleCredentialResponse = useCallback(async (response: CredentialResponse) => {
     setIsLoading(true);
@@ -51,6 +54,9 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
   }, [loginWithGoogle, router, setError, onSuccess]);
 
   useEffect(() => {
+    // Hide the button in non-production environments to avoid Google origin errors in previews
+    if (!isProd) return;
+
     // Load Google Sign-In script
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
@@ -59,9 +65,13 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
     document.body.appendChild(script);
 
     script.onload = () => {
+      if (!clientId) {
+        setError('Google client ID non configurato');
+        return;
+      }
       if (window.google?.accounts?.id) {
         window.google.accounts.id.initialize({
-          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+          client_id: clientId,
           callback: handleCredentialResponse,
         });
 
@@ -70,7 +80,8 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
           window.google.accounts.id.renderButton(googleButton, {
             theme: 'outline',
             size: 'large',
-            width: '100%',
+            // fixed width avoids GSI invalid width warnings
+            width: 320,
             text: 'signup_with',
           });
         }
@@ -80,7 +91,11 @@ export default function GoogleSignInButton({ onSuccess, className = '' }: Google
     return () => {
       document.body.removeChild(script);
     };
-  }, [handleCredentialResponse]);
+  }, [handleCredentialResponse, clientId, setError, isProd]);
+
+  if (!isProd) {
+    return null;
+  }
 
   if (isLoading) {
     return (

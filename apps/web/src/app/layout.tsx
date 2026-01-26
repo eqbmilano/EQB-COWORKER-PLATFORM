@@ -27,6 +27,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it">
+      <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
       <body className="bg-gray-50">{children}</body>
     </html>
   );
