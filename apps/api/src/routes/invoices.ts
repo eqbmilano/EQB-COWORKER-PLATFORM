@@ -392,7 +392,7 @@ router.get('/:id/pdf', authMiddleware, async (req: AuthenticatedRequest, res: Re
           endTime: invoice.appointment.endTime,
           durationHours: invoice.appointment.durationHours,
           roomType: invoice.appointment.roomType,
-          roomNumber: invoice.appointment.roomNumber || undefined,
+          roomNumber: invoice.appointment.roomNumber ? String(invoice.appointment.roomNumber) : undefined,
         },
         client: {
           name: invoice.appointment.client.name,

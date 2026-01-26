@@ -139,9 +139,13 @@ export default function BacklogDashboard() {
                         ? 'bg-yellow-500'
                         : 'bg-green-600'
                     }`}
+                    role="progressbar"
+                    aria-valuenow={capacity.capacityUsedPercentage}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
                     style={{
                       width: `${Math.min(capacity.capacityUsedPercentage, 100)}%`,
-                    }}
+                    } as React.CSSProperties}
                   ></div>
                 </div>
                 <div className="flex justify-between mt-2">

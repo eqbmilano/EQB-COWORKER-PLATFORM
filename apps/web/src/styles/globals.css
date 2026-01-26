@@ -87,7 +87,7 @@ h3 {
 
 /* Smooth transitions */
 * {
-  @apply transition-colors duration-200;
+  transition: colors 200ms;
 }
 
 /* Custom scrollbar */
@@ -115,9 +115,7 @@ button:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  ring: 2px;
-  ring-offset: 0;
-  ring-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
 }
 
 /* Loading animation */
