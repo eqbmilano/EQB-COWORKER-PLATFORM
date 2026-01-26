@@ -3,7 +3,7 @@
  * Run with: npm run db:seed
  */
 import { PrismaClient, UserRole } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { addDays, addHours, subDays } from 'date-fns';
 
 const prisma = new PrismaClient();
@@ -54,10 +54,8 @@ async function main() {
       status: 'ACTIVE',
       coworkerProfile: {
         create: {
-          profession: 'Fisioterapista',
-          specialization: 'Riabilitazione sportiva',
+          specializations: ['Riabilitazione sportiva'],
           bio: 'Fisioterapista specializzato in riabilitazione sportiva con 10 anni di esperienza',
-          status: 'ACTIVE',
         },
       },
     },
@@ -65,17 +63,21 @@ async function main() {
 
   console.log('✅ Coworker created:', coworker.email);
 
+  // Fetch coworker profile id for appointments
+  const coworkerProfile = await prisma.coworker.findFirst({ where: { userId: coworker.id } });
+  if (!coworkerProfile) {
+    throw new Error('Coworker profile not found after creation');
+  }
+
   // Create sample clients
   const client1 = await prisma.client.create({
     data: {
       name: 'Marco Bianchi',
       email: 'marco.bianchi@example.com',
       phone: '+39 338 123 4567',
-      companyName: 'Studio Bianchi',
       city: 'Milano',
       address: 'Via Roma 15',
-      zipCode: '20121',
-      notes: 'Cliente VIP - preferisce appuntamenti mattutini',
+      postalCode: '20121',
       status: 'ACTIVE',
     },
   });
@@ -87,7 +89,7 @@ async function main() {
       phone: '+39 349 987 6543',
       city: 'Milano',
       address: 'Corso Buenos Aires 42',
-      zipCode: '20124',
+      postalCode: '20124',
       status: 'ACTIVE',
     },
   });
@@ -97,11 +99,9 @@ async function main() {
       name: 'Giuseppe Neri',
       email: 'giuseppe.neri@example.com',
       phone: '+39 340 555 1234',
-      companyName: 'Neri Personal Training',
       city: 'Milano',
       address: 'Via Tortona 31',
-      zipCode: '20144',
-      notes: 'Richiede fattura elettronica',
+      postalCode: '20144',
       status: 'ACTIVE',
     },
   });
@@ -114,14 +114,15 @@ async function main() {
 
   const appointment1 = await prisma.appointment.create({
     data: {
-      userId: coworker.id,
+      coworkerId: coworkerProfile.id,
+      userId: adminUser.id,
       clientId: client1.id,
       startTime: addHours(today, 10),
       endTime: addHours(today, 11),
       durationHours: 1,
       type: 'Seduta fisioterapica',
       roomType: 'TREATMENT',
-      roomNumber: 'T1',
+      roomNumber: 1,
       status: 'SCHEDULED',
       notes: 'Prima seduta - valutazione iniziale',
     },
@@ -129,14 +130,15 @@ async function main() {
 
   const appointment2 = await prisma.appointment.create({
     data: {
-      userId: coworker.id,
+      coworkerId: coworkerProfile.id,
+      userId: adminUser.id,
       clientId: client2.id,
       startTime: subDays(addHours(today, 14), 3),
       endTime: subDays(addHours(today, 15), 3),
       durationHours: 1,
       type: 'Allenamento personalizzato',
       roomType: 'TRAINING',
-      roomNumber: 'A2',
+      roomNumber: 2,
       status: 'COMPLETED',
       notes: 'Sessione completata',
     },
@@ -144,14 +146,15 @@ async function main() {
 
   const appointment3 = await prisma.appointment.create({
     data: {
-      userId: coworker.id,
+      coworkerId: coworkerProfile.id,
+      userId: adminUser.id,
       clientId: client3.id,
       startTime: addDays(addHours(today, 16), 2),
       endTime: addDays(addHours(today, 17.5), 2),
       durationHours: 1.5,
       type: 'Consulenza nutrizionale',
       roomType: 'TREATMENT',
-      roomNumber: 'T2',
+      roomNumber: 2,
       status: 'SCHEDULED',
     },
   });

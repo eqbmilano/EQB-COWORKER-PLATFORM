@@ -13,8 +13,8 @@ export interface UserWithDetails {
   phoneNumber?: string;
   coworker?: {
     id: string;
-    specialization?: string;
-    hourlyRate: number;
+    specializations?: string[];
+    phone?: string;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -65,8 +65,8 @@ export class AdminService {
         coworker: {
           select: {
             id: true,
-            specialization: true,
-            hourlyRate: true,
+            specializations: true,
+            phone: true,
           },
         },
       },
@@ -88,8 +88,8 @@ export class AdminService {
         coworker: {
           select: {
             id: true,
-            specialization: true,
-            hourlyRate: true,
+            specializations: true,
+            phone: true,
           },
         },
       },
@@ -129,8 +129,8 @@ export class AdminService {
         coworker: {
           select: {
             id: true,
-            specialization: true,
-            hourlyRate: true,
+            specializations: true,
+            phone: true,
           },
         },
       },
@@ -141,8 +141,8 @@ export class AdminService {
       await prisma.coworker.create({
         data: {
           userId: user.id,
-          specialization: data.specialization,
-          hourlyRate: data.hourlyRate || 25, // Default hourly rate
+          specializations: data.specialization ? [data.specialization] : [],
+          phone: data.phoneNumber,
         },
       });
 
@@ -197,22 +197,28 @@ export class AdminService {
         coworker: {
           select: {
             id: true,
-            specialization: true,
-            hourlyRate: true,
+            specializations: true,
+            phone: true,
           },
         },
       },
     });
 
     // Update coworker profile if exists and data provided
-    if (user.coworker && (data.specialization !== undefined || data.hourlyRate !== undefined)) {
-      await prisma.coworker.update({
-        where: { id: user.coworker.id },
-        data: {
-          ...(data.specialization !== undefined && { specialization: data.specialization }),
-          ...(data.hourlyRate !== undefined && { hourlyRate: data.hourlyRate }),
-        },
-      });
+    if (user.coworker) {
+      const coworkerData: any = {};
+      if (data.specialization !== undefined) {
+        coworkerData.specializations = [data.specialization];
+      }
+      if (data.phoneNumber !== undefined) {
+        coworkerData.phone = data.phoneNumber;
+      }
+      if (Object.keys(coworkerData).length > 0) {
+        await prisma.coworker.update({
+          where: { userId },
+          data: coworkerData,
+        });
+      }
     }
 
     // Create coworker profile if role changed to OPERATOR and doesn't exist
@@ -220,8 +226,8 @@ export class AdminService {
       await prisma.coworker.create({
         data: {
           userId: user.id,
-          specialization: data.specialization,
-          hourlyRate: data.hourlyRate || 25,
+          specializations: data.specialization ? [data.specialization] : [],
+          phone: data.phoneNumber,
         },
       });
     }

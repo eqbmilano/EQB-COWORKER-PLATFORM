@@ -1,34 +1,34 @@
-import { PrismaClient, Prisma } from '@prisma/client';
-import prisma from '../database/client.js';
+import { PrismaClient, Prisma, ClientStatus } from '@prisma/client';
+import prisma from '../database/prisma.js';
 import { logger } from '../utils/logger.js';
 
 interface CreateClientInput {
-  firstName: string;
-  lastName: string;
-  email?: string;
+  name: string;
+  email: string;
   phone?: string;
   birthDate?: Date;
   address?: string;
   city?: string;
-  province?: string;
   postalCode?: string;
-  taxCode?: string;
-  notes?: string;
+  taxId?: string;
+  medicalHistory?: string;
+  allergies?: string;
+  medications?: string;
   coworkerId: string;
 }
 
 interface UpdateClientInput {
-  firstName?: string;
-  lastName?: string;
+  name?: string;
   email?: string;
   phone?: string;
   birthDate?: Date;
   address?: string;
   city?: string;
-  province?: string;
   postalCode?: string;
-  taxCode?: string;
-  notes?: string;
+  taxId?: string;
+  medicalHistory?: string;
+  allergies?: string;
+  medications?: string;
 }
 
 interface ClientFilters {
@@ -80,18 +80,18 @@ export class ClientService {
         // Create client
         const client = await tx.client.create({
           data: {
-            firstName: data.firstName,
-            lastName: data.lastName,
+            name: data.name,
             email: data.email,
             phone: data.phone,
             birthDate: data.birthDate,
             address: data.address,
             city: data.city,
-            province: data.province,
             postalCode: data.postalCode,
-            taxCode: data.taxCode,
-            notes: data.notes,
-            status: 'ACTIVE',
+            taxId: data.taxId,
+            medicalHistory: data.medicalHistory,
+            allergies: data.allergies,
+            medications: data.medications,
+            status: 'ACTIVE' as ClientStatus,
           },
         });
 
@@ -196,11 +196,10 @@ export class ClientService {
         status: 'ACTIVE',
       };
 
-      // Search filter (firstName, lastName, email, phone)
+      // Search filter (name, email, phone)
       if (filters.search) {
         where.OR = [
-          { firstName: { contains: filters.search, mode: 'insensitive' } },
-          { lastName: { contains: filters.search, mode: 'insensitive' } },
+          { name: { contains: filters.search, mode: 'insensitive' } },
           { email: { contains: filters.search, mode: 'insensitive' } },
           { phone: { contains: filters.search, mode: 'insensitive' } },
         ];
