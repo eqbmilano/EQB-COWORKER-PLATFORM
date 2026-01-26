@@ -10,11 +10,11 @@
     "moduleResolution": "node",
     "allowJs": true,
     "checkJs": false,
-    "strict": false,
-    "noImplicitAny": false,
+    "strict": true,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": false,
+    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": false,
     "declarationMap": false,
@@ -22,8 +22,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": false,
-    "alwaysStrict": false,
-    "noUnusedVariables": false
+    "alwaysStrict": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
