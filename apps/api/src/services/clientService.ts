@@ -303,16 +303,6 @@ export class ClientService {
         }
       }
 
-      // Check for duplicate phone (if changing)
-      if (data.phone && data.phone !== existingClient.phone) {
-        const duplicatePhone = await prisma.client.findUnique({
-          where: { phone: data.phone },
-        });
-        if (duplicatePhone) {
-          throw new Error('Phone number already in use by another client');
-        }
-      }
-
       // Update client
       const updatedClient = await prisma.client.update({
         where: { id: clientId },
@@ -499,7 +489,7 @@ export class ClientService {
             status: 'COMPLETED',
           },
           _sum: {
-            duration: true,
+            durationHours: true,
           },
         }),
         // Last appointment
@@ -519,7 +509,7 @@ export class ClientService {
       return {
         totalAppointments,
         completedAppointments,
-        totalHours: totalHours._sum.duration || 0,
+        totalHours: totalHours._sum.durationHours || 0,
         lastAppointmentDate: lastAppointment?.startTime || null,
       };
     } catch (error) {
