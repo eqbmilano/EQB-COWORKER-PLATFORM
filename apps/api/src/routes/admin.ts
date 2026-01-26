@@ -1,7 +1,7 @@
 import express from 'express';
-import { authMiddleware } from '../middleware/auth';
-import { requireAdmin } from '../middleware/authorization';
-import { adminService } from '../services/adminService';
+import { authMiddleware } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/authorization.js';
+import { adminService } from '../services/adminService.js';
 import { z } from 'zod';
 import { UserRole, UserStatus } from '@prisma/client';
 
@@ -327,3 +327,4 @@ router.get('/statistics', async (req, res) => {
 });
 
 export default router;
+

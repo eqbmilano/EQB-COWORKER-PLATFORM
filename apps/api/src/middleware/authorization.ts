@@ -168,3 +168,4 @@ export function canModifyResource(req: Request, ownerId: string): boolean {
   // User can modify their own resources
   return req.user.id === ownerId;
 }
+

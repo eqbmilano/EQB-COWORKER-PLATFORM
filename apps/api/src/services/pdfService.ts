@@ -388,3 +388,4 @@ export async function generateInvoicePDF(
   const pdfBytes = await pdfDoc.save();
   return pdfBytes;
 }
+

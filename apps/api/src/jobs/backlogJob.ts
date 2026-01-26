@@ -1,6 +1,6 @@
-import { backlogQueue } from '../config/queue';
-import { backlogService } from '../services/backlogService';
-import { logger } from '../utils/logger';
+import { backlogQueue } from '../config/queue.js';
+import { backlogService } from '../services/backlogService.js';
+import { logger } from '../utils/logger.js';
 import { subDays } from 'date-fns';
 
 /**
@@ -91,3 +91,4 @@ export async function triggerBacklogProcessing(startDate: Date, endDate: Date): 
 
   logger.info(`Queued backlog processing for date range: ${startDate} to ${endDate}`);
 }
+

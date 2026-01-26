@@ -1,5 +1,5 @@
-import prisma from '../database/prisma';
-import { logger } from '../utils/logger';
+import prisma from '../database/prisma.js';
+import { logger } from '../utils/logger.js';
 import { startOfDay, endOfDay, startOfMonth, endOfMonth, format } from 'date-fns';
 
 export interface BacklogStatistics {
@@ -329,3 +329,4 @@ function getMonthNumber(monthName: string): number {
 }
 
 export const backlogService = new BacklogService();
+

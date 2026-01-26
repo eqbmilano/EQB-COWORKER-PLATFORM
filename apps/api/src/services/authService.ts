@@ -1,7 +1,7 @@
 /**
  * Authentication Service for Auth0 integration
  */
-import prisma from '../database/client';
+import prisma from '../database/client.js';
 import { User, UserRole, UserStatus } from '@prisma/client';
 import pino from 'pino';
 
@@ -114,3 +114,4 @@ export default {
   blockUser,
   unblockUser,
 };
+

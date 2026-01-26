@@ -4,11 +4,11 @@
  */
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
-import { authMiddleware } from '../middleware/auth';
-import { authorize } from '../middleware/rbac';
-import prisma from '../database/prisma';
-import { createResponse } from '../utils/response';
-import logger from '../logger';
+import { authMiddleware } from '../middleware/auth.js';
+import { authorize } from '../middleware/rbac.js';
+import prisma from '../database/prisma.js';
+import { createResponse } from '../utils/response.js';
+import logger from '../logger.js';
 
 const router = Router();
 
@@ -317,7 +317,7 @@ router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-import { generateInvoicePDF } from '../services/pdfService';
+import { generateInvoicePDF } from '../services/pdfService.js';
 
 /**
  * GET /api/invoices/:id/pdf
@@ -410,3 +410,4 @@ router.get('/:id/pdf', authMiddleware, async (req: Request, res: Response) => {
 });
 
 export default router;
+

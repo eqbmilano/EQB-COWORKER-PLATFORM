@@ -1,5 +1,5 @@
 import Queue from 'bull';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 // If no REDIS_URL is provided, export a no-op queue to avoid runtime errors
 const REDIS_URL = process.env.REDIS_URL;
@@ -52,3 +52,4 @@ if (REDIS_URL) {
 }
 
 export default backlogQueue;
+

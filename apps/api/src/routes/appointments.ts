@@ -6,11 +6,11 @@ import { z } from 'zod';
 import {
   authMiddleware,
   AuthenticatedRequest,
-} from '../middleware/auth';
-import appointmentService from '../services/appointmentService';
-import { emailService } from '../services/emailService';
-import prisma from '../database/prisma';
-import { createResponse } from '../types/api';
+} from '../middleware/auth.js';
+import appointmentService from '../services/appointmentService.js';
+import { emailService } from '../services/emailService.js';
+import prisma from '../database/prisma.js';
+import { createResponse } from '../types/api.js';
 import pino from 'pino';
 
 const logger = pino();
@@ -374,3 +374,4 @@ router.patch('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Resp
 });
 
 export default router;
+

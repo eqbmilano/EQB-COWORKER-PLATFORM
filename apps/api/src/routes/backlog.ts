@@ -1,8 +1,8 @@
 import express from 'express';
-import { authMiddleware } from '../middleware/auth';
-import { requireAdmin } from '../middleware/authorization';
-import { backlogService } from '../services/backlogService';
-import { triggerBacklogProcessing } from '../jobs/backlogJob';
+import { authMiddleware } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/authorization.js';
+import { backlogService } from '../services/backlogService.js';
+import { triggerBacklogProcessing } from '../jobs/backlogJob.js';
 import { z } from 'zod';
 import { startOfMonth, endOfMonth, subMonths, parseISO } from 'date-fns';
 
@@ -203,3 +203,4 @@ router.get('/capacity', async (req, res) => {
 });
 
 export default router;
+

@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 // Initialize SendGrid
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
@@ -326,3 +326,4 @@ export class EmailService {
 }
 
 export const emailService = new EmailService();
+

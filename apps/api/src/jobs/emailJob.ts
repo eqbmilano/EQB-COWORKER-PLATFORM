@@ -1,8 +1,8 @@
 import sgMail from '@sendgrid/mail';
-import { backlogQueue } from '../config/queue';
-import { emailService } from '../services/emailService';
-import prisma from '../database/prisma';
-import { logger } from '../utils/logger';
+import { backlogQueue } from '../config/queue.js';
+import { emailService } from '../services/emailService.js';
+import prisma from '../database/prisma.js';
+import { logger } from '../utils/logger.js';
 import { addDays, subHours } from 'date-fns';
 
 /**
@@ -117,3 +117,4 @@ export function initializeEmailJobs(): void {
     logger.error('Failed to initialize email jobs:', error);
   }
 }
+

@@ -6,11 +6,11 @@ import { Router, Response } from 'express';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { authMiddleware, AuthenticatedRequest } from '../middleware/auth';
-import authService from '../services/authService';
-import { createResponse } from '../types/api';
+import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.js';
+import authService from '../services/authService.js';
+import { createResponse } from '../types/api.js';
 import pino from 'pino';
-import prisma from '../database/prisma';
+import prisma from '../database/prisma.js';
 
 const logger = pino();
 const router = Router();
@@ -493,3 +493,4 @@ router.post('/change-password', authMiddleware, async (req: AuthenticatedRequest
 });
 
 export default router;
+

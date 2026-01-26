@@ -2,7 +2,7 @@
  * Appointment Service
  * Business logic for appointments
  */
-import prisma from '../database/client';
+import prisma from '../database/client.js';
 import { Appointment, AppointmentStatus } from '@prisma/client';
 import pino from 'pino';
 
@@ -209,3 +209,4 @@ export default {
   cancelAppointment,
   completeAppointment,
 };
+

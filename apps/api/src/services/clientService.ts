@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import prisma from '../database/client';
-import { logger } from '../utils/logger';
+import prisma from '../database/client.js';
+import { logger } from '../utils/logger.js';
 
 interface CreateClientInput {
   firstName: string;
@@ -547,3 +547,4 @@ export class ClientService {
 }
 
 export default new ClientService();
+

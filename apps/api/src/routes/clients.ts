@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import clientService from '../services/clientService';
-import prisma from '../database/client';
-import { authMiddleware } from '../middleware/auth';
+import clientService from '../services/clientService.js';
+import prisma from '../database/client.js';
+import { authMiddleware } from '../middleware/auth.js';
 import {
   uploadSingleFile,
   uploadMultipleFiles,
@@ -10,8 +10,8 @@ import {
   deleteFromS3,
   handleUploadError,
   validateFilePresence,
-} from '../middleware/upload';
-import { logger } from '../utils/logger';
+} from '../middleware/upload.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -473,3 +473,4 @@ router.delete(
 );
 
 export default router;
+

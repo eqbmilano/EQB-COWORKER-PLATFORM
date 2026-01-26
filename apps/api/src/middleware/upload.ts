@@ -3,7 +3,7 @@ import multer from 'multer';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.js';
 
 // AWS S3 Client Configuration
 const s3Client = new S3Client({
@@ -176,3 +176,4 @@ export function validateFilePresence(
   }
   next();
 }
+

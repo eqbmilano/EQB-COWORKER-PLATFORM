@@ -8,16 +8,16 @@ import { config } from 'dotenv';
 config();
 
 // Import routes
-import authRouter from './routes/auth';
-import appointmentsRouter from './routes/appointments';
-import clientsRouter from './routes/clients';
-import invoicesRouter from './routes/invoices';
-import backlogRouter from './routes/backlog';
-import adminRouter from './routes/admin';
+import authRouter from './routes/auth.js';
+import appointmentsRouter from './routes/appointments.js';
+import clientsRouter from './routes/clients.js';
+import invoicesRouter from './routes/invoices.js';
+import backlogRouter from './routes/backlog.js';
+import adminRouter from './routes/admin.js';
 
 // Import job initializer
-import { initializeBacklogJobs } from './jobs/backlogJob';
-import { initializeEmailJobs } from './jobs/emailJob';
+import { initializeBacklogJobs } from './jobs/backlogJob.js';
+import { initializeEmailJobs } from './jobs/emailJob.js';
 
 const logger = pino();
 
@@ -142,3 +142,4 @@ process.on('SIGTERM', () => {
 });
 
 export default app;
+

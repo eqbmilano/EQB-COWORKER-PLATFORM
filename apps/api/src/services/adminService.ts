@@ -1,5 +1,5 @@
-import prisma from '../database/prisma';
-import { logger } from '../utils/logger';
+import prisma from '../database/prisma.js';
+import { logger } from '../utils/logger.js';
 import { Role, UserStatus } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -400,3 +400,4 @@ export class AdminService {
 }
 
 export const adminService = new AdminService();
+
