@@ -63,6 +63,7 @@ export default function CalendarView() {
       <div className="flex items-center justify-between bg-white/10 backdrop-blur border border-white/20 rounded-lg p-4">
         <button
           onClick={goToPreviousMonth}
+          aria-label="Mese precedente"
           className="p-2 hover:bg-white/10 rounded-lg transition"
         >
           <ChevronLeft className="w-5 h-5 text-slate-300" />
@@ -74,6 +75,7 @@ export default function CalendarView() {
 
         <button
           onClick={goToNextMonth}
+          aria-label="Prossimo mese"
           className="p-2 hover:bg-white/10 rounded-lg transition"
         >
           <ChevronRight className="w-5 h-5 text-slate-300" />

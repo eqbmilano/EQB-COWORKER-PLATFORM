@@ -189,10 +189,11 @@ export default function NewUserForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-1">
                   Tariffa Oraria (€)
                 </label>
                 <input
+                  id="hourlyRate"
                   type="number"
                   name="hourlyRate"
                   value={formData.hourlyRate}

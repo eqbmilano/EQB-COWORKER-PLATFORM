@@ -25,10 +25,9 @@ interface InvoiceData {
     name: string;
     email: string;
     phone?: string;
-    companyName?: string;
     address?: string;
     city?: string;
-    zipCode?: string;
+    postalCode?: string;
   };
 }
 
@@ -162,10 +161,9 @@ export async function generateInvoicePDF(
 
   const clientDetails = [
     invoiceData.client.name,
-    ...(invoiceData.client.companyName ? [invoiceData.client.companyName] : []),
     ...(invoiceData.client.address ? [invoiceData.client.address] : []),
-    ...(invoiceData.client.city && invoiceData.client.zipCode
-      ? [`${invoiceData.client.zipCode} ${invoiceData.client.city}`]
+    ...(invoiceData.client.city && invoiceData.client.postalCode
+      ? [`${invoiceData.client.postalCode} ${invoiceData.client.city}`]
       : []),
     invoiceData.client.email,
     ...(invoiceData.client.phone ? [invoiceData.client.phone] : []),

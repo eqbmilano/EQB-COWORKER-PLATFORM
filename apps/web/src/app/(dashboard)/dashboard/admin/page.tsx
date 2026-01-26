@@ -242,8 +242,9 @@ export default function AdminPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-300">Nome</label>
+                <label htmlFor="firstName" className="mb-1 block text-sm font-medium text-slate-300">Nome</label>
                 <input
+                  id="firstName"
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
@@ -253,8 +254,9 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-300">Cognome</label>
+                <label htmlFor="lastName" className="mb-1 block text-sm font-medium text-slate-300">Cognome</label>
                 <input
+                  id="lastName"
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
@@ -264,8 +266,9 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-300">Email</label>
+                <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-300">Email</label>
                 <input
+                  id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -275,8 +278,9 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-300">Password</label>
+                <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-300">Password</label>
                 <input
+                  id="password"
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
@@ -287,8 +291,9 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-300">Ruolo</label>
+                <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-300">Ruolo</label>
                 <select
+                  id="role"
                   value={formData.role}
                   onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as 'ADMIN' | 'COWORKER' }))}
                   className="w-full rounded-lg border border-slate-600 bg-slate-800/50 px-4 py-2 text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"

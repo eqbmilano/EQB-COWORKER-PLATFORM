@@ -329,10 +329,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* Start Time */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="startTime" className="block text-sm font-medium text-slate-300 mb-1">
               Data/Ora Inizio
             </label>
             <input
+              id="startTime"
               type="datetime-local"
               value={formData.startTime}
               onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
@@ -343,10 +344,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* End Time */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="endTime" className="block text-sm font-medium text-slate-300 mb-1">
               Data/Ora Fine
             </label>
             <input
+              id="endTime"
               type="datetime-local"
               value={formData.endTime}
               onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
@@ -358,10 +360,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="notes" className="block text-sm font-medium text-slate-300 mb-1">
             Note
           </label>
           <textarea
+            id="notes"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
