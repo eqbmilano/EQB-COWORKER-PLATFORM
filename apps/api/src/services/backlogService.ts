@@ -74,7 +74,7 @@ export class BacklogService {
 
     // Create backlog entries for each coworker
     for (const [coworkerId, appointments] of Object.entries(appointmentsByCoworker)) {
-      const hoursWorked = appointments.reduce((sum, apt) => sum + (apt.duration || 0), 0);
+      const hoursWorked = appointments.reduce((sum, apt) => sum + (apt.durationHours || 0), 0);
       totalHours += hoursWorked;
 
       // Create a backlog entry for each appointment
@@ -89,14 +89,14 @@ export class BacklogService {
           continue;
         }
 
-        const roomType = apt.type || 'Training';
+        const roomType = apt.roomType || 'Training';
         
         // Create backlog entry
         await prisma.backlogEntry.create({
           data: {
             appointmentId: apt.id,
             coworkerId,
-            hoursWorked: apt.duration || 0,
+            hoursWorked: apt.durationHours || 0,
             roomType,
             month: date.getMonth() + 1,
             year: date.getFullYear(),
@@ -105,7 +105,7 @@ export class BacklogService {
           },
         });
         entriesCreated++;
-        logger.info(`Created backlog entry for coworker ${coworkerId}: ${apt.duration}h`);
+        logger.info(`Created backlog entry for coworker ${coworkerId}: ${apt.durationHours}h`);
       }
     }
 
@@ -293,11 +293,14 @@ export class BacklogService {
   /**
    * Get monthly recap data
    */
-  async getMonthlyRecap(month: string, year: number): Promise<MonthlyRecapData | null> {
-    const recap = await prisma.monthlyRecap.findFirst({
+  async getMonthlyRecap(coworkerId: string, month: number, year: number): Promise<MonthlyRecapData | null> {
+    const recap = await prisma.monthlyRecap.findUnique({
       where: {
-        month,
-        year,
+        coworkerId_year_month: {
+          coworkerId,
+          year,
+          month,
+        },
       },
     });
 
@@ -305,20 +308,55 @@ export class BacklogService {
       return null;
     }
 
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
     // Calculate days in month for average
-    const date = new Date(year, getMonthNumber(month), 1);
-    const daysInMonth = new Date(year, getMonthNumber(month) + 1, 0).getDate();
+    const daysInMonth = new Date(year, month, 0).getDate();
     const dailyAverage = recap.totalHours / daysInMonth;
     const capacityUsed = (recap.totalHours / this.MONTHLY_CAPACITY) * 100;
 
     return {
-      month: recap.month,
+      month: monthNames[month - 1],
       year: recap.year,
       totalHours: recap.totalHours,
-      totalAppointments: recap.totalAppointments,
+      totalAppointments: recap.appointmentCount,
       dailyAverage,
       capacityUsed,
     };
+  }
+
+  /**
+   * Get all monthly recaps for a coworker
+   */
+  async getCoworkerMonthlyRecaps(coworkerId: string, limit = 12): Promise<MonthlyRecapData[]> {
+    const recaps = await prisma.monthlyRecap.findMany({
+      where: { coworkerId },
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+      take: limit,
+    });
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    return recaps.map((recap) => {
+      const daysInMonth = new Date(recap.year, recap.month, 0).getDate();
+      const dailyAverage = recap.totalHours / daysInMonth;
+      const capacityUsed = (recap.totalHours / this.MONTHLY_CAPACITY) * 100;
+
+      return {
+        month: monthNames[recap.month - 1],
+        year: recap.year,
+        totalHours: recap.totalHours,
+        totalAppointments: recap.appointmentCount,
+        dailyAverage,
+        capacityUsed,
+      };
+    });
   }
 
   /**
@@ -329,17 +367,21 @@ export class BacklogService {
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
     });
 
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
     return recaps.map((recap) => {
-      const date = new Date(recap.year, getMonthNumber(recap.month), 1);
-      const daysInMonth = new Date(recap.year, getMonthNumber(recap.month) + 1, 0).getDate();
+      const daysInMonth = new Date(recap.year, recap.month, 0).getDate();
       const dailyAverage = recap.totalHours / daysInMonth;
       const capacityUsed = (recap.totalHours / this.MONTHLY_CAPACITY) * 100;
 
       return {
-        month: recap.month,
+        month: monthNames[recap.month - 1],
         year: recap.year,
         totalHours: recap.totalHours,
-        totalAppointments: recap.totalAppointments,
+        totalAppointments: recap.appointmentCount,
         dailyAverage,
         capacityUsed,
       };

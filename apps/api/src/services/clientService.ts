@@ -48,7 +48,7 @@ export class ClientService {
       logger.info('Creating new client', { data });
 
       // Check if coworker exists
-      const coworker = await prisma.coworkerProfile.findUnique({
+      const coworker = await prisma.coworker.findUnique({
         where: { userId: data.coworkerId },
       });
 
@@ -56,22 +56,13 @@ export class ClientService {
         throw new Error('Coworker not found');
       }
 
-      // Check for duplicate email or phone
+      // Check for duplicate email
       if (data.email) {
         const existingByEmail = await prisma.client.findUnique({
           where: { email: data.email },
         });
         if (existingByEmail) {
           throw new Error('Client with this email already exists');
-        }
-      }
-
-      if (data.phone) {
-        const existingByPhone = await prisma.client.findUnique({
-          where: { phone: data.phone },
-        });
-        if (existingByPhone) {
-          throw new Error('Client with this phone number already exists');
         }
       }
 
@@ -100,7 +91,6 @@ export class ClientService {
           data: {
             coworkerId: data.coworkerId,
             clientId: client.id,
-            isPrimary: true,
           },
         });
 
@@ -411,7 +401,6 @@ export class ClientService {
         data: {
           coworkerId,
           clientId,
-          isPrimary: false,
         },
       });
 
@@ -449,11 +438,6 @@ export class ClientService {
 
       if (!relationship) {
         throw new Error('Coworker is not associated with this client');
-      }
-
-      // Cannot remove primary coworker
-      if (relationship.isPrimary) {
-        throw new Error('Cannot remove primary coworker from client');
       }
 
       // Delete relationship

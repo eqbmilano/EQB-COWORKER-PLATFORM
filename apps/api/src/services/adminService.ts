@@ -1,21 +1,20 @@
 import prisma from '../database/prisma.js';
 import { logger } from '../utils/logger.js';
-import { Role, UserStatus } from '@prisma/client';
+import { UserRole, UserStatus } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 export interface UserWithDetails {
   id: string;
   email: string;
-  role: Role;
+  role: UserRole;
   status: UserStatus;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  coworker?: {
+  firstName?: string | null;
+  lastName?: string | null;
+  coworkerProfile?: {
     id: string;
     specializations?: string[];
-    phone?: string;
-  };
+    phone?: string | null;
+  } | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,23 +22,19 @@ export interface UserWithDetails {
 export interface CreateUserInput {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  role: Role;
+  firstName?: string;
+  lastName?: string;
+  role: UserRole;
   specialization?: string;
-  hourlyRate?: number;
 }
 
 export interface UpdateUserInput {
   email?: string;
   firstName?: string;
   lastName?: string;
-  phoneNumber?: string;
-  role?: Role;
+  role?: UserRole;
   status?: UserStatus;
   specialization?: string;
-  hourlyRate?: number;
 }
 
 export interface SystemStatistics {
@@ -126,7 +121,7 @@ export class AdminService {
         status: 'ACTIVE',
       },
       include: {
-        coworker: {
+        coworkerProfile: {
           select: {
             id: true,
             specializations: true,
@@ -136,13 +131,12 @@ export class AdminService {
       },
     });
 
-    // Create coworker profile if role is OPERATOR
-    if (data.role === 'OPERATOR') {
+    // Create coworker profile if role is COWORKER
+    if (data.role === 'COWORKER') {
       await prisma.coworker.create({
         data: {
           userId: user.id,
           specializations: data.specialization ? [data.specialization] : [],
-          phone: data.phoneNumber,
         },
       });
 
@@ -164,7 +158,7 @@ export class AdminService {
   async updateUser(userId: string, data: UpdateUserInput): Promise<UserWithDetails> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { coworker: true },
+      include: { coworkerProfile: true },
     });
 
     if (!user) {
@@ -189,12 +183,11 @@ export class AdminService {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        phoneNumber: data.phoneNumber,
         role: data.role,
         status: data.status,
       },
       include: {
-        coworker: {
+        coworkerProfile: {
           select: {
             id: true,
             specializations: true,
@@ -205,13 +198,10 @@ export class AdminService {
     });
 
     // Update coworker profile if exists and data provided
-    if (user.coworker) {
+    if (user.coworkerProfile) {
       const coworkerData: any = {};
       if (data.specialization !== undefined) {
         coworkerData.specializations = [data.specialization];
-      }
-      if (data.phoneNumber !== undefined) {
-        coworkerData.phone = data.phoneNumber;
       }
       if (Object.keys(coworkerData).length > 0) {
         await prisma.coworker.update({
@@ -221,13 +211,12 @@ export class AdminService {
       }
     }
 
-    // Create coworker profile if role changed to OPERATOR and doesn't exist
-    if (data.role === 'OPERATOR' && !user.coworker) {
+    // Create coworker profile if role changed to COWORKER and doesn't exist
+    if (data.role === 'COWORKER' && !user.coworkerProfile) {
       await prisma.coworker.create({
         data: {
           userId: user.id,
           specializations: data.specialization ? [data.specialization] : [],
-          phone: data.phoneNumber,
         },
       });
     }
@@ -271,7 +260,7 @@ export class AdminService {
   async deleteUser(userId: string): Promise<void> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { coworker: true },
+      include: { coworkerProfile: true },
     });
 
     if (!user) {
@@ -279,9 +268,9 @@ export class AdminService {
     }
 
     // Delete coworker profile if exists
-    if (user.coworker) {
+    if (user.coworkerProfile) {
       await prisma.coworker.delete({
-        where: { id: user.coworker.id },
+        where: { id: user.coworkerProfile.id },
       });
     }
 
@@ -296,10 +285,10 @@ export class AdminService {
   /**
    * Change user role
    */
-  async changeUserRole(userId: string, newRole: Role): Promise<UserWithDetails> {
+  async changeUserRole(userId: string, newRole: UserRole): Promise<UserWithDetails> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { coworker: true },
+      include: { coworkerProfile: true },
     });
 
     if (!user) {
@@ -311,22 +300,21 @@ export class AdminService {
       where: { id: userId },
       data: { role: newRole },
       include: {
-        coworker: {
+        coworkerProfile: {
           select: {
             id: true,
-            specialization: true,
-            hourlyRate: true,
+            specializations: true,
+            phone: true,
           },
         },
       },
     });
 
-    // Create coworker profile if role changed to OPERATOR and doesn't exist
-    if (newRole === 'OPERATOR' && !user.coworker) {
+    // Create coworker profile if role changed to COWORKER and doesn't exist
+    if (newRole === 'COWORKER' && !user.coworkerProfile) {
       await prisma.coworker.create({
         data: {
           userId: user.id,
-          hourlyRate: 25, // Default hourly rate
         },
       });
     }
@@ -367,9 +355,8 @@ export class AdminService {
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const monthlyBacklog = await prisma.backlogEntry.findMany({
       where: {
-        date: {
-          gte: monthStart,
-        },
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
       },
     });
 

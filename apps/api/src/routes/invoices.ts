@@ -333,21 +333,8 @@ router.delete('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Res
     );
   }
 });
-                email: true,
-                phone: true,
-              },
-            },
-          },
-        },
-      },
-    });
 
-    if (!invoice) {
-      return res.status(404).json(createResponse(false, 'Invoice not found'));
-    }
-
-    // Verify ownership
-    if (invoice.appointment?.userId !== req.user?.id) {
+export default router;
       return res.status(403).json(createResponse(false, 'Unauthorized'));
     }
 
