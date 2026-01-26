@@ -121,7 +121,12 @@ export default function MonthlyRecapList() {
                         ? 'bg-yellow-500'
                         : 'bg-green-600'
                     }`}
-                    style={{ width: `${Math.min(recap.capacityUsed, 100)}%` }}
+                    role="progressbar"
+                    aria-label={`Capacità: ${recap.capacityUsed.toFixed(0)}%`}
+                    aria-valuenow={Math.min(recap.capacityUsed, 100)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    style={{ width: `${Math.min(recap.capacityUsed, 100)}%` } as React.CSSProperties}
                   ></div>
                 </div>
               </div>

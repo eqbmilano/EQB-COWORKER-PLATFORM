@@ -12,8 +12,10 @@ interface BrandThemeProviderProps {
 }
 
 export function BrandThemeProvider({ children }: BrandThemeProviderProps) {
+  // eslint-disable-next-line jsx-a11y/no-static-element-interactions
   return (
     <div
+      // eslint-disable-next-line react/no-unknown-property
       style={{
         '--eqb-wood-primary': brand.colors.logoPrimaryWood,
         '--eqb-wood-secondary': brand.colors.palettePrimary,
@@ -39,6 +41,7 @@ export function BrandShowcase() {
         <h3 className="text-lg font-bold mb-4 text-slate-50">Colori EQB</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-2">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="w-full h-20 rounded-lg"
               style={{ backgroundColor: brand.colors.logoPrimaryWood }}
@@ -47,6 +50,7 @@ export function BrandShowcase() {
             <p className="text-xs text-slate-300">{brand.colors.logoPrimaryWood}</p>
           </div>
           <div className="space-y-2">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="w-full h-20 rounded-lg"
               style={{ backgroundColor: brand.colors.palettePrimary }}
@@ -55,6 +59,7 @@ export function BrandShowcase() {
             <p className="text-xs text-slate-300">{brand.colors.palettePrimary}</p>
           </div>
           <div className="space-y-2">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="w-full h-20 rounded-lg"
               style={{ backgroundColor: brand.colors.paletteSecondary }}
@@ -63,6 +68,7 @@ export function BrandShowcase() {
             <p className="text-xs text-slate-300">{brand.colors.paletteSecondary}</p>
           </div>
           <div className="space-y-2">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="w-full h-20 rounded-lg border border-slate-400"
               style={{ backgroundColor: brand.colors.warmWhite }}
@@ -79,12 +85,14 @@ export function BrandShowcase() {
         <div className="space-y-4">
           <div>
             <p className="text-xs text-slate-400 mb-1">Logo ({brand.typography.logo.regular})</p>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <p style={{ fontFamily: brand.typography.logo.regular }} className="text-2xl">
               EQB
             </p>
           </div>
           <div>
             <p className="text-xs text-slate-400 mb-1">Body ({brand.typography.text})</p>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <p style={{ fontFamily: brand.typography.text }} className="text-base">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             </p>

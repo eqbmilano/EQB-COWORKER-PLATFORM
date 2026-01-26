@@ -160,9 +160,14 @@ export default function OperatorDashboard() {
                         ? 'bg-yellow-500'
                         : 'bg-green-600'
                     }`}
+                    role="progressbar"
+                    aria-label={`Ore mese corrente: ${stats.monthlyHours.toFixed(1)}h`}
+                    aria-valuenow={Math.min((stats.monthlyHours / 1500) * 100, 100)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
                     style={{
                       width: `${Math.min((stats.monthlyHours / 1500) * 100, 100)}%`,
-                    }}
+                    } as React.CSSProperties}
                   ></div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">

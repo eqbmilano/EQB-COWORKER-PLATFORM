@@ -140,7 +140,8 @@ export default function BacklogDashboard() {
                         : 'bg-green-600'
                     }`}
                     role="progressbar"
-                    aria-valuenow={capacity.capacityUsedPercentage}
+                    aria-label="Capacità utilizzata"
+                    aria-valuenow={Math.min(capacity.capacityUsedPercentage, 100)}
                     aria-valuemin={0}
                     aria-valuemax={100}
                     style={{

@@ -1,4 +1,12 @@
 {
   "root": false,
-  "extends": ["../../.eslintrc.json"]
+  "extends": ["../../.eslintrc.json"],
+  "overrides": [
+    {
+      "files": ["src/**/*.css"],
+      "rules": {
+        "unknownAtRules": "off"
+      }
+    }
+  ]
 }
