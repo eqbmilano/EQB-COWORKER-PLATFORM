@@ -203,13 +203,40 @@ npx prisma seed             # Run seed script
 
 ## 🌍 DEPLOYMENT
 
+### ⚠️ RENDER DEPLOYMENT - IMPORTANTE!
+
+**PRIMA di deployare su Render, devi configurare il DATABASE!**
+
+#### Critical Setup Steps:
+1. **Configura PostgreSQL** (Neon o altro)
+   - Crea database su https://neon.tech/ (gratuito)
+   - Copia connection string
+
+2. **Configura Environment su Render**
+   - Vai a Render Dashboard → API service → Environment
+   - Aggiungi variable: `DATABASE_URL="postgresql://..."`
+   - Aggiungi variable: `JWT_SECRET="long-random-string"`
+   - Aggiungi variable: `NODE_ENV="production"`
+
+3. **Esegui Migrations**
+   - Usa SQL command nel Neon console, oppure
+   - Crea uno script migration pre-deploy
+
+4. **Crea Admin User**
+   - Via SQL nel Neon console, oppure
+   - Via script di seed
+
+5. **Trigger Deploy** su Render
+
+**Se salti questi step, il login fallirà con 500 error!**
+
 ### Render (Consigliato)
 1. **Push code su GitHub**
 2. **Vai su** https://render.com/
 3. **Connect repository**
-4. **Configura environment:**
+4. **Configura environment (VEDI SOPRA):**
    ```
-   DATABASE_URL=postgresql://...
+   DATABASE_URL=postgresql://user:password@host/dbname
    JWT_SECRET=your_secret_here
    NODE_ENV=production
    ```
@@ -219,6 +246,8 @@ npx prisma seed             # Run seed script
 ```bash
 npm install && npm run build --workspace=@eqb/api
 ```
+
+**Per diagnosticare errori:** Vedi [RENDER_TROUBLESHOOTING.md](./RENDER_TROUBLESHOOTING.md)
 
 ### Vercel (Per Web App)
 1. **Import repository** in Vercel
