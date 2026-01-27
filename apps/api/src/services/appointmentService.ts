@@ -3,7 +3,7 @@
  * Business logic for appointments
  */
 import prisma from '../database/client.js';
-import { Appointment, AppointmentStatus } from '@prisma/client';
+import { Appointment } from '@prisma/client';
 import pino from 'pino';
 
 const logger = pino();
@@ -166,7 +166,7 @@ export const cancelAppointment = async (
     const cancelled = await prisma.appointment.update({
       where: { id },
       data: {
-        status: AppointmentStatus.CANCELLED,
+        status: 'CANCELLED',
         cancelledAt: now,
         cancelledBy,
       },
@@ -188,7 +188,7 @@ export const completeAppointment = async (id: string): Promise<Appointment> => {
     const appointment = await prisma.appointment.update({
       where: { id },
       data: {
-        status: AppointmentStatus.COMPLETED,
+        status: 'COMPLETED',
       },
     });
 

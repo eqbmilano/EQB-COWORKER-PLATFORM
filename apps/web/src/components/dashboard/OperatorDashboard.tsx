@@ -152,23 +152,28 @@ export default function OperatorDashboard() {
               </p>
               <div className="mt-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full ${
-                      stats.monthlyHours > 1500
-                        ? 'bg-red-600'
-                        : stats.monthlyHours > 1200
-                        ? 'bg-yellow-500'
-                        : 'bg-green-600'
-                    }`}
-                    role="progressbar"
-                    aria-label={`Ore mese corrente: ${stats.monthlyHours.toFixed(1)}h`}
-                    aria-valuenow={Math.min((stats.monthlyHours / 1500) * 100, 100)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    style={{
-                      width: `${Math.min((stats.monthlyHours / 1500) * 100, 100)}%`,
-                    } as React.CSSProperties}
-                  ></div>
+                  {(() => {
+                    const progressValue = Math.min(Math.round((stats.monthlyHours / 1500) * 100), 100);
+                    const progressWidth = Math.min((stats.monthlyHours / 1500) * 100, 100);
+                    return (
+                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
+                      <div
+                        className={`h-2 rounded-full ${
+                          stats.monthlyHours > 1500
+                            ? 'bg-red-600'
+                            : stats.monthlyHours > 1200
+                            ? 'bg-yellow-500'
+                            : 'bg-green-600'
+                        }`}
+                        role="progressbar"
+                        aria-label={`Ore mese corrente: ${stats.monthlyHours.toFixed(1)}h`}
+                        aria-valuenow={progressValue}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: `${progressWidth}%` }}
+                      ></div>
+                    );
+                  })()}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
                   {((stats.monthlyHours / 1500) * 100).toFixed(0)}% capacità

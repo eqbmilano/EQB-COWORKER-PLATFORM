@@ -57,8 +57,6 @@ async function seedAdminUser() {
 }
 
 // Run if executed directly
-if (require.main === module) {
-  seedAdminUser();
-}
+seedAdminUser().catch(console.error);
 
 export default seedAdminUser;

@@ -113,21 +113,28 @@ export default function MonthlyRecapList() {
 
               <div className="mt-3">
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full ${
-                      recap.capacityUsed > 100
-                        ? 'bg-red-600'
-                        : recap.capacityUsed > 80
-                        ? 'bg-yellow-500'
-                        : 'bg-green-600'
-                    }`}
-                    role="progressbar"
-                    aria-label={`Capacità: ${recap.capacityUsed.toFixed(0)}%`}
-                    aria-valuenow={Math.min(recap.capacityUsed, 100)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    style={{ width: `${Math.min(recap.capacityUsed, 100)}%` } as React.CSSProperties}
-                  ></div>
+                  {(() => {
+                    const progressValue = Math.min(Math.round(recap.capacityUsed), 100);
+                    const progressWidth = Math.min(recap.capacityUsed, 100);
+                    return (
+                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
+                      <div
+                        className={`h-2 rounded-full ${
+                          recap.capacityUsed > 100
+                            ? 'bg-red-600'
+                            : recap.capacityUsed > 80
+                            ? 'bg-yellow-500'
+                            : 'bg-green-600'
+                        }`}
+                        role="progressbar"
+                        aria-label={`Capacit\u00e0: ${recap.capacityUsed.toFixed(0)}%`}
+                        aria-valuenow={progressValue}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: `${progressWidth}%` }}
+                      ></div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

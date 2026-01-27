@@ -154,26 +154,28 @@ export default function AdminStatistics() {
               </p>
               <div className="mt-3">
                 <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`h-3 rounded-full ${
-                      statistics.monthlyHoursWorked > 1500
-                        ? 'bg-red-600'
-                        : statistics.monthlyHoursWorked > 1200
-                        ? 'bg-yellow-500'
-                        : 'bg-green-600'
-                    }`}
-                    role="progressbar"
-                    aria-label={`Ore mese corrente: ${statistics.monthlyHoursWorked.toFixed(1)}h`}
-                    aria-valuenow={Math.min((statistics.monthlyHoursWorked / 1500) * 100, 100)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    style={{
-                      width: `${Math.min(
-                        (statistics.monthlyHoursWorked / 1500) * 100,
-                        100
-                      )}%`,
-                    } as React.CSSProperties}
-                  ></div>
+                  {(() => {
+                    const progressValue = Math.min(Math.round((statistics.monthlyHoursWorked / 1500) * 100), 100);
+                    const progressWidth = Math.min((statistics.monthlyHoursWorked / 1500) * 100, 100);
+                    return (
+                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
+                      <div
+                        className={`h-3 rounded-full ${
+                          statistics.monthlyHoursWorked > 1500
+                            ? 'bg-red-600'
+                            : statistics.monthlyHoursWorked > 1200
+                            ? 'bg-yellow-500'
+                            : 'bg-green-600'
+                        }`}
+                        role="progressbar"
+                        aria-label={`Ore mese corrente: ${statistics.monthlyHoursWorked.toFixed(1)}h`}
+                        aria-valuenow={progressValue}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: `${progressWidth}%` }}
+                      ></div>
+                    );
+                  })()}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
                   {((statistics.monthlyHoursWorked / 1500) * 100).toFixed(1)}%

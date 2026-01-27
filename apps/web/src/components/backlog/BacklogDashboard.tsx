@@ -131,23 +131,28 @@ export default function BacklogDashboard() {
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-4">
-                  <div
-                    className={`h-4 rounded-full transition-all ${
-                      capacity.isOverCapacity
-                        ? 'bg-red-600'
-                        : capacity.capacityUsedPercentage > 80
-                        ? 'bg-yellow-500'
-                        : 'bg-green-600'
-                    }`}
-                    role="progressbar"
-                    aria-label="Capacità utilizzata"
-                    aria-valuenow={Math.min(capacity.capacityUsedPercentage, 100)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    style={{
-                      width: `${Math.min(capacity.capacityUsedPercentage, 100)}%`,
-                    } as React.CSSProperties}
-                  ></div>
+                  {(() => {
+                    const progressValue = Math.min(Math.round(capacity.capacityUsedPercentage), 100);
+                    const progressWidth = Math.min(capacity.capacityUsedPercentage, 100);
+                    return (
+                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
+                      <div
+                        className={`h-4 rounded-full transition-all ${
+                          capacity.isOverCapacity
+                            ? 'bg-red-600'
+                            : capacity.capacityUsedPercentage > 80
+                            ? 'bg-yellow-500'
+                            : 'bg-green-600'
+                        }`}
+                        role="progressbar"
+                        aria-label="Capacit\u00e0 utilizzata"
+                        aria-valuenow={progressValue}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        style={{ width: `${progressWidth}%` }}
+                      ></div>
+                    );
+                  })()}
                 </div>
                 <div className="flex justify-between mt-2">
                   <span className="text-xs text-gray-500">

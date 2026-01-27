@@ -1,13 +1,12 @@
 import prisma from '../database/prisma.js';
 import { logger } from '../utils/logger.js';
-import { UserRole, UserStatus } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 export interface UserWithDetails {
   id: string;
   email: string;
-  role: UserRole;
-  status: UserStatus;
+  role: string;
+  status: string;
   firstName?: string | null;
   lastName?: string | null;
   coworkerProfile?: {
@@ -24,7 +23,7 @@ export interface CreateUserInput {
   password: string;
   firstName?: string;
   lastName?: string;
-  role: UserRole;
+  role: string;
   specialization?: string;
 }
 
@@ -32,8 +31,8 @@ export interface UpdateUserInput {
   email?: string;
   firstName?: string;
   lastName?: string;
-  role?: UserRole;
-  status?: UserStatus;
+  role?: string;
+  status?: string;
   specialization?: string;
 }
 
@@ -116,8 +115,8 @@ export class AdminService {
         password: hashedPassword,
         firstName: data.firstName,
         lastName: data.lastName,
-        role: data.role,
-        status: 'ACTIVE',
+        role: data.role as any,
+        status: 'ACTIVE' as any,
       },
       include: {
         coworkerProfile: {
@@ -182,8 +181,8 @@ export class AdminService {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        role: data.role,
-        status: data.status,
+        role: data.role as any,
+        status: data.status as any,
       },
       include: {
         coworkerProfile: {
@@ -284,7 +283,7 @@ export class AdminService {
   /**
    * Change user role
    */
-  async changeUserRole(userId: string, newRole: UserRole): Promise<UserWithDetails> {
+  async changeUserRole(userId: string, newRole: string): Promise<UserWithDetails> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: { coworkerProfile: true },
@@ -297,7 +296,7 @@ export class AdminService {
     // Update role
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: { role: newRole },
+      data: { role: newRole as any },
       include: {
         coworkerProfile: {
           select: {

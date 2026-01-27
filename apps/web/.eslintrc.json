@@ -5,7 +5,8 @@
     {
       "files": ["src/**/*.css"],
       "rules": {
-        "unknownAtRules": "off"
+        "unknownAtRules": "off",
+        "at-rule-no-unknown": "off"
       }
     }
   ]

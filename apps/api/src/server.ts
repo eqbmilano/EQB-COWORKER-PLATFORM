@@ -3,9 +3,14 @@ import cors, { CorsOptions } from 'cors';
 import 'express-async-errors';
 import pino from 'pino';
 import { config } from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables
-config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+config({ path: path.resolve(__dirname, '../.env.local') });
+config(); // Also load from default .env
 
 // Import routes
 import authRouter from './routes/auth.js';

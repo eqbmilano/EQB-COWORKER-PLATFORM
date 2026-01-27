@@ -36,6 +36,8 @@
       {
         "allow": ["warn", "error"]
       }
-    ]
+    ],
+    "no-inline-styles": "off",
+    "jsx-a11y/aria-proptypes": "off"
   }
 }

@@ -2,7 +2,7 @@
  * Authentication Service for Auth0 integration
  */
 import prisma from '../database/client.js';
-import { User, UserRole, UserStatus } from '@prisma/client';
+import { User } from '@prisma/client';
 import pino from 'pino';
 
 const logger = pino();
@@ -31,13 +31,13 @@ export const getOrCreateUser = async (auth0User: Auth0User): Promise<User> => {
           email: auth0User.email,
           name: auth0User.name || auth0User.email.split('@')[0],
           auth0Id: auth0User.sub,
-          role: UserRole.COWORKER, // Default role
-          status: UserStatus.ACTIVE,
+          role: 'COWORKER',
+          status: 'ACTIVE',
         },
       });
 
       // Create coworker profile
-      if (user.role === UserRole.COWORKER) {
+      if (user.role === 'COWORKER') {
         await prisma.coworker.create({
           data: {
             userId: user.id,
@@ -84,11 +84,11 @@ export const getUserById = async (id: string): Promise<User | null> => {
  */
 export const updateUserStatus = async (
   userId: string,
-  status: UserStatus
+  status: string
 ): Promise<User> => {
   return prisma.user.update({
     where: { id: userId },
-    data: { status },
+    data: { status: status as any },
   });
 };
 
@@ -96,14 +96,14 @@ export const updateUserStatus = async (
  * Block user (set status to BLOCKED)
  */
 export const blockUser = async (userId: string): Promise<User> => {
-  return updateUserStatus(userId, UserStatus.BLOCKED);
+  return updateUserStatus(userId, 'BLOCKED');
 };
 
 /**
  * Unblock user (set status to ACTIVE)
  */
 export const unblockUser = async (userId: string): Promise<User> => {
-  return updateUserStatus(userId, UserStatus.ACTIVE);
+  return updateUserStatus(userId, 'ACTIVE');
 };
 
 export default {

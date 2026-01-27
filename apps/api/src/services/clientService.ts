@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, ClientStatus } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import prisma from '../database/prisma.js';
 import { logger } from '../utils/logger.js';
 
@@ -82,7 +82,7 @@ export class ClientService {
             medicalHistory: data.medicalHistory,
             allergies: data.allergies,
             medications: data.medications,
-            status: 'ACTIVE' as ClientStatus,
+            status: 'ACTIVE',
           },
         });
 

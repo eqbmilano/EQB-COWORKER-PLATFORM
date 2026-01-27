@@ -3,7 +3,6 @@ import { authMiddleware } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/authorization.js';
 import { adminService } from '../services/adminService.js';
 import { z } from 'zod';
-import { UserRole, UserStatus } from '@prisma/client';
 
 const router = express.Router();
 
