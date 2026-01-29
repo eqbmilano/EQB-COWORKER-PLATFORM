@@ -34,7 +34,7 @@ const PORT = process.env.API_PORT || 3001;
 // ============================================================================
 
 // CORS
-const allowedOrigins = (process.env.WEB_ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
+const allowedOrigins = (process.env.WEB_ALLOWED_ORIGINS || '*.vercel.app,http://localhost:3000').split(',').map(o => o.trim()).filter(Boolean);
 const wildcardOrigins = allowedOrigins.filter(o => o.startsWith('*.')).map(o => o.replace(/^\*\./, ''));
 const corsMiddleware = cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -51,6 +51,7 @@ const corsMiddleware = cors({
     } catch (err) {
       return callback(err as Error);
     }
+    logger.warn(`CORS blocked: ${origin}`);
     return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
