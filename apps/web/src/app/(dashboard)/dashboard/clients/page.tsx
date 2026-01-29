@@ -169,7 +169,7 @@ interface ClientFormProps {
 }
 
 function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
-  const { createClient, updateClient, loading, error: hookError, clearError } = useClients();
+  const { createClient, updateClient, loading, error: hookError } = useClients();
   const [formData, setFormData] = useState({
     name: '',
     email: '',

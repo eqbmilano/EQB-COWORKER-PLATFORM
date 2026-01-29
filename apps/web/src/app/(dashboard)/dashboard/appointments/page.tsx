@@ -298,7 +298,7 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
   // Load clients on mount
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [fetchClients]);
 
   // Filter clients based on search
   useEffect(() => {
