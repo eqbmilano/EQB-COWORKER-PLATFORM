@@ -60,13 +60,15 @@ export const useAuthStore = create<AuthState>()(
 
           if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.message || 'Login failed');
+            throw new Error(error.error?.message || error.message || 'Login failed');
           }
 
-          const data = await response.json();
+          const result = await response.json();
+          const { token, user } = result.data || result;
+          
           set({
-            user: data.user,
-            token: data.token,
+            user,
+            token,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -89,13 +91,15 @@ export const useAuthStore = create<AuthState>()(
 
           if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.message || 'Signup failed');
+            throw new Error(error.error?.message || error.message || 'Signup failed');
           }
 
-          const data = await response.json();
+          const result = await response.json();
+          const { token, user } = result.data || result;
+          
           set({
-            user: data.user,
-            token: data.token,
+            user,
+            token,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -130,10 +134,12 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(error.error?.message || 'Google login failed');
           }
 
-          const data = await response.json();
+          const result = await response.json();
+          const { token, user } = result.data || result;
+          
           set({
-            user: data.user,
-            token: data.token,
+            user,
+            token,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -146,7 +152,16 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ token: state.token, user: state.user }),
+      partialize: (state) => ({ 
+        token: state.token, 
+        user: state.user 
+      }),
+      onRehydrateStorage: () => (state) => {
+        // After rehydration, set isAuthenticated based on token presence
+        if (state && state.token && state.user) {
+          state.isAuthenticated = true;
+        }
+      },
     }
   )
 );
