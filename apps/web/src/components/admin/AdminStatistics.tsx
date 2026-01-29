@@ -158,7 +158,6 @@ export default function AdminStatistics() {
                     const progressValue = Math.min(Math.round((statistics.monthlyHoursWorked / 1500) * 100), 100);
                     const progressWidth = Math.min((statistics.monthlyHoursWorked / 1500) * 100, 100);
                     return (
-                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
                       <div
                         className={`h-3 rounded-full ${
                           statistics.monthlyHoursWorked > 1500

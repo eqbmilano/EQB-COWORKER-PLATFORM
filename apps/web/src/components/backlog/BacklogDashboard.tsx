@@ -135,7 +135,6 @@ export default function BacklogDashboard() {
                     const progressValue = Math.min(Math.round(capacity.capacityUsedPercentage), 100);
                     const progressWidth = Math.min(capacity.capacityUsedPercentage, 100);
                     return (
-                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
                       <div
                         className={`h-4 rounded-full transition-all ${
                           capacity.isOverCapacity

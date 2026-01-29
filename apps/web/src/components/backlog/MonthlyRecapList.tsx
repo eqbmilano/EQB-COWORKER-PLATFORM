@@ -117,7 +117,6 @@ export default function MonthlyRecapList() {
                     const progressValue = Math.min(Math.round(recap.capacityUsed), 100);
                     const progressWidth = Math.min(recap.capacityUsed, 100);
                     return (
-                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
                       <div
                         className={`h-2 rounded-full ${
                           recap.capacityUsed > 100

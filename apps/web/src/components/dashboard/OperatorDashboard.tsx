@@ -156,7 +156,6 @@ export default function OperatorDashboard() {
                     const progressValue = Math.min(Math.round((stats.monthlyHours / 1500) * 100), 100);
                     const progressWidth = Math.min((stats.monthlyHours / 1500) * 100, 100);
                     return (
-                      /* eslint-disable-next-line no-inline-styles, jsx-a11y/aria-proptypes */
                       <div
                         className={`h-2 rounded-full ${
                           stats.monthlyHours > 1500
