@@ -127,9 +127,9 @@ export default function MonthlyRecapList() {
                         }`}
                         role="progressbar"
                         aria-label={`Capacit\u00e0: ${recap.capacityUsed.toFixed(0)}%`}
-                        aria-valuenow={progressValue}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
+                        aria-valuenow={String(progressValue)}
+                        aria-valuemin="0"
+                        aria-valuemax="100"
                         style={{ width: `${progressWidth}%` }}
                       ></div>
                     );

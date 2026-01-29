@@ -4,7 +4,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useClients } from '@/hooks/useClients';
+import { useClients, type CreateClientInput } from '@/hooks/useClients';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { Users, Plus, Trash2, Edit, AlertCircle, Search } from 'lucide-react';
@@ -15,6 +15,10 @@ export default function ClientsPage() {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const handleErrorClose = () => {
+    clearError();
+  };
 
   useEffect(() => {
     fetchClients(searchTerm);
@@ -50,7 +54,7 @@ export default function ClientsPage() {
           <div>
             <p className="text-red-300 font-medium">{error}</p>
             <button
-              onClick={clearError}
+              onClick={handleErrorClose}
               className="text-xs text-red-200 hover:text-red-100 mt-1"
             >
               Chiudi

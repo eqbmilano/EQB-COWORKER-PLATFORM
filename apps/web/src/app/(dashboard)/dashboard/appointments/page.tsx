@@ -436,10 +436,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="appointmentType" className="block text-sm font-medium text-slate-300 mb-1">
               Tipo Appuntamento
             </label>
             <select
+              id="appointmentType"
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}
               className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -454,10 +455,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* Room Type */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="roomType" className="block text-sm font-medium text-slate-300 mb-1">
               Tipo Stanza
             </label>
             <select
+              id="roomType"
               value={formData.roomType}
               onChange={(e) => setFormData({ ...formData, roomType: e.target.value as any })}
               className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -471,10 +473,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* Start Time */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="startTime" className="block text-sm font-medium text-slate-300 mb-1">
               Data/Ora Inizio *
             </label>
             <input
+              id="startTime"
               type="datetime-local"
               value={formData.startTime}
               onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
@@ -486,10 +489,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* End Time */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="endTime" className="block text-sm font-medium text-slate-300 mb-1">
               Data/Ora Fine *
             </label>
             <input
+              id="endTime"
               type="datetime-local"
               value={formData.endTime}
               onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
@@ -501,10 +505,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
           {/* Room Number */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="roomNumber" className="block text-sm font-medium text-slate-300 mb-1">
               Numero Stanza
             </label>
             <input
+              id="roomNumber"
               type="text"
               value={formData.roomNumber}
               onChange={(e) => setFormData({ ...formData, roomNumber: e.target.value })}
@@ -517,10 +522,11 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="appointmentNotes" className="block text-sm font-medium text-slate-300 mb-1">
             Note
           </label>
           <textarea
+            id="appointmentNotes"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"

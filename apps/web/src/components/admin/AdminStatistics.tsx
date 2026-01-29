@@ -168,9 +168,9 @@ export default function AdminStatistics() {
                         }`}
                         role="progressbar"
                         aria-label={`Ore mese corrente: ${statistics.monthlyHoursWorked.toFixed(1)}h`}
-                        aria-valuenow={progressValue}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
+                        aria-valuenow={String(progressValue)}
+                        aria-valuemin="0"
+                        aria-valuemax="100"
                         style={{ width: `${progressWidth}%` }}
                       ></div>
                     );
