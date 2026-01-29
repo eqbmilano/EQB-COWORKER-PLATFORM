@@ -111,7 +111,12 @@ router.post('/login', async (req, res: Response) => {
     );
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    logger.error('Login error:', errorMsg);
+    const errorStack = error instanceof Error ? error.stack : '';
+    logger.error({
+      msg: 'Login error',
+      error: errorMsg,
+      stack: errorStack,
+    });
     return res.status(500).json(
       createResponse(false, 500, undefined, {
         code: 'SERVER_ERROR',
