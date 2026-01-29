@@ -11,14 +11,10 @@ import { Users, Plus, Trash2, Edit, AlertCircle, Search } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ClientsPage() {
-  const { clients, loading, error, fetchClients, deleteClient, clearError } = useClients();
+  const { clients, loading, error, fetchClients, deleteClient } = useClients();
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const handleErrorClose = () => {
-    clearError();
-  };
 
   useEffect(() => {
     fetchClients(searchTerm);
@@ -51,15 +47,7 @@ export default function ClientsPage() {
       {error && (
         <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-red-300 font-medium">{error}</p>
-            <button
-              onClick={handleErrorClose}
-              className="text-xs text-red-200 hover:text-red-100 mt-1"
-            >
-              Chiudi
-            </button>
-          </div>
+          <p className="text-red-300 font-medium">{error}</p>
         </div>
       )}
 
