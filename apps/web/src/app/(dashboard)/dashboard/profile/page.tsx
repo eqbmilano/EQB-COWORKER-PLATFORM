@@ -216,19 +216,16 @@ export default function ProfilePage() {
 
             {/* Email (read-only) */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Email
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                Email (non modificabile)
               </label>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                  Email (non modificabile)
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  disabled
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-slate-400 cursor-not-allowed"
-                />
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                disabled
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-slate-400 cursor-not-allowed"
+              />
             </div>
 
             <button
