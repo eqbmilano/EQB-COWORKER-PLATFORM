@@ -23,13 +23,12 @@ export interface Appointment {
 }
 
 export interface CreateAppointmentInput {
-  coworkerId: string;
   clientId: string;
   startTime: string;
   endTime: string;
   type: string;
   roomType: 'Training' | 'Treatment';
-  roomNumber?: number;
+  roomNumber?: string;
   notes?: string;
 }
 

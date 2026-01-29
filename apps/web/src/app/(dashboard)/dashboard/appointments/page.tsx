@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppointments, Appointment } from '@/hooks/useAppointments';
+import { useClients } from '@/hooks/useClients';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';
 import {
@@ -17,6 +18,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Search,
 } from 'lucide-react';
 
 export default function AppointmentsListPage() {
@@ -273,9 +275,15 @@ interface AppointmentFormProps {
 }
 
 function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
+  const { createAppointment, loading: appointmentLoading, error: appointmentError } = useAppointments();
+  const { clients, fetchClients, loading: clientsLoading, error: clientsError } = useClients();
+  const [filteredClients, setFilteredClients] = useState<typeof clients>([]);
+  const [showClientList, setShowClientList] = useState(false);
+  const [clientSearch, setClientSearch] = useState('');
+  
   const [formData, setFormData] = useState({
     clientId: '',
-    coworkerId: '',
+    clientName: '',
     startTime: '',
     endTime: '',
     type: 'Consulenza',
@@ -284,92 +292,241 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
     notes: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Load clients on mount
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  // Filter clients based on search
+  useEffect(() => {
+    if (!clientSearch.trim()) {
+      setFilteredClients(clients);
+      return;
+    }
+
+    const term = clientSearch.toLowerCase();
+    setFilteredClients(
+      clients.filter((client) =>
+        client.name.toLowerCase().includes(term) ||
+        client.email?.toLowerCase().includes(term)
+      )
+    );
+  }, [clientSearch, clients]);
+
+  const handleClientSelect = (client: typeof clients[0]) => {
+    setFormData((prev) => ({
+      ...prev,
+      clientId: client.id,
+      clientName: client.name,
+    }));
+    setShowClientList(false);
+    setClientSearch('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement create/update logic
-    onSuccess();
+    setError('');
+
+    if (!formData.clientId.trim()) {
+      setError('Seleziona un cliente');
+      return;
+    }
+
+    if (!formData.startTime || !formData.endTime) {
+      setError('Inserisci data e ora inizio/fine');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await createAppointment({
+        clientId: formData.clientId,
+        startTime: new Date(formData.startTime).toISOString(),
+        endTime: new Date(formData.endTime).toISOString(),
+        type: formData.type,
+        roomType: formData.roomType,
+        roomNumber: formData.roomNumber || undefined,
+        notes: formData.notes || undefined,
+      });
+
+      setLoading(false);
+      onSuccess();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Errore nel salvataggio';
+      setError(message);
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-white/10 backdrop-blur border border-white/20 rounded-lg p-6 space-y-4">
       <h3 className="text-xl font-bold text-slate-50">Nuovo Appuntamento</h3>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Client ID */}
-          <div>
-            <label htmlFor="clientId" className="block text-sm font-medium text-slate-300 mb-1">
-              Cliente
-            </label>
-            <input
-              id="clientId"
-              type="text"
-              value={formData.clientId}
-              onChange={(e) => setFormData({ ...formData, clientId: e.target.value })}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="ID Cliente"
-              required
-            />
-          </div>
+      {(error || appointmentError || clientsError) && (
+        <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
+          <p className="text-red-300 text-sm">{error || appointmentError || clientsError}</p>
+        </div>
+      )}
 
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Client Selection */}
+        <div className="relative">
+          <label className="block text-sm font-medium text-slate-300 mb-1">
+            Seleziona Cliente *
+          </label>
+
+          {formData.clientId ? (
+            <div className="flex items-center justify-between bg-white/10 border border-white/20 rounded-lg px-3 py-2">
+              <span className="text-white">{formData.clientName}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    clientId: '',
+                    clientName: '',
+                  }));
+                  setShowClientList(true);
+                }}
+                className="text-xs text-slate-400 hover:text-slate-200"
+              >
+                Cambia
+              </button>
+            </div>
+          ) : (
+            <div className="relative">
+              <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={clientSearch}
+                onChange={(e) => setClientSearch(e.target.value)}
+                onFocus={() => setShowClientList(true)}
+                placeholder="Cerca cliente..."
+                className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+
+              {showClientList && (
+                <div className="absolute z-10 mt-1 w-full bg-slate-900 border border-white/20 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  {clientsLoading ? (
+                    <div className="p-3 text-slate-400 text-sm">Caricamento clienti...</div>
+                  ) : filteredClients.length === 0 ? (
+                    <div className="p-3 text-slate-400 text-sm">Nessun cliente trovato</div>
+                  ) : (
+                    filteredClients.map((client) => (
+                      <button
+                        key={client.id}
+                        type="button"
+                        onClick={() => handleClientSelect(client)}
+                        className="w-full text-left px-3 py-2 hover:bg-white/10 transition border-b border-white/5 last:border-b-0"
+                      >
+                        <p className="text-white font-medium">{client.name}</p>
+                        {client.email && <p className="text-xs text-slate-400">{client.email}</p>}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Type */}
           <div>
-            <label htmlFor="appointmentType" className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-slate-300 mb-1">
               Tipo Appuntamento
             </label>
-            <input
-              id="appointmentType"
-              type="text"
+            <select
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Tipo"
-            />
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              disabled={loading}
+            >
+              <option value="Consulenza">Consulenza</option>
+              <option value="Terapia">Terapia</option>
+              <option value="Valutazione">Valutazione</option>
+              <option value="Follow-up">Follow-up</option>
+            </select>
+          </div>
+
+          {/* Room Type */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Tipo Stanza
+            </label>
+            <select
+              value={formData.roomType}
+              onChange={(e) => setFormData({ ...formData, roomType: e.target.value as any })}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              disabled={loading}
+            >
+              <option value="Treatment">Trattamento</option>
+              <option value="Office">Ufficio</option>
+              <option value="Meeting">Riunione</option>
+            </select>
           </div>
 
           {/* Start Time */}
           <div>
-            <label htmlFor="startTime" className="block text-sm font-medium text-slate-300 mb-1">
-              Data/Ora Inizio
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Data/Ora Inizio *
             </label>
             <input
-              id="startTime"
               type="datetime-local"
               value={formData.startTime}
               onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
+              disabled={loading}
             />
           </div>
 
           {/* End Time */}
           <div>
-            <label htmlFor="endTime" className="block text-sm font-medium text-slate-300 mb-1">
-              Data/Ora Fine
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Data/Ora Fine *
             </label>
             <input
-              id="endTime"
               type="datetime-local"
               value={formData.endTime}
               onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
+              disabled={loading}
+            />
+          </div>
+
+          {/* Room Number */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">
+              Numero Stanza
+            </label>
+            <input
+              type="text"
+              value={formData.roomNumber}
+              onChange={(e) => setFormData({ ...formData, roomNumber: e.target.value })}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="es. 101"
+              disabled={loading}
             />
           </div>
         </div>
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-slate-300 mb-1">
+          <label className="block text-sm font-medium text-slate-300 mb-1">
             Note
           </label>
           <textarea
-            id="notes"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Note aggiuntive..."
             rows={3}
+            disabled={loading}
           />
         </div>
 
@@ -377,14 +534,16 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
         <div className="flex gap-3 pt-4">
           <button
             type="submit"
-            className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition font-medium"
+            disabled={loading || appointmentLoading}
+            className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-600 text-white rounded-lg transition font-medium"
           >
-            Salva Appuntamento
+            {loading || appointmentLoading ? 'Salvataggio...' : 'Salva Appuntamento'}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-slate-300 rounded-lg transition"
+            disabled={loading || appointmentLoading}
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-slate-700 text-slate-300 rounded-lg transition"
           >
             Annulla
           </button>
