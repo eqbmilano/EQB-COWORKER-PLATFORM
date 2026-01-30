@@ -53,6 +53,11 @@ export function useAppointments(): UseAppointmentsReturn {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
 
+  const getErrorMessage = (data: any, fallback: string) => {
+    if (!data) return fallback;
+    return data.message || data.error || data.error?.message || fallback;
+  };
+
   const headers = useMemo(() => ({
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
@@ -79,8 +84,8 @@ export function useAppointments(): UseAppointmentsReturn {
         );
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to fetch appointments');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile caricare gli appuntamenti'));
         }
 
         const data = await response.json();
@@ -113,8 +118,8 @@ export function useAppointments(): UseAppointmentsReturn {
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to create appointment');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile creare l\'appuntamento'));
         }
 
         const data = await response.json();
@@ -154,8 +159,8 @@ export function useAppointments(): UseAppointmentsReturn {
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to update appointment');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile aggiornare l\'appuntamento'));
         }
 
         const data = await response.json();
@@ -194,8 +199,8 @@ export function useAppointments(): UseAppointmentsReturn {
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to delete appointment');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile eliminare l\'appuntamento'));
         }
 
         setAppointments(appointments.filter((a) => a.id !== id));

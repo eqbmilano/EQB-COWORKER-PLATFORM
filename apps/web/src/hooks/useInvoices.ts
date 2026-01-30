@@ -47,10 +47,19 @@ export function useInvoices() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
 
+  const getErrorMessage = (data: any, fallback: string) => {
+    if (!data) return fallback;
+    return data.message || data.error || data.error?.message || fallback;
+  };
+
   /**
    * Fetch all invoices
    */
   const fetchInvoices = useCallback(async () => {
+    if (!token) {
+      setError('Not authenticated');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -62,7 +71,8 @@ export function useInvoices() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch invoices: ${response.statusText}`);
+        const data = await response.json().catch(() => null);
+        throw new Error(getErrorMessage(data, 'Impossibile caricare le fatture'));
       }
 
       const data = await response.json();
@@ -81,6 +91,10 @@ export function useInvoices() {
    */
   const getInvoiceById = useCallback(async (id: string) => {
     try {
+      if (!token) {
+        setError('Not authenticated');
+        return null;
+      }
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -89,7 +103,8 @@ export function useInvoices() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch invoice: ${response.statusText}`);
+        const data = await response.json().catch(() => null);
+        throw new Error(getErrorMessage(data, 'Impossibile caricare la fattura'));
       }
 
       const data = await response.json();
@@ -104,6 +119,10 @@ export function useInvoices() {
    * Create new invoice
    */
   const createInvoice = useCallback(async (input: CreateInvoiceInput) => {
+    if (!token) {
+      setError('Not authenticated');
+      return null;
+    }
     setError(null);
     try {
       const response = await fetch(`${apiUrl}/api/invoices`, {
@@ -116,7 +135,8 @@ export function useInvoices() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to create invoice: ${response.statusText}`);
+        const data = await response.json().catch(() => null);
+        throw new Error(getErrorMessage(data, 'Impossibile creare la fattura'));
       }
 
       const data = await response.json();
@@ -135,6 +155,10 @@ export function useInvoices() {
    * Update invoice
    */
   const updateInvoice = useCallback(async (id: string, input: UpdateInvoiceInput) => {
+    if (!token) {
+      setError('Not authenticated');
+      return null;
+    }
     setError(null);
     try {
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
@@ -147,7 +171,8 @@ export function useInvoices() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to update invoice: ${response.statusText}`);
+        const data = await response.json().catch(() => null);
+        throw new Error(getErrorMessage(data, 'Impossibile aggiornare la fattura'));
       }
 
       const data = await response.json();
@@ -168,6 +193,10 @@ export function useInvoices() {
    * Delete invoice
    */
   const deleteInvoice = useCallback(async (id: string) => {
+    if (!token) {
+      setError('Not authenticated');
+      return null;
+    }
     setError(null);
     try {
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
@@ -179,7 +208,8 @@ export function useInvoices() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to delete invoice: ${response.statusText}`);
+        const data = await response.json().catch(() => null);
+        throw new Error(getErrorMessage(data, 'Impossibile eliminare la fattura'));
       }
 
       setInvoices((prev) => prev.filter((inv) => inv.id !== id));
@@ -196,6 +226,10 @@ export function useInvoices() {
    */
   const downloadPDF = useCallback(async (id: string) => {
     try {
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
       const response = await fetch(`${apiUrl}/api/invoices/${id}/pdf`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -203,7 +237,8 @@ export function useInvoices() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to download PDF: ${response.statusText}`);
+        const data = await response.json().catch(() => null);
+        throw new Error(getErrorMessage(data, 'Impossibile scaricare il PDF'));
       }
 
       const blob = await response.blob();

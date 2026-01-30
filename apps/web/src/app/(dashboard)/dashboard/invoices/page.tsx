@@ -35,7 +35,7 @@ const statusConfig: Record<InvoiceStatus, { color: string; icon: React.Component
 export default function InvoicesPage() {
   const { invoices, loading, error, fetchInvoices, createInvoice, updateInvoice, deleteInvoice, downloadPDF } =
     useInvoices();
-  const { appointments } = useAppointments();
+  const { appointments, fetchAppointments } = useAppointments();
 
   const [showForm, setShowForm] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -50,7 +50,8 @@ export default function InvoicesPage() {
 
   useEffect(() => {
     fetchInvoices();
-  }, [fetchInvoices]);
+    fetchAppointments();
+  }, [fetchInvoices, fetchAppointments]);
 
   const handleCreateOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
