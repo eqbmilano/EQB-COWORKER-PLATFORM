@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import type { Client } from '@eqb/shared-types';
+import { useAuthStore } from '@/store/authStore';
 
 interface ClientListProps {
   coworkerId?: string;
@@ -17,6 +18,8 @@ export default function ClientList({ coworkerId }: ClientListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const { token } = useAuthStore();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const fetchClients = useCallback(async () => {
     try {
@@ -34,10 +37,8 @@ export default function ClientList({ coworkerId }: ClientListProps) {
         params.append('coworkerId', coworkerId);
       }
 
-      const response = await fetch(`/api/clients?${params}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      const response = await fetch(`${apiUrl}/api/clients?${params}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {

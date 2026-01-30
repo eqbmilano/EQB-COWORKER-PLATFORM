@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Alert } from '@/components/ui/Alert';
 import ClientForm from '@/components/clients/ClientForm';
 import DocumentUpload from '@/components/clients/DocumentUpload';
+import { useAuthStore } from '@/store/authStore';
 
 interface ClientDocument {
   id: string;
@@ -72,6 +73,8 @@ export default function ClientDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const { token } = useAuthStore();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const fetchClientData = useCallback(async () => {
     try {
@@ -79,10 +82,8 @@ export default function ClientDetailPage() {
       setError(null);
 
       // Fetch client details
-      const clientResponse = await fetch(`/api/clients/${clientId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      const clientResponse = await fetch(`${apiUrl}/api/clients/${clientId}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!clientResponse.ok) {
@@ -93,10 +94,8 @@ export default function ClientDetailPage() {
       setClient(clientData.data);
 
       // Fetch documents
-      const docsResponse = await fetch(`/api/clients/${clientId}/documents`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      const docsResponse = await fetch(`${apiUrl}/api/clients/${clientId}/documents`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (docsResponse.ok) {
@@ -106,11 +105,9 @@ export default function ClientDetailPage() {
 
       // Fetch statistics
       const statsResponse = await fetch(
-        `/api/clients/${clientId}/statistics`,
+        `${apiUrl}/api/clients/${clientId}/statistics`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }
       );
 
@@ -139,12 +136,10 @@ export default function ClientDetailPage() {
 
     try {
       const response = await fetch(
-        `/api/clients/${clientId}/documents/${documentId}`,
+        `${apiUrl}/api/clients/${clientId}/documents/${documentId}`,
         {
           method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }
       );
 
@@ -169,11 +164,9 @@ export default function ClientDetailPage() {
     }
 
     try {
-      const response = await fetch(`/api/clients/${clientId}`, {
+      const response = await fetch(`${apiUrl}/api/clients/${clientId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {

@@ -176,12 +176,11 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const clientData = {
       name: validatedData.name,
-      email: validatedData.email,
+      email: validatedData.email || `client-${Date.now()}@temp.local`,
       phone: validatedData.phone,
-      companyName: validatedData.companyName,
       address: validatedData.address,
       city: validatedData.city,
-      zipCode: validatedData.zipCode,
+      postalCode: validatedData.zipCode,
       notes: validatedData.notes,
       coworkerId: coworker.id,
     };
@@ -219,7 +218,17 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const validatedData = UpdateClientSchema.parse(req.body);
 
-    const client = await clientService.updateClient(id, validatedData);
+    const updateData = {
+      name: validatedData.name,
+      email: validatedData.email,
+      phone: validatedData.phone,
+      address: validatedData.address,
+      city: validatedData.city,
+      postalCode: validatedData.zipCode,
+      notes: validatedData.notes,
+    };
+
+    const client = await clientService.updateClient(id, updateData);
 
     res.json({
       success: true,

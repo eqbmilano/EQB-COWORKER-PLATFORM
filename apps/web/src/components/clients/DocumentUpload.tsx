@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { useAuthStore } from '@/store/authStore';
 
 interface DocumentUploadProps {
   clientId: string;
@@ -35,6 +36,8 @@ export default function DocumentUpload({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { token } = useAuthStore();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -76,10 +79,10 @@ export default function DocumentUpload({
         formData.append('notes', notes);
       }
 
-      const response = await fetch(`/api/clients/${clientId}/documents`, {
+      const response = await fetch(`${apiUrl}/api/clients/${clientId}/documents`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: formData,
       });

@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { useAuthStore } from '@/store/authStore';
 
 interface DashboardStats {
   todayAppointments: number;
@@ -29,6 +30,7 @@ export default function OperatorDashboard() {
   const [upcomingAppointments, setUpcomingAppointments] = useState<UpcomingAppointment[]>([]);
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const { token } = useAuthStore();
 
   useEffect(() => {
     fetchDashboardData();
@@ -44,13 +46,13 @@ export default function OperatorDashboard() {
 
       const [backlogResponse, appointmentsResponse, clientsResponse] = await Promise.all([
         fetch(`${apiUrl}/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }),
         fetch(`${apiUrl}/api/appointments?status=SCHEDULED&limit=5`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }),
         fetch(`${apiUrl}/api/clients?limit=1`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }),
       ]);
 

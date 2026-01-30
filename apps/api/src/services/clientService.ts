@@ -49,7 +49,7 @@ export class ClientService {
 
       // Check if coworker exists
       const coworker = await prisma.coworker.findUnique({
-        where: { userId: data.coworkerId },
+        where: { id: data.coworkerId },
       });
 
       if (!coworker) {

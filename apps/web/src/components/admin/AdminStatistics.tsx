@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
+import { useAuthStore } from '@/store/authStore';
 
 interface SystemStatistics {
   totalUsers: number;
@@ -19,6 +20,7 @@ export default function AdminStatistics() {
   const [statistics, setStatistics] = useState<SystemStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const { token } = useAuthStore();
 
   useEffect(() => {
     fetchStatistics();
@@ -29,9 +31,7 @@ export default function AdminStatistics() {
       setLoading(true);
 
       const response = await fetch(`${apiUrl}/api/admin/statistics`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (response.ok) {

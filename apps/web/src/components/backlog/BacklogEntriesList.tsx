@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
 import { format } from 'date-fns';
+import { useAuthStore } from '@/store/authStore';
 
 interface BacklogEntry {
   id: string;
@@ -29,17 +30,17 @@ export default function BacklogEntriesList({
 }: BacklogEntriesListProps) {
   const [entries, setEntries] = useState<BacklogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const { token } = useAuthStore();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const fetchEntries = useCallback(async () => {
     try {
       setLoading(true);
 
       const response = await fetch(
-        `/api/backlog/entries?startDate=${startDate}&endDate=${endDate}`,
+        `${apiUrl}/api/backlog/entries?startDate=${startDate}&endDate=${endDate}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }
       );
 

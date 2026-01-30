@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
+import { useAuthStore } from '@/store/authStore';
 
 interface MonthlyRecap {
   month: string;
@@ -16,6 +17,7 @@ export default function MonthlyRecapList() {
   const [recaps, setRecaps] = useState<MonthlyRecap[]>([]);
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const { token } = useAuthStore();
 
   useEffect(() => {
     fetchMonthlyRecaps();
@@ -26,9 +28,7 @@ export default function MonthlyRecapList() {
       setLoading(true);
 
       const response = await fetch(`${apiUrl}/api/backlog/monthly-recap`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (response.ok) {

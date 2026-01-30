@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Alert } from '@/components/ui/Alert';
+import { useAuthStore } from '@/store/authStore';
 
 interface User {
   id: string;
@@ -27,6 +28,8 @@ export default function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [includeInactive, setIncludeInactive] = useState(false);
+  const { token } = useAuthStore();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -34,11 +37,9 @@ export default function UserManagement() {
       setError(null);
 
       const response = await fetch(
-        `/api/admin/users?includeInactive=${includeInactive}`,
+        `${apiUrl}/api/admin/users?includeInactive=${includeInactive}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }
       );
 
@@ -62,11 +63,9 @@ export default function UserManagement() {
 
   const handleActivateUser = async (userId: string) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/activate`, {
+      const response = await fetch(`${apiUrl}/api/admin/users/${userId}/activate`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
@@ -86,11 +85,9 @@ export default function UserManagement() {
     }
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}/deactivate`, {
+      const response = await fetch(`${apiUrl}/api/admin/users/${userId}/deactivate`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
@@ -114,11 +111,9 @@ export default function UserManagement() {
     }
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await fetch(`${apiUrl}/api/admin/users/${userId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
@@ -145,11 +140,11 @@ export default function UserManagement() {
     }
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}/change-role`, {
+      const response = await fetch(`${apiUrl}/api/admin/users/${userId}/change-role`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ role: newRole }),
       });

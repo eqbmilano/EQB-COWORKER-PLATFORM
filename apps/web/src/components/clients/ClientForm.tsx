@@ -5,19 +5,17 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { useAuthStore } from '@/store/authStore';
 
 interface ClientFormData {
   id?: string;
-  firstName?: string;
-  lastName?: string;
+  name?: string;
   email?: string;
   phone?: string;
-  birthDate?: Date | string;
   address?: string;
   city?: string;
-  province?: string;
+  zipCode?: string;
   postalCode?: string;
-  taxCode?: string;
   notes?: string;
   [key: string]: unknown;
 }
@@ -32,20 +30,16 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    firstName: initialData?.firstName || '',
-    lastName: initialData?.lastName || '',
+    name: initialData?.name || '',
     email: initialData?.email || '',
     phone: initialData?.phone || '',
-    birthDate: initialData?.birthDate
-      ? new Date(initialData.birthDate).toISOString().split('T')[0]
-      : '',
     address: initialData?.address || '',
     city: initialData?.city || '',
-    province: initialData?.province || '',
-    postalCode: initialData?.postalCode || '',
-    taxCode: initialData?.taxCode || '',
+    zipCode: initialData?.zipCode || initialData?.postalCode || '',
     notes: initialData?.notes || '',
   });
+  const { token } = useAuthStore();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -60,21 +54,18 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
     setError(null);
 
     try {
-      const url = clientId ? `/api/clients/${clientId}` : '/api/clients';
+      const url = clientId ? `${apiUrl}/api/clients/${clientId}` : `${apiUrl}/api/clients`;
       const method = clientId ? 'PUT' : 'POST';
 
       const payload = {
         ...formData,
-        birthDate: formData.birthDate
-          ? new Date(formData.birthDate).toISOString()
-          : undefined,
       };
 
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(payload),
       });
@@ -103,29 +94,14 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
           <h3 className="text-lg font-semibold mb-4">Informazioni Personali</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                Nome <span className="text-red-500">*</span>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Nome e Cognome <span className="text-red-500">*</span>
               </label>
               <input
-                id="firstName"
+                id="name"
                 type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                Cognome <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="lastName"
-                type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -160,34 +136,6 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
               />
             </div>
 
-            <div>
-              <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Data di Nascita
-              </label>
-              <input
-                id="birthDate"
-                type="date"
-                name="birthDate"
-                value={formData.birthDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="taxCode" className="block text-sm font-medium text-gray-700 mb-1">
-                Codice Fiscale
-              </label>
-              <input
-                id="taxCode"
-                type="text"
-                name="taxCode"
-                value={formData.taxCode}
-                onChange={handleChange}
-                maxLength={16}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
           </div>
         </div>
       </Card>
@@ -210,7 +158,7 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
                   Città
@@ -226,29 +174,14 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
               </div>
 
               <div>
-                <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1">
-                  Provincia
-                </label>
-                <input
-                  id="province"
-                  type="text"
-                  name="province"
-                  value={formData.province}
-                  onChange={handleChange}
-                  maxLength={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
                   CAP
                 </label>
                 <input
-                  id="postalCode"
+                  id="zipCode"
                   type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
+                  name="zipCode"
+                  value={formData.zipCode}
                   onChange={handleChange}
                   maxLength={5}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
