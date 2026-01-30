@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/Button";
@@ -65,13 +66,17 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="space-y-3 pt-8">
-            <Button href="/login" className="w-full py-4 text-lg">
-              Accedi
-            </Button>
+            <Link href="/login" className="block">
+              <Button className="w-full py-4 text-lg">
+                Accedi
+              </Button>
+            </Link>
 
-            <Button href="/signup" variant="secondary" className="w-full py-4 text-lg">
-              Registrati
-            </Button>
+            <Link href="/signup" className="block">
+              <Button variant="secondary" className="w-full py-4 text-lg">
+                Registrati
+              </Button>
+            </Link>
           </div>
 
           {/* Footer */}
