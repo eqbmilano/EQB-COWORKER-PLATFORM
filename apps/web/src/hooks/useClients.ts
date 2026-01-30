@@ -89,7 +89,8 @@ export function useClients(): UseClientsReturn {
         }
 
         const data = await response.json();
-        setClients(data.data || []);
+        const clientsArray = Array.isArray(data.data) ? data.data : (data.data?.clients || []);
+        setClients(clientsArray);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'An error occurred';
         setError(message);
@@ -116,7 +117,7 @@ export function useClients(): UseClientsReturn {
         }
 
         const data = await response.json();
-        return data.data || null;
+        return data.data?.client || data.data || null;
       } catch (err) {
         const message = err instanceof Error ? err.message : 'An error occurred';
         setError(message);
@@ -149,7 +150,7 @@ export function useClients(): UseClientsReturn {
         }
 
         const data = await response.json();
-        const newClient = data.data;
+        const newClient = data.data?.client || data.data;
 
         if (newClient) {
           setClients([...clients, newClient]);
@@ -190,7 +191,7 @@ export function useClients(): UseClientsReturn {
         }
 
         const data = await response.json();
-        const updated = data.data;
+        const updated = data.data?.client || data.data;
 
         if (updated) {
           setClients(clients.map((c) => (c.id === id ? updated : c)));

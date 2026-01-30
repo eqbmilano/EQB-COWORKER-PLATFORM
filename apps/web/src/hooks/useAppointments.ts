@@ -89,7 +89,8 @@ export function useAppointments(): UseAppointmentsReturn {
         }
 
         const data = await response.json();
-        setAppointments(data.data || []);
+        const appointmentsArray = Array.isArray(data.data) ? data.data : (data.data?.appointments || []);
+        setAppointments(appointmentsArray);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'An error occurred';
         setError(message);
@@ -123,7 +124,7 @@ export function useAppointments(): UseAppointmentsReturn {
         }
 
         const data = await response.json();
-        const newAppointment = data.data;
+        const newAppointment = data.data?.appointment || data.data;
 
         if (newAppointment) {
           setAppointments([...appointments, newAppointment]);
@@ -164,7 +165,7 @@ export function useAppointments(): UseAppointmentsReturn {
         }
 
         const data = await response.json();
-        const updated = data.data;
+        const updated = data.data?.appointment || data.data;
 
         if (updated) {
           setAppointments(appointments.map((a) => (a.id === id ? updated : a)));
