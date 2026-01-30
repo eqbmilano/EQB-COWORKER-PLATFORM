@@ -2,11 +2,11 @@
  * Authentication Routes
  * Handles JWT-based login, signup, and refresh
  */
-import { Router, Response } from 'express';
+import { Router, type Response } from 'express';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.js';
+import { authMiddleware, type AuthenticatedRequest } from '../middleware/auth.js';
 import authService from '../services/authService.js';
 import { createResponse } from '../types/api.js';
 import pino from 'pino';

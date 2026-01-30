@@ -3,7 +3,7 @@
  * Business logic for appointments
  */
 import prisma from '../database/client.js';
-import { Appointment } from '@prisma/client';
+import type { Appointment } from '@prisma/client';
 import pino from 'pino';
 
 const logger = pino();

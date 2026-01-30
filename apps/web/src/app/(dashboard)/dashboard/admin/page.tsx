@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAdmin, CreateUserData } from '@/hooks/useAdmin';
+import { useAdmin, type CreateUserData } from '@/hooks/useAdmin';
 import { useAuth } from '@/hooks/useAuth';
 import { Card } from '@/components/ui/Card';
 import { 

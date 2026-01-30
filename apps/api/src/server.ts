@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { type Express, type Request, type Response, type NextFunction } from 'express';
 import cors, { CorsOptions } from 'cors';
 import 'express-async-errors';
 import pino from 'pino';

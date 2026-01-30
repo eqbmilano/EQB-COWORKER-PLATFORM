@@ -1,8 +1,8 @@
 /**
  * RBAC Authorization Middleware
  */
-import { Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from './auth.js';
+import type { Response, NextFunction } from 'express';
+import type { AuthenticatedRequest } from './auth.js';
 import { createResponse } from '../types/api.js';
 
 export type AllowedRole = 'ADMIN' | 'COWORKER' | '*';

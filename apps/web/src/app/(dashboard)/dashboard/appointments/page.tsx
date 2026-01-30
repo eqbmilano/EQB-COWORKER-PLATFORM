@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useAppointments, Appointment } from '@/hooks/useAppointments';
+import { useAppointments, type Appointment } from '@/hooks/useAppointments';
 import { useClients } from '@/hooks/useClients';
 import { format, parseISO } from 'date-fns';
 import { it } from 'date-fns/locale';

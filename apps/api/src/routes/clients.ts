@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, type Response } from 'express';
 import { z } from 'zod';
 import clientService from '../services/clientService.js';
 import prisma from '../database/client.js';

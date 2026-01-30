@@ -2,7 +2,7 @@
  * Authentication Service for Auth0 integration
  */
 import prisma from '../database/client.js';
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import pino from 'pino';
 
 const logger = pino();

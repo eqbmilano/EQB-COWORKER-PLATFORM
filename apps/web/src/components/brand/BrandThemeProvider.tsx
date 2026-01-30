@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { brand } from '@/config/brand';
 
 interface BrandThemeProviderProps {

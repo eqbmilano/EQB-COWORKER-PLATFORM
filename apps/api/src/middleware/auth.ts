@@ -2,7 +2,7 @@
  * JWT Middleware for custom authentication
  * Validates JWT tokens signed with our server secret and attaches user info to request
  */
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import pino from 'pino';
 

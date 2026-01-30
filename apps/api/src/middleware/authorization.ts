@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { UserRole } from '@prisma/client';
+import type { Request, Response, NextFunction } from 'express';
+import type { UserRole } from '@prisma/client';
 
 /**
  * Extend Express Request type to include user

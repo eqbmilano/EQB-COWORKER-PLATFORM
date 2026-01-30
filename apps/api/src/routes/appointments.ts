@@ -1,11 +1,11 @@
 /**
  * Appointment Routes
  */
-import { Router, Response } from 'express';
+import { Router, type Response } from 'express';
 import { z } from 'zod';
 import {
   authMiddleware,
-  AuthenticatedRequest,
+  type AuthenticatedRequest,
 } from '../middleware/auth.js';
 import appointmentService from '../services/appointmentService.js';
 import { emailService } from '../services/emailService.js';

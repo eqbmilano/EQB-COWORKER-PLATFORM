@@ -17,7 +17,7 @@ import {
   Clock,
   XCircle,
 } from 'lucide-react';
-import { useInvoices, Invoice, CreateInvoiceInput } from '@/hooks/useInvoices';
+import { useInvoices, type Invoice, type CreateInvoiceInput } from '@/hooks/useInvoices';
 import { useAppointments } from '@/hooks/useAppointments';
 import { formatDate } from 'date-fns';
 import { it } from 'date-fns/locale';

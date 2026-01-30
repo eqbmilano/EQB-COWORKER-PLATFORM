@@ -2,9 +2,9 @@
  * Invoice Routes
  * Endpoints for managing AppointmentInvoice (client invoices for appointments)
  */
-import { Router, Request, Response } from 'express';
+import { Router, Request, type Response } from 'express';
 import { z } from 'zod';
-import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.js';
+import { authMiddleware, type AuthenticatedRequest } from '../middleware/auth.js';
 import { authorize } from '../middleware/rbac.js';
 import prisma from '../database/prisma.js';
 import { createResponse } from '../types/api.js';
