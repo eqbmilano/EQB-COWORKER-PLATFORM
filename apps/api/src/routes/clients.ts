@@ -193,7 +193,11 @@ router.post('/', authMiddleware, async (req, res) => {
       message: 'Client created successfully',
     });
   } catch (error: any) {
-    logger.error('Failed to create client', { error });
+    logger.error('Failed to create client', {
+      message: error?.message,
+      code: error?.code,
+      stack: error?.stack,
+    });
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         success: false,
@@ -201,10 +205,28 @@ router.post('/', authMiddleware, async (req, res) => {
         details: error.errors,
       });
     }
+    if (error?.code === 'P2002') {
+      return res.status(409).json({
+        success: false,
+        error: 'Client with this email already exists',
+      });
+    }
+    if (error?.message === 'Client with this email already exists') {
+      return res.status(409).json({
+        success: false,
+        error: 'Client with this email already exists',
+      });
+    }
+    if (error?.message === 'Coworker not found') {
+      return res.status(404).json({
+        success: false,
+        error: 'Coworker not found',
+      });
+    }
     res.status(500).json({
       success: false,
       error: 'Failed to create client',
-      message: error.message,
+      message: error?.message,
     });
   }
 });

@@ -100,7 +100,20 @@ export class ClientService {
       logger.info('Client created successfully', { clientId: result.id });
       return result;
     } catch (error) {
-      logger.error('Failed to create client', { error });
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        logger.error('Failed to create client', {
+          code: error.code,
+          message: error.message,
+          meta: error.meta,
+        });
+      } else if (error instanceof Error) {
+        logger.error('Failed to create client', {
+          message: error.message,
+          stack: error.stack,
+        });
+      } else {
+        logger.error('Failed to create client', { error });
+      }
       throw error;
     }
   }
