@@ -21,7 +21,7 @@ const router = Router();
 // ============================================================================
 
 const CreateAppointmentSchema = z.object({
-  coworkerId: z.string(),
+  coworkerId: z.string().optional(),
   clientId: z.string(),
   startTime: z.string().datetime(),
   endTime: z.string().datetime(),
@@ -124,13 +124,28 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res: Response
       );
     }
 
-    const { coworkerId, clientId, startTime, endTime, type, roomType, roomNumber, notes } =
+    // Get coworker from authenticated user
+    const userId = req.user.sub;
+    const coworker = await prisma.coworker.findUnique({
+      where: { userId },
+    });
+
+    if (!coworker) {
+      return res.status(403).json(
+        createResponse(false, 403, undefined, {
+          code: 'FORBIDDEN',
+          message: 'Only coworkers can create appointments',
+        })
+      );
+    }
+
+    const { clientId, startTime, endTime, type, roomType, roomNumber, notes } =
       validation.data;
 
     const durationHours = (new Date(endTime).getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60);
 
     const appointment = await appointmentService.createAppointment({
-      coworkerId,
+      coworkerId: coworker.id,
       clientId,
       userId: req.user.sub,
       startTime: new Date(startTime),
@@ -148,14 +163,15 @@ router.post('/', authMiddleware, async (req: AuthenticatedRequest, res: Response
       select: { email: true, name: true },
     });
 
-    const coworker = await prisma.coworker.findUnique({
-      where: { id: coworkerId },
+    // Fetch user details for coworker name
+    const coworkerWithUser = await prisma.coworker.findUnique({
+      where: { id: coworker.id },
       include: { user: true },
     });
 
-    if (client?.email && coworker) {
+    if (client?.email && coworkerWithUser) {
       const clientName = client.name;
-      const coworkerName = coworker.user.name || 'Operatore';
+      const coworkerName = coworkerWithUser.user.name || 'Operatore';
       
       emailService.sendAppointmentConfirmation(
         client.email,
