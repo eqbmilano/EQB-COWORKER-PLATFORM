@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import type { Coworker } from '@eqb/shared-types';
+import type { CoworkerProfile } from '@eqb/shared-types';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
@@ -37,7 +37,7 @@ type AppointmentFormData = z.infer<typeof appointmentSchema>;
 interface AppointmentFormProps {
   initialData?: Partial<AppointmentFormData> & { id?: string };
   appointmentId?: string;
-  coworkers: Coworker[];
+  coworkers: CoworkerProfile[];
 }
 
 export default function AppointmentForm({
@@ -66,7 +66,7 @@ export default function AppointmentForm({
 
   const coworkerOptions: SelectOption[] = coworkers.map((c) => ({
     value: c.id,
-    label: c.name,
+    label: c.companyName || `Coworker ${c.id.substring(0, 8)}`,
   }));
 
   const onSubmit = async (data: AppointmentFormData) => {
@@ -98,7 +98,6 @@ export default function AppointmentForm({
         return;
       }
 
-      const responseData = await response.json();
       success('Appuntamento salvato con successo!');
       router.push(`/dashboard/appointments`);
     } catch (err: unknown) {
@@ -162,7 +161,7 @@ export default function AppointmentForm({
               <FormField
                 control={form.control}
                 name="coworkerId"
-                render={({ field }) => (
+                render={() => (
                   <SelectField
                     control={form.control}
                     name="coworkerId"

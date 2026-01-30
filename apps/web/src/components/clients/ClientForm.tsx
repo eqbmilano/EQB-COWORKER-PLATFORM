@@ -92,7 +92,7 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {form.formState.errors.root && (
-          <Alert type="error" message={form.formState.errors.root.message} />
+          <Alert type="error" message={form.formState.errors.root.message || 'Errore durante il salvataggio'} />
         )}
 
         {/* Informazioni Personali */}
