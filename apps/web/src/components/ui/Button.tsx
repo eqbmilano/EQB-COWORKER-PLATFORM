@@ -10,6 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        primary: "bg-primary text-primary-foreground shadow hover:bg-primary/90", // Alias for default
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         danger: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90", // Alias for destructive
         outline:
