@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'EQB Platform - Appointment Booking & Invoice Management',
@@ -30,7 +31,10 @@ export default function RootLayout({
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body className="bg-gray-50">{children}</body>
+      <body className="bg-gray-50">
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

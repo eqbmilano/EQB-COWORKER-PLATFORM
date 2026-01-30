@@ -1,66 +1,58 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/store/authStore';
 
-interface ClientFormData {
-  id?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  zipCode?: string;
-  postalCode?: string;
-  notes?: string;
-  [key: string]: unknown;
-}
+// Validation schema
+const clientSchema = z.object({
+  name: z.string().min(1, 'Nome è obbligatorio'),
+  email: z.string().email('Email non valida').optional().or(z.literal('')),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  zipCode: z.string().max(5).optional(),
+  notes: z.string().optional(),
+});
+
+type ClientFormData = z.infer<typeof clientSchema>;
 
 interface ClientFormProps {
-  initialData?: ClientFormData;
+  initialData?: Partial<ClientFormData> & { id?: string; postalCode?: string };
   clientId?: string;
 }
 
 export default function ClientForm({ initialData, clientId }: ClientFormProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    address: initialData?.address || '',
-    city: initialData?.city || '',
-    zipCode: initialData?.zipCode || initialData?.postalCode || '',
-    notes: initialData?.notes || '',
-  });
   const { token } = useAuthStore();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const form = useForm<ClientFormData>({
+    resolver: zodResolver(clientSchema),
+    defaultValues: {
+      name: initialData?.name || '',
+      email: initialData?.email || '',
+      phone: initialData?.phone || '',
+      address: initialData?.address || '',
+      city: initialData?.city || '',
+      zipCode: initialData?.zipCode || initialData?.postalCode || '',
+      notes: initialData?.notes || '',
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
+  const onSubmit = async (data: ClientFormData) => {
     try {
       const url = clientId ? `${apiUrl}/api/clients/${clientId}` : `${apiUrl}/api/clients`;
       const method = clientId ? 'PUT' : 'POST';
 
-      const payload = {
-        ...formData,
-      };
-      console.log('Sending request:', { url, method, payload, token });
+      console.log('Sending request:', { url, method, data, token });
 
       const response = await fetch(url, {
         method,
@@ -68,161 +60,170 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(data),
       });
       console.log('Response status:', response.status);
 
       if (!response.ok) {
-        const data = await response.json().catch(() => null);
-        console.error('API error:', data);
-        const message = data?.message || data?.error || 'Errore nel salvataggio del cliente';
-        throw new Error(message);
+        const errorData = await response.json().catch(() => null);
+        console.error('API error:', errorData);
+        const message = errorData?.message || errorData?.error || 'Errore nel salvataggio del cliente';
+        form.setError('root', { message });
+        return;
       }
 
-      const data = await response.json();
-      router.push(`/dashboard/clients/${data.data.id}`);
+      const responseData = await response.json();
+      router.push(`/dashboard/clients/${responseData.data.id}`);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      form.setError('root', { message: errorMessage });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <Alert type="error" message={error} />}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {form.formState.errors.root && (
+          <Alert type="error" message={form.formState.errors.root.message} />
+        )}
 
-      <Card>
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Informazioni Personali</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nome e Cognome <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="name"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Telefono
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-          </div>
-        </div>
-      </Card>
-
-      <Card>
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Indirizzo</h3>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                Indirizzo
-              </label>
-              <input
-                id="address"
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
+        {/* Informazioni Personali */}
+        <Card>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Informazioni Personali</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                  Città
-                </label>
-                <input
-                  id="city"
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome e Cognome <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Mario Rossi" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="mario@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Telefono</FormLabel>
+                    <FormControl>
+                      <Input type="tel" placeholder="+39 3XX XXX XXXX" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        </Card>
 
-              <div>
-                <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
-                  CAP
-                </label>
-                <input
-                  id="zipCode"
-                  type="text"
+        {/* Indirizzo */}
+        <Card>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Indirizzo</h3>
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Indirizzo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Via Rossini 10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Città</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Milano" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="zipCode"
-                  value={formData.zipCode}
-                  onChange={handleChange}
-                  maxLength={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CAP</FormLabel>
+                      <FormControl>
+                        <Input placeholder="20100" maxLength={5} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      <Card>
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Note</h3>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            rows={4}
-            placeholder="Note aggiuntive sul cliente..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </Card>
+        {/* Note */}
+        <Card>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Note</h3>
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <textarea
+                      placeholder="Note aggiuntive sul cliente..."
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </Card>
 
-      <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => router.back()}
-          disabled={loading}
-        >
-          Annulla
-        </Button>
-        <Button type="submit" variant="primary" disabled={loading}>
-          {loading ? 'Salvataggio...' : clientId ? 'Aggiorna' : 'Crea Cliente'}
-        </Button>
-      </div>
-    </form>
+        {/* Submit Buttons */}
+        <div className="flex justify-end gap-3">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => router.back()}
+            disabled={form.formState.isSubmitting}
+          >
+            Annulla
+          </Button>
+          <Button type="submit" variant="primary" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Salvataggio...' : clientId ? 'Aggiorna' : 'Crea Cliente'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
