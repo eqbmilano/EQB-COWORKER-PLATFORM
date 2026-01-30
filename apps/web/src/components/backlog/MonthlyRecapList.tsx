@@ -15,6 +15,7 @@ interface MonthlyRecap {
 export default function MonthlyRecapList() {
   const [recaps, setRecaps] = useState<MonthlyRecap[]>([]);
   const [loading, setLoading] = useState(true);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     fetchMonthlyRecaps();
@@ -24,7 +25,7 @@ export default function MonthlyRecapList() {
     try {
       setLoading(true);
 
-      const response = await fetch('/api/backlog/monthly-recap', {
+      const response = await fetch(`${apiUrl}/api/backlog/monthly-recap`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

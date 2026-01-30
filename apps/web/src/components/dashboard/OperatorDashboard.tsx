@@ -28,6 +28,7 @@ export default function OperatorDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [upcomingAppointments, setUpcomingAppointments] = useState<UpcomingAppointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     fetchDashboardData();
@@ -42,13 +43,13 @@ export default function OperatorDashboard() {
       const endDate = format(endOfMonth(new Date()), 'yyyy-MM-dd');
 
       const [backlogResponse, appointmentsResponse, clientsResponse] = await Promise.all([
-        fetch(`/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`, {
+        fetch(`${apiUrl}/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }),
-        fetch('/api/appointments?status=SCHEDULED&limit=5', {
+        fetch(`${apiUrl}/api/appointments?status=SCHEDULED&limit=5`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }),
-        fetch('/api/clients?limit=1', {
+        fetch(`${apiUrl}/api/clients?limit=1`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }),
       ]);

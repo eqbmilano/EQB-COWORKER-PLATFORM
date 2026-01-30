@@ -27,6 +27,7 @@ export default function BacklogDashboard() {
     format(startOfMonth(new Date()), 'yyyy-MM-dd')
   );
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'));
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const fetchBacklogData = useCallback(async () => {
     try {
@@ -34,7 +35,7 @@ export default function BacklogDashboard() {
 
       // Fetch statistics
       const statsResponse = await fetch(
-        `/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`,
+        `${apiUrl}/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -48,7 +49,7 @@ export default function BacklogDashboard() {
       }
 
       // Fetch capacity
-      const capacityResponse = await fetch('/api/backlog/capacity', {
+      const capacityResponse = await fetch(`${apiUrl}/api/backlog/capacity`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

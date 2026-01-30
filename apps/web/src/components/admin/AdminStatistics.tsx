@@ -18,6 +18,7 @@ interface SystemStatistics {
 export default function AdminStatistics() {
   const [statistics, setStatistics] = useState<SystemStatistics | null>(null);
   const [loading, setLoading] = useState(true);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     fetchStatistics();
@@ -27,7 +28,7 @@ export default function AdminStatistics() {
     try {
       setLoading(true);
 
-      const response = await fetch('/api/admin/statistics', {
+      const response = await fetch(`${apiUrl}/api/admin/statistics`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

@@ -20,6 +20,7 @@ export default function NewUserForm() {
     specialization: '',
     hourlyRate: '25',
   });
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -39,7 +40,7 @@ export default function NewUserForm() {
         hourlyRate: parseFloat(formData.hourlyRate),
       };
 
-      const response = await fetch('/api/admin/users', {
+      const response = await fetch(`${apiUrl}/api/admin/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
