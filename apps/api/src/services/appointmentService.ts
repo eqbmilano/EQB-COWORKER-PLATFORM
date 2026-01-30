@@ -143,15 +143,22 @@ export const updateAppointment = async (
  */
 export const cancelAppointment = async (
   id: string,
-  cancelledBy: string
+  cancelledBy: string,
+  userId?: string
 ): Promise<Appointment> => {
   try {
     const appointment = await prisma.appointment.findUnique({
       where: { id },
+      include: { coworker: true },
     });
 
     if (!appointment) {
       throw new Error('Appointment not found');
+    }
+
+    // Check authorization if userId is provided
+    if (userId && appointment.coworker.userId !== userId) {
+      throw new Error('You do not have permission to cancel this appointment');
     }
 
     // Check 12-hour preavviso

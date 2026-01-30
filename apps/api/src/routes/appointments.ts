@@ -277,7 +277,7 @@ router.delete('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Res
       );
     }
 
-    const appointment = await appointmentService.cancelAppointment(id, req.user.sub);
+    const appointment = await appointmentService.cancelAppointment(id, req.user.sub, req.user.sub);
 
     return res.json(
       createResponse(true, 200, { appointment, message: 'Appointment cancelled' })
@@ -340,16 +340,27 @@ router.patch('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Resp
       );
     }
 
-    // Fetch existing appointment
+    // Fetch existing appointment with coworker relation
     const existing = await prisma.appointment.findUnique({
       where: { id },
+      include: { coworker: true },
     });
 
-    if (!existing || existing.userId !== req.user.sub) {
+    if (!existing) {
       return res.status(404).json(
         createResponse(false, 404, undefined, {
           code: 'NOT_FOUND',
           message: 'Appointment not found',
+        })
+      );
+    }
+
+    // Check if user owns this appointment (via coworker relation)
+    if (existing.coworker.userId !== req.user.sub) {
+      return res.status(403).json(
+        createResponse(false, 403, undefined, {
+          code: 'FORBIDDEN',
+          message: 'You do not have permission to update this appointment',
         })
       );
     }

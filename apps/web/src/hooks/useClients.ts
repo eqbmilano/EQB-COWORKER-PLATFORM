@@ -180,7 +180,7 @@ export function useClients(): UseClientsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/clients/${id}`, {
-          method: 'PATCH',
+          method: 'PUT',
           headers,
           body: JSON.stringify(input),
         });
