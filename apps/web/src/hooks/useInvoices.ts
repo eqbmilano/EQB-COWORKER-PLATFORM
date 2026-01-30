@@ -56,10 +56,6 @@ export function useInvoices() {
    * Fetch all invoices
    */
   const fetchInvoices = useCallback(async () => {
-    if (!token) {
-      setError('Not authenticated');
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
@@ -91,10 +87,6 @@ export function useInvoices() {
    */
   const getInvoiceById = useCallback(async (id: string) => {
     try {
-      if (!token) {
-        setError('Not authenticated');
-        return null;
-      }
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -119,10 +111,6 @@ export function useInvoices() {
    * Create new invoice
    */
   const createInvoice = useCallback(async (input: CreateInvoiceInput) => {
-    if (!token) {
-      setError('Not authenticated');
-      return null;
-    }
     setError(null);
     try {
       const response = await fetch(`${apiUrl}/api/invoices`, {
@@ -155,10 +143,6 @@ export function useInvoices() {
    * Update invoice
    */
   const updateInvoice = useCallback(async (id: string, input: UpdateInvoiceInput) => {
-    if (!token) {
-      setError('Not authenticated');
-      return null;
-    }
     setError(null);
     try {
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
@@ -193,10 +177,6 @@ export function useInvoices() {
    * Delete invoice
    */
   const deleteInvoice = useCallback(async (id: string) => {
-    if (!token) {
-      setError('Not authenticated');
-      return null;
-    }
     setError(null);
     try {
       const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
@@ -226,10 +206,6 @@ export function useInvoices() {
    */
   const downloadPDF = useCallback(async (id: string) => {
     try {
-      if (!token) {
-        setError('Not authenticated');
-        return;
-      }
       const response = await fetch(`${apiUrl}/api/invoices/${id}/pdf`, {
         headers: {
           'Authorization': `Bearer ${token}`,
