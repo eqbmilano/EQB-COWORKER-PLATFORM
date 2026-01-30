@@ -16,7 +16,7 @@ interface MonthlyRecap {
 export default function MonthlyRecapList() {
   const [recaps, setRecaps] = useState<MonthlyRecap[]>([]);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
   const { token } = useAuthStore();
 
   useEffect(() => {

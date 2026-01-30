@@ -29,7 +29,7 @@ export default function OperatorDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [upcomingAppointments, setUpcomingAppointments] = useState<UpcomingAppointment[]>([]);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
   const { token } = useAuthStore();
 
   useEffect(() => {

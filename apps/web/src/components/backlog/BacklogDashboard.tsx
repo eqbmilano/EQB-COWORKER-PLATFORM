@@ -28,7 +28,7 @@ export default function BacklogDashboard() {
     format(startOfMonth(new Date()), 'yyyy-MM-dd')
   );
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'));
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
   const { token } = useAuthStore();
 
   const fetchBacklogData = useCallback(async () => {
