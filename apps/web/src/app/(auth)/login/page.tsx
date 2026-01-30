@@ -1,5 +1,5 @@
 /**
- * Login Page - Custom JWT + Google OAuth
+ * Login Page - Custom JWT + Social OAuth (Google, Instagram, LinkedIn)
  */
 'use client';
 
@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { useAuthStore } from '@/store/authStore';
-import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons';
 import { Mail, Lock, AlertCircle, Check } from 'lucide-react';
 
 export default function LoginPage() {
@@ -129,17 +129,17 @@ export default function LoginPage() {
       </form>
 
       {/* Divider */}
-      <div className="relative my-6">
+      <div className="relative my-8">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-white/20" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white/5 text-slate-400">Oppure continua con</span>
+          <span className="px-2 bg-white/5 text-slate-400">O continua con i social</span>
         </div>
       </div>
 
-      {/* Google Sign-In */}
-      <GoogleSignInButton className="w-full" />
+      {/* Social Sign-In */}
+      <SocialLoginButtons className="w-full" />
 
       {/* Footer */}
       <div className="mt-8 pt-6 border-t border-white/10">
