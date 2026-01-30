@@ -17,16 +17,13 @@ const router = Router();
 
 // Zod validation schemas
 const CreateClientSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
+  name: z.string().min(1, 'Name is required'),
   email: z.string().email().optional(),
   phone: z.string().optional(),
-  birthDate: z.string().datetime().optional(),
+  companyName: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
-  province: z.string().optional(),
-  postalCode: z.string().optional(),
-  taxCode: z.string().optional(),
+  zipCode: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -177,20 +174,15 @@ router.post('/', authMiddleware, async (req, res) => {
       });
     }
 
-    const name = validatedData.firstName && validatedData.lastName 
-      ? `${validatedData.firstName} ${validatedData.lastName}`
-      : validatedData.firstName || 'Unknown';
-
     const clientData = {
-      name,
-      email: validatedData.email || `client-${Date.now()}@temp.local`,
+      name: validatedData.name,
+      email: validatedData.email,
       phone: validatedData.phone,
+      companyName: validatedData.companyName,
       address: validatedData.address,
       city: validatedData.city,
-      postalCode: validatedData.postalCode,
-      birthDate: validatedData.birthDate
-        ? new Date(validatedData.birthDate)
-        : undefined,
+      zipCode: validatedData.zipCode,
+      notes: validatedData.notes,
       coworkerId: coworker.id,
     };
 
@@ -227,14 +219,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const validatedData = UpdateClientSchema.parse(req.body);
 
-    const updateData = {
-      ...validatedData,
-      birthDate: validatedData.birthDate
-        ? new Date(validatedData.birthDate)
-        : undefined,
-    };
-
-    const client = await clientService.updateClient(id, updateData);
+    const client = await clientService.updateClient(id, validatedData);
 
     res.json({
       success: true,
