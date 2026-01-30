@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
 
 interface CredentialResponse {
   credential?: string;
@@ -38,16 +38,17 @@ const SocialButton = ({
   onClick,
   isLoading,
 }: {
-  provider: 'google' | 'instagram' | 'linkedin';
+  provider: "google" | "instagram" | "linkedin";
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
   isLoading: boolean;
 }) => {
   const colors = {
-    google: 'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
-    instagram: 'from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600',
-    linkedin: 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800',
+    google: "from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
+    instagram:
+      "from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600",
+    linkedin: "from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800",
   };
 
   return (
@@ -66,7 +67,7 @@ const SocialButton = ({
     >
       {/* Animated background */}
       <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
-      
+
       {/* Ripple effect */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute inset-0 animate-pulse bg-white/5" />
@@ -90,30 +91,33 @@ const SocialButton = ({
   );
 };
 
-export default function SocialLoginButtons({ onSuccess, className = '' }: SocialLoginButtonsProps) {
+export default function SocialLoginButtons({ onSuccess, className = "" }: SocialLoginButtonsProps) {
   const router = useRouter();
   const { loginWithGoogle, setError } = useAuthStore();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-  const isProd = process.env.NEXT_PUBLIC_APP_ENV === 'production';
+  const isProd = process.env.NEXT_PUBLIC_APP_ENV === "production";
 
-  const handleGoogleCredentialResponse = useCallback(async (response: CredentialResponse) => {
-    setIsLoading('google');
-    try {
-      if (!response.credential) {
-        throw new Error('No credential received from Google');
+  const handleGoogleCredentialResponse = useCallback(
+    async (response: CredentialResponse) => {
+      setIsLoading("google");
+      try {
+        if (!response.credential) {
+          throw new Error("No credential received from Google");
+        }
+        await loginWithGoogle(response.credential);
+        onSuccess?.();
+        router.push("/dashboard");
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "Google sign-in failed");
+        setIsLoading(null);
       }
-      await loginWithGoogle(response.credential);
-      onSuccess?.();
-      router.push('/dashboard');
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Google sign-in failed');
-      setIsLoading(null);
-    }
-  }, [loginWithGoogle, router, setError, onSuccess]);
+    },
+    [loginWithGoogle, router, setError, onSuccess],
+  );
 
   const handleInstagramLogin = () => {
-    setIsLoading('instagram');
+    setIsLoading("instagram");
     // Instagram OAuth flow - reindirizza a endpoint API
     const redirectUri = `${window.location.origin}/api/auth/instagram/callback`;
     const instagramAuthUrl = `https://www.instagram.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user_profile&response_type=code`;
@@ -121,7 +125,7 @@ export default function SocialLoginButtons({ onSuccess, className = '' }: Social
   };
 
   const handleLinkedInLogin = () => {
-    setIsLoading('linkedin');
+    setIsLoading("linkedin");
     // LinkedIn OAuth flow - reindirizza a endpoint API
     const redirectUri = `${window.location.origin}/api/auth/linkedin/callback`;
     const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=r_liteprofile%20r_emailaddress`;
@@ -132,15 +136,15 @@ export default function SocialLoginButtons({ onSuccess, className = '' }: Social
     if (!isProd) return;
 
     // Load Google Sign-In script
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
     script.defer = true;
     document.body.appendChild(script);
 
     script.onload = () => {
       if (!clientId) {
-        setError('Google client ID non configurato');
+        setError("Google client ID non configurato");
         return;
       }
       if (window.google?.accounts?.id) {
@@ -173,10 +177,10 @@ export default function SocialLoginButtons({ onSuccess, className = '' }: Social
           icon="🔵"
           label="Accedi con Google"
           onClick={() => {
-            const googleButton = document.querySelector('[data-callback]') as HTMLElement;
+            const googleButton = document.querySelector("[data-callback]") as HTMLElement;
             googleButton?.click();
           }}
-          isLoading={isLoading === 'google'}
+          isLoading={isLoading === "google"}
         />
 
         {/* Instagram */}
@@ -185,7 +189,7 @@ export default function SocialLoginButtons({ onSuccess, className = '' }: Social
           icon="📷"
           label="Accedi con Instagram"
           onClick={handleInstagramLogin}
-          isLoading={isLoading === 'instagram'}
+          isLoading={isLoading === "instagram"}
         />
 
         {/* LinkedIn */}
@@ -194,7 +198,7 @@ export default function SocialLoginButtons({ onSuccess, className = '' }: Social
           icon="💼"
           label="Accedi con LinkedIn"
           onClick={handleLinkedInLogin}
-          isLoading={isLoading === 'linkedin'}
+          isLoading={isLoading === "linkedin"}
         />
       </div>
 

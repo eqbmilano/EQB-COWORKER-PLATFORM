@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type React from 'react';
+import type React from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 export interface TableColumn<T> {
   key: keyof T;
@@ -34,7 +34,7 @@ export function TableWrapper<T extends Record<string, unknown>>({
   keyExtractor,
   actions,
   isLoading = false,
-  emptyMessage = 'Nessun dato trovato',
+  emptyMessage = "Nessun dato trovato",
   hoverable = true,
 }: TableWrapperProps<T>) {
   if (isLoading) {
@@ -69,20 +69,13 @@ export function TableWrapper<T extends Record<string, unknown>>({
         </TableHeader>
         <TableBody>
           {data.map((row) => (
-            <TableRow
-              key={keyExtractor(row)}
-              className={hoverable ? 'hover:bg-gray-50' : ''}
-            >
+            <TableRow key={keyExtractor(row)} className={hoverable ? "hover:bg-gray-50" : ""}>
               {columns.map((col) => (
                 <TableCell key={String(col.key)}>
-                  {col.render
-                    ? col.render(row[col.key], row)
-                    : String(row[col.key] || '-')}
+                  {col.render ? col.render(row[col.key], row) : String(row[col.key] || "-")}
                 </TableCell>
               ))}
-              {actions && (
-                <TableCell className="text-right">{actions(row)}</TableCell>
-              )}
+              {actions && <TableCell className="text-right">{actions(row)}</TableCell>}
             </TableRow>
           ))}
         </TableBody>

@@ -1,29 +1,29 @@
 /**
  * Signup Page - Custom JWT + Google OAuth
  */
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { useAuthStore } from '@/store/authStore';
-import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
-import { User, Mail, Lock, Check, AlertCircle } from 'lucide-react';
+import { AlertCircle, Check, Lock, Mail, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 export default function SignupPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [showPasswords, setShowPasswords] = useState(false);
   const { signup, isLoading, error, clearError } = useAuthStore();
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,35 +36,31 @@ export default function SignupPage() {
 
     // Validate
     if (formData.password !== formData.confirmPassword) {
-      useAuthStore.setState({ error: 'Le password non corrispondono' });
+      useAuthStore.setState({ error: "Le password non corrispondono" });
       return;
     }
 
     if (formData.password.length < 8) {
-      useAuthStore.setState({ error: 'La password deve contenere almeno 8 caratteri' });
+      useAuthStore.setState({ error: "La password deve contenere almeno 8 caratteri" });
       return;
     }
 
     if (!formData.firstName || !formData.lastName || !formData.email) {
-      useAuthStore.setState({ error: 'Compila tutti i campi' });
+      useAuthStore.setState({ error: "Compila tutti i campi" });
       return;
     }
 
     try {
-      await signup(
-        formData.email,
-        formData.password,
-        formData.firstName,
-        formData.lastName
-      );
-      setSuccessMessage('Registrazione riuscita! Reindirizzamento...');
-      setTimeout(() => router.push('/dashboard'), 500);
+      await signup(formData.email, formData.password, formData.firstName, formData.lastName);
+      setSuccessMessage("Registrazione riuscita! Reindirizzamento...");
+      setTimeout(() => router.push("/dashboard"), 500);
     } catch (err) {
-      console.error('Signup error:', err);
+      console.error("Signup error:", err);
     }
   };
 
-  const passwordStrength = formData.password.length >= 8 ? 'strong' : formData.password.length >= 4 ? 'medium' : 'weak';
+  const passwordStrength =
+    formData.password.length >= 8 ? "strong" : formData.password.length >= 4 ? "medium" : "weak";
 
   return (
     <Card className="p-8 sm:p-10 max-w-md mx-auto border border-white/10 bg-white/10 backdrop-blur-2xl shadow-[0_25px_80px_rgba(0,0,0,0.35)]">
@@ -164,7 +160,7 @@ export default function SignupPage() {
             <Lock className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" />
             <input
               id="password"
-              type={showPasswords ? 'text' : 'password'}
+              type={showPasswords ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -177,18 +173,18 @@ export default function SignupPage() {
               onClick={() => setShowPasswords(!showPasswords)}
               className="absolute right-3.5 top-3.5 text-slate-400 hover:text-white transition"
             >
-              {showPasswords ? '👁️' : '👁️‍🗨️'}
+              {showPasswords ? "👁️" : "👁️‍🗨️"}
             </button>
           </div>
           {/* Password strength indicator */}
           <div className="mt-2 h-1 bg-white/10 rounded-full overflow-hidden">
             <div
               className={`h-full transition-all duration-300 ${
-                passwordStrength === 'strong'
-                  ? 'w-full bg-green-500'
-                  : passwordStrength === 'medium'
-                  ? 'w-2/3 bg-yellow-500'
-                  : 'w-1/3 bg-red-500'
+                passwordStrength === "strong"
+                  ? "w-full bg-green-500"
+                  : passwordStrength === "medium"
+                    ? "w-2/3 bg-yellow-500"
+                    : "w-1/3 bg-red-500"
               }`}
             />
           </div>
@@ -203,7 +199,7 @@ export default function SignupPage() {
             <Lock className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" />
             <input
               id="confirmPassword"
-              type={showPasswords ? 'text' : 'password'}
+              type={showPasswords ? "text" : "password"}
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -226,7 +222,7 @@ export default function SignupPage() {
               Registrazione in corso...
             </span>
           ) : (
-            'Registrati'
+            "Registrati"
           )}
         </Button>
       </form>
@@ -247,8 +243,11 @@ export default function SignupPage() {
       {/* Footer */}
       <div className="mt-8 pt-6 border-t border-white/10">
         <p className="text-center text-slate-300 text-sm">
-          Hai già un account?{' '}
-          <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-medium transition">
+          Hai già un account?{" "}
+          <Link
+            href="/login"
+            className="text-indigo-400 hover:text-indigo-300 font-medium transition"
+          >
             Accedi
           </Link>
         </p>

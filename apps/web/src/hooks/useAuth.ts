@@ -1,11 +1,11 @@
 /**
  * useAuth Hook - Extended with role checking
  */
-'use client';
+"use client";
 
-import { useAuthStore, type User } from '@/store/authStore';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { type User, useAuthStore } from "@/store/authStore";
 
 interface UseAuthReturn {
   user: User | null;
@@ -21,16 +21,16 @@ export function useAuth(): UseAuthReturn {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [isAuthenticated, router]);
 
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;
-    return roles.includes(user.role || 'COWORKER');
+    return roles.includes(user.role || "COWORKER");
   };
 
-  const isAdmin = () => hasRole(['ADMIN']);
+  const isAdmin = () => hasRole(["ADMIN"]);
 
   const canAccess = (requiredRoles: string[]): boolean => {
     return hasRole(requiredRoles);

@@ -1,10 +1,10 @@
 /**
  * Hook per gestire clienti via API
  */
-'use client';
+"use client";
 
-import { useState, useCallback, useMemo } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useCallback, useMemo, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
 
 export interface Client {
   id: string;
@@ -16,7 +16,7 @@ export interface Client {
   city?: string;
   zipCode?: string;
   notes?: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   createdAt: string;
   updatedAt: string;
 }
@@ -52,22 +52,25 @@ export function useClients(): UseClientsReturn {
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuthStore();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const getErrorMessage = (data: any, fallback: string) => {
     if (!data) return fallback;
     return data.message || data.error || data.error?.message || fallback;
   };
 
-  const headers = useMemo(() => ({
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  }), [token]);
+  const headers = useMemo(
+    () => ({
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    }),
+    [token],
+  );
 
   const fetchClients = useCallback(
     async (search?: string) => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return;
       }
 
@@ -76,35 +79,34 @@ export function useClients(): UseClientsReturn {
 
       try {
         const queryParams = new URLSearchParams();
-        if (search) queryParams.append('search', search);
+        if (search) queryParams.append("search", search);
 
-        const response = await fetch(
-          `${apiUrl}/api/clients?${queryParams.toString()}`,
-          { headers }
-        );
+        const response = await fetch(`${apiUrl}/api/clients?${queryParams.toString()}`, {
+          headers,
+        });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile caricare i clienti'));
+          throw new Error(getErrorMessage(data, "Impossibile caricare i clienti"));
         }
 
         const data = await response.json();
-        const clientsArray = Array.isArray(data.data) ? data.data : (data.data?.clients || []);
+        const clientsArray = Array.isArray(data.data) ? data.data : data.data?.clients || [];
         setClients(clientsArray);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, headers]
+    [token, apiUrl, headers],
   );
 
   const getClient = useCallback(
     async (id: string): Promise<Client | null> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return null;
       }
 
@@ -113,24 +115,24 @@ export function useClients(): UseClientsReturn {
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile caricare il cliente'));
+          throw new Error(getErrorMessage(data, "Impossibile caricare il cliente"));
         }
 
         const data = await response.json();
         return data.data?.client || data.data || null;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return null;
       }
     },
-    [token, apiUrl, headers]
+    [token, apiUrl, headers],
   );
 
   const createClient = useCallback(
     async (input: CreateClientInput): Promise<Client | null> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return null;
       }
 
@@ -139,14 +141,14 @@ export function useClients(): UseClientsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/clients`, {
-          method: 'POST',
+          method: "POST",
           headers,
           body: JSON.stringify(input),
         });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile creare il cliente'));
+          throw new Error(getErrorMessage(data, "Impossibile creare il cliente"));
         }
 
         const data = await response.json();
@@ -158,20 +160,20 @@ export function useClients(): UseClientsReturn {
 
         return newClient || null;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return null;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, clients, headers]
+    [token, apiUrl, clients, headers],
   );
 
   const updateClient = useCallback(
     async (id: string, input: UpdateClientInput): Promise<Client | null> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return null;
       }
 
@@ -180,14 +182,14 @@ export function useClients(): UseClientsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/clients/${id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers,
           body: JSON.stringify(input),
         });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile aggiornare il cliente'));
+          throw new Error(getErrorMessage(data, "Impossibile aggiornare il cliente"));
         }
 
         const data = await response.json();
@@ -199,20 +201,20 @@ export function useClients(): UseClientsReturn {
 
         return updated || null;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return null;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, clients, headers]
+    [token, apiUrl, clients, headers],
   );
 
   const deleteClient = useCallback(
     async (id: string): Promise<boolean> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return false;
       }
 
@@ -221,26 +223,26 @@ export function useClients(): UseClientsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/clients/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers,
         });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile eliminare il cliente'));
+          throw new Error(getErrorMessage(data, "Impossibile eliminare il cliente"));
         }
 
         setClients(clients.filter((c) => c.id !== id));
         return true;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return false;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, clients, headers]
+    [token, apiUrl, clients, headers],
   );
 
   const clearError = useCallback(() => setError(null), []);

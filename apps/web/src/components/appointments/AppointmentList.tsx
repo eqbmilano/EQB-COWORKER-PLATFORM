@@ -1,13 +1,13 @@
 /**
  * Appointment List Component
  */
-'use client';
+"use client";
 
-import type React from 'react';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import type { Appointment } from '@eqb/shared-types';
+import type { Appointment } from "@eqb/shared-types";
+import type React from "react";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 interface AppointmentListProps {
   appointments: Appointment[];
@@ -24,23 +24,23 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
 }) => {
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'SCHEDULED':
-        return 'warning';
-      case 'COMPLETED':
-        return 'success';
-      case 'CANCELLED':
-        return 'danger';
+      case "SCHEDULED":
+        return "warning";
+      case "COMPLETED":
+        return "success";
+      case "CANCELLED":
+        return "danger";
       default:
-        return 'default';
+        return "default";
     }
   };
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      SCHEDULED: 'Programmato',
-      COMPLETED: 'Completato',
-      CANCELLED: 'Cancellato',
-      MODIFIED: 'Modificato',
+      SCHEDULED: "Programmato",
+      COMPLETED: "Completato",
+      CANCELLED: "Cancellato",
+      MODIFIED: "Modificato",
     };
     return labels[status] || status;
   };
@@ -68,7 +68,7 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
       <h2 className="text-2xl font-bold mb-4">📋 I tuoi Appuntamenti</h2>
 
       <div className="space-y-3">
-        {appointments.map(appointment => (
+        {appointments.map((appointment) => (
           <div
             key={appointment.id}
             className="flex justify-between items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
@@ -82,16 +82,15 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
               </div>
               <div className="text-sm text-gray-600 space-y-1">
                 <p>
-                  📅 {new Date(appointment.startTime).toLocaleDateString('it-IT')} |{' '}
-                  🕐{' '}
-                  {new Date(appointment.startTime).toLocaleTimeString('it-IT', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}{' '}
-                  -{' '}
-                  {new Date(appointment.endTime).toLocaleTimeString('it-IT', {
-                    hour: '2-digit',
-                    minute: '2-digit',
+                  📅 {new Date(appointment.startTime).toLocaleDateString("it-IT")} | 🕐{" "}
+                  {new Date(appointment.startTime).toLocaleTimeString("it-IT", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  -{" "}
+                  {new Date(appointment.endTime).toLocaleTimeString("it-IT", {
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
                 <p>⏱️ Durata: {appointment.durationHours} ore</p>
@@ -101,23 +100,15 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
             </div>
 
             <div className="flex gap-2">
-              {appointment.status === 'SCHEDULED' && (
+              {appointment.status === "SCHEDULED" && (
                 <>
                   {onEdit && (
-                    <Button
-                      onClick={() => onEdit(appointment)}
-                      variant="secondary"
-                      size="sm"
-                    >
+                    <Button onClick={() => onEdit(appointment)} variant="secondary" size="sm">
                       Modifica
                     </Button>
                   )}
                   {onCancel && (
-                    <Button
-                      onClick={() => onCancel(appointment.id)}
-                      variant="danger"
-                      size="sm"
-                    >
+                    <Button onClick={() => onCancel(appointment.id)} variant="danger" size="sm">
                       Cancella
                     </Button>
                   )}

@@ -1,34 +1,35 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAdmin, type CreateUserData } from '@/hooks/useAdmin';
-import { useAuth } from '@/hooks/useAuth';
-import { Card } from '@/components/ui/Card';
-import { 
-  Users, 
-  Plus, 
-  Shield, 
-  UserCheck, 
-  UserX, 
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
   Crown,
   Mail,
-  Calendar,
-  AlertCircle,
-  CheckCircle,
+  Plus,
+  Shield,
+  UserCheck,
+  Users,
+  UserX,
   XCircle,
-} from 'lucide-react';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { type CreateUserData, useAdmin } from "@/hooks/useAdmin";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AdminPage() {
-  const { users, loading, error, fetchUsers, createUser, updateUserRole, updateUserStatus } = useAdmin();
+  const { users, loading, error, fetchUsers, createUser, updateUserRole, updateUserStatus } =
+    useAdmin();
   const { isAdmin } = useAuth();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [includeInactive, setIncludeInactive] = useState(false);
   const [formData, setFormData] = useState<CreateUserData>({
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    role: 'COWORKER',
+    email: "",
+    firstName: "",
+    lastName: "",
+    password: "",
+    role: "COWORKER",
   });
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -45,7 +46,9 @@ export default function AdminPage() {
         <Card variant="solid" className="max-w-md p-8 text-center">
           <Shield className="mx-auto mb-4 h-16 w-16 text-red-400" />
           <h2 className="mb-2 text-2xl font-semibold text-white">Accesso Negato</h2>
-          <p className="text-slate-300">Solo gli amministratori possono accedere a questa pagina.</p>
+          <p className="text-slate-300">
+            Solo gli amministratori possono accedere a questa pagina.
+          </p>
         </Card>
       </div>
     );
@@ -60,14 +63,14 @@ export default function AdminPage() {
       await createUser(formData);
       setShowCreateForm(false);
       setFormData({
-        email: '',
-        firstName: '',
-        lastName: '',
-        password: '',
-        role: 'COWORKER',
+        email: "",
+        firstName: "",
+        lastName: "",
+        password: "",
+        role: "COWORKER",
       });
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Errore durante la creazione');
+      setFormError(err instanceof Error ? err.message : "Errore durante la creazione");
     } finally {
       setFormLoading(false);
     }
@@ -75,24 +78,24 @@ export default function AdminPage() {
 
   const handlePromote = async (userId: string, currentRole: string) => {
     try {
-      const newRole = currentRole === 'ADMIN' ? 'COWORKER' : 'ADMIN';
+      const newRole = currentRole === "ADMIN" ? "COWORKER" : "ADMIN";
       await updateUserRole(userId, newRole);
     } catch (err) {
-      console.error('Error updating role:', err);
+      console.error("Error updating role:", err);
     }
   };
 
   const handleToggleStatus = async (userId: string, currentStatus: string) => {
     try {
-      const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+      const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
       await updateUserStatus(userId, newStatus);
     } catch (err) {
-      console.error('Error updating status:', err);
+      console.error("Error updating status:", err);
     }
   };
 
   const getRoleBadge = (role: string) => {
-    if (role === 'ADMIN') {
+    if (role === "ADMIN") {
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/20 px-3 py-1 text-sm font-medium text-indigo-300">
           <Crown className="h-3 w-3" />
@@ -110,21 +113,21 @@ export default function AdminPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'ACTIVE':
+      case "ACTIVE":
         return (
           <span className="inline-flex items-center gap-1 text-sm text-green-400">
             <CheckCircle className="h-4 w-4" />
             Attivo
           </span>
         );
-      case 'INACTIVE':
+      case "INACTIVE":
         return (
           <span className="inline-flex items-center gap-1 text-sm text-slate-500">
             <XCircle className="h-4 w-4" />
             Inattivo
           </span>
         );
-      case 'SUSPENDED':
+      case "SUSPENDED":
         return (
           <span className="inline-flex items-center gap-1 text-sm text-red-400">
             <AlertCircle className="h-4 w-4" />
@@ -136,9 +139,9 @@ export default function AdminPage() {
     }
   };
 
-  const activeUsers = users.filter(u => u.status === 'ACTIVE');
-  const adminCount = activeUsers.filter(u => u.role === 'ADMIN').length;
-  const coworkerCount = activeUsers.filter(u => u.role === 'COWORKER').length;
+  const activeUsers = users.filter((u) => u.status === "ACTIVE");
+  const adminCount = activeUsers.filter((u) => u.role === "ADMIN").length;
+  const coworkerCount = activeUsers.filter((u) => u.role === "COWORKER").length;
 
   return (
     <div className="space-y-6">
@@ -195,7 +198,7 @@ export default function AdminPage() {
               Mostra inattivi
             </label>
           </div>
-          
+
           <button
             onClick={() => setShowCreateForm(true)}
             className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
@@ -242,48 +245,59 @@ export default function AdminPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label htmlFor="firstName" className="mb-1 block text-sm font-medium text-slate-300">Nome</label>
+                <label
+                  htmlFor="firstName"
+                  className="mb-1 block text-sm font-medium text-slate-300"
+                >
+                  Nome
+                </label>
                 <input
                   id="firstName"
                   type="text"
                   value={formData.firstName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, firstName: e.target.value }))}
                   required
                   className="w-full rounded-lg border border-slate-600 bg-slate-800/50 px-4 py-2 text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="lastName" className="mb-1 block text-sm font-medium text-slate-300">Cognome</label>
+                <label htmlFor="lastName" className="mb-1 block text-sm font-medium text-slate-300">
+                  Cognome
+                </label>
                 <input
                   id="lastName"
                   type="text"
                   value={formData.lastName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, lastName: e.target.value }))}
                   required
                   className="w-full rounded-lg border border-slate-600 bg-slate-800/50 px-4 py-2 text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-300">Email</label>
+                <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-300">
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                   required
                   className="w-full rounded-lg border border-slate-600 bg-slate-800/50 px-4 py-2 text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-300">Password</label>
+                <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-300">
+                  Password
+                </label>
                 <input
                   id="password"
                   type="password"
                   value={formData.password}
-                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
                   required
                   minLength={8}
                   className="w-full rounded-lg border border-slate-600 bg-slate-800/50 px-4 py-2 text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -291,11 +305,18 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-300">Ruolo</label>
+                <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-300">
+                  Ruolo
+                </label>
                 <select
                   id="role"
                   value={formData.role}
-                  onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as 'ADMIN' | 'COWORKER' }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      role: e.target.value as "ADMIN" | "COWORKER",
+                    }))
+                  }
                   className="w-full rounded-lg border border-slate-600 bg-slate-800/50 px-4 py-2 text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="COWORKER">Coworker</option>
@@ -320,7 +341,7 @@ export default function AdminPage() {
                 disabled={formLoading}
                 className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
               >
-                {formLoading ? 'Creazione...' : 'Crea Utente'}
+                {formLoading ? "Creazione..." : "Crea Utente"}
               </button>
             </div>
           </form>
@@ -359,7 +380,7 @@ export default function AdminPage() {
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        {new Date(user.createdAt).toLocaleDateString('it-IT')}
+                        {new Date(user.createdAt).toLocaleDateString("it-IT")}
                       </span>
                     </div>
 
@@ -376,18 +397,18 @@ export default function AdminPage() {
                       className="inline-flex items-center gap-1 rounded-lg border border-indigo-600 px-3 py-1.5 text-sm font-medium text-indigo-400 transition-colors hover:bg-indigo-600 hover:text-white"
                     >
                       <Shield className="h-4 w-4" />
-                      {user.role === 'ADMIN' ? 'Rimuovi Admin' : 'Promuovi'}
+                      {user.role === "ADMIN" ? "Rimuovi Admin" : "Promuovi"}
                     </button>
 
                     <button
                       onClick={() => handleToggleStatus(user.id, user.status)}
                       className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-                        user.status === 'ACTIVE'
-                          ? 'border-red-600 text-red-400 hover:bg-red-600 hover:text-white'
-                          : 'border-green-600 text-green-400 hover:bg-green-600 hover:text-white'
+                        user.status === "ACTIVE"
+                          ? "border-red-600 text-red-400 hover:bg-red-600 hover:text-white"
+                          : "border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
                       }`}
                     >
-                      {user.status === 'ACTIVE' ? (
+                      {user.status === "ACTIVE" ? (
                         <>
                           <UserX className="h-4 w-4" />
                           Disattiva

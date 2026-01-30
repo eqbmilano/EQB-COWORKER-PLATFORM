@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import Link from 'next/link';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
-import { useAuthStore } from '@/store/authStore';
+import { endOfMonth, format, startOfMonth } from "date-fns";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Alert } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface DashboardStats {
   todayAppointments: number;
@@ -31,7 +31,7 @@ export default function OperatorDashboard() {
   const [upcomingAppointments, setUpcomingAppointments] = useState<UpcomingAppointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
   const { token } = useAuthStore();
 
   useEffect(() => {
@@ -43,8 +43,8 @@ export default function OperatorDashboard() {
       setLoading(true);
 
       // Fetch monthly hours from backlog
-      const startDate = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-      const endDate = format(endOfMonth(new Date()), 'yyyy-MM-dd');
+      const startDate = format(startOfMonth(new Date()), "yyyy-MM-dd");
+      const endDate = format(endOfMonth(new Date()), "yyyy-MM-dd");
 
       const [backlogResponse, appointmentsResponse, clientsResponse] = await Promise.all([
         fetch(`${apiUrl}/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`, {
@@ -63,7 +63,7 @@ export default function OperatorDashboard() {
         const backlogData = await backlogResponse.json();
         monthlyHours = backlogData.data.totalHours;
       } else {
-        setError('Impossibile caricare le statistiche backlog');
+        setError("Impossibile caricare le statistiche backlog");
       }
 
       let appointments: UpcomingAppointment[] = [];
@@ -71,7 +71,7 @@ export default function OperatorDashboard() {
         const appointmentsData = await appointmentsResponse.json();
         appointments = appointmentsData.data.appointments || [];
       } else {
-        setError('Impossibile caricare gli appuntamenti');
+        setError("Impossibile caricare gli appuntamenti");
       }
 
       let totalClients = 0;
@@ -79,7 +79,7 @@ export default function OperatorDashboard() {
         const clientsData = await clientsResponse.json();
         totalClients = clientsData.pagination?.total || 0;
       } else {
-        setError('Impossibile caricare i clienti');
+        setError("Impossibile caricare i clienti");
       }
 
       // Calculate today and week appointments
@@ -107,7 +107,7 @@ export default function OperatorDashboard() {
 
       setUpcomingAppointments(appointments.slice(0, 5));
     } catch (error) {
-      setError('Errore nel caricamento della dashboard');
+      setError("Errore nel caricamento della dashboard");
     } finally {
       setLoading(false);
     }
@@ -130,9 +130,7 @@ export default function OperatorDashboard() {
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Benvenuto! Ecco il riepilogo della tua attività
-        </p>
+        <p className="mt-2 text-gray-600">Benvenuto! Ecco il riepilogo della tua attività</p>
       </div>
 
       {/* Stats Grid */}
@@ -141,18 +139,14 @@ export default function OperatorDashboard() {
           <Card>
             <div className="p-6">
               <p className="text-sm text-gray-600">Appuntamenti Oggi</p>
-              <p className="text-3xl font-bold text-blue-600 mt-2">
-                {stats.todayAppointments}
-              </p>
+              <p className="text-3xl font-bold text-blue-600 mt-2">{stats.todayAppointments}</p>
             </div>
           </Card>
 
           <Card>
             <div className="p-6">
               <p className="text-sm text-gray-600">Prossimi 7 Giorni</p>
-              <p className="text-3xl font-bold text-purple-600 mt-2">
-                {stats.weekAppointments}
-              </p>
+              <p className="text-3xl font-bold text-purple-600 mt-2">{stats.weekAppointments}</p>
             </div>
           </Card>
 
@@ -165,16 +159,19 @@ export default function OperatorDashboard() {
               <div className="mt-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   {(() => {
-                    const progressValue = Math.min(Math.round((stats.monthlyHours / 1500) * 100), 100);
+                    const progressValue = Math.min(
+                      Math.round((stats.monthlyHours / 1500) * 100),
+                      100,
+                    );
                     const progressWidth = Math.min((stats.monthlyHours / 1500) * 100, 100);
                     return (
                       <div
                         className={`h-2 rounded-full ${
                           stats.monthlyHours > 1500
-                            ? 'bg-red-600'
+                            ? "bg-red-600"
                             : stats.monthlyHours > 1200
-                            ? 'bg-yellow-500'
-                            : 'bg-green-600'
+                              ? "bg-yellow-500"
+                              : "bg-green-600"
                         }`}
                         role="progressbar"
                         aria-label={`Ore mese corrente: ${stats.monthlyHours.toFixed(1)}h`}
@@ -196,9 +193,7 @@ export default function OperatorDashboard() {
           <Card>
             <div className="p-6">
               <p className="text-sm text-gray-600">Clienti Totali</p>
-              <p className="text-3xl font-bold text-orange-600 mt-2">
-                {stats.totalClients}
-              </p>
+              <p className="text-3xl font-bold text-orange-600 mt-2">{stats.totalClients}</p>
             </div>
           </Card>
         </div>
@@ -218,9 +213,7 @@ export default function OperatorDashboard() {
             </div>
 
             {upcomingAppointments.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
-                Nessun appuntamento in programma
-              </p>
+              <p className="text-gray-500 text-center py-8">Nessun appuntamento in programma</p>
             ) : (
               <div className="space-y-3">
                 {upcomingAppointments.map((appointment) => (
@@ -235,7 +228,7 @@ export default function OperatorDashboard() {
                         </p>
                         <p className="text-sm text-gray-600">{appointment.type}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {format(new Date(appointment.startTime), 'dd/MM/yyyy HH:mm')} •{' '}
+                          {format(new Date(appointment.startTime), "dd/MM/yyyy HH:mm")} •{" "}
                           {appointment.duration}h
                         </p>
                       </div>

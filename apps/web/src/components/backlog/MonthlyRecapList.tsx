@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface MonthlyRecap {
   month: string;
@@ -16,7 +16,7 @@ interface MonthlyRecap {
 export default function MonthlyRecapList() {
   const [recaps, setRecaps] = useState<MonthlyRecap[]>([]);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
   const { token } = useAuthStore();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function MonthlyRecapList() {
         setRecaps(data.data);
       }
     } catch (error) {
-      console.error('Error fetching monthly recaps:', error);
+      console.error("Error fetching monthly recaps:", error);
     } finally {
       setLoading(false);
     }
@@ -55,9 +55,7 @@ export default function MonthlyRecapList() {
   if (recaps.length === 0) {
     return (
       <Card>
-        <div className="p-6 text-center text-gray-500">
-          Nessun riepilogo mensile disponibile
-        </div>
+        <div className="p-6 text-center text-gray-500">Nessun riepilogo mensile disponibile</div>
       </Card>
     );
   }
@@ -81,10 +79,10 @@ export default function MonthlyRecapList() {
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     recap.capacityUsed > 100
-                      ? 'bg-red-100 text-red-800'
+                      ? "bg-red-100 text-red-800"
                       : recap.capacityUsed > 80
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-green-100 text-green-800'
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-green-100 text-green-800"
                   }`}
                 >
                   {recap.capacityUsed.toFixed(1)}%
@@ -94,15 +92,11 @@ export default function MonthlyRecapList() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-xs text-gray-600">Ore Totali</p>
-                  <p className="text-lg font-bold text-blue-600">
-                    {recap.totalHours.toFixed(1)}h
-                  </p>
+                  <p className="text-lg font-bold text-blue-600">{recap.totalHours.toFixed(1)}h</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-600">Appuntamenti</p>
-                  <p className="text-lg font-bold text-green-600">
-                    {recap.totalAppointments}
-                  </p>
+                  <p className="text-lg font-bold text-green-600">{recap.totalAppointments}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-600">Media Giornaliera</p>
@@ -121,10 +115,10 @@ export default function MonthlyRecapList() {
                       <div
                         className={`h-2 rounded-full ${
                           recap.capacityUsed > 100
-                            ? 'bg-red-600'
+                            ? "bg-red-600"
                             : recap.capacityUsed > 80
-                            ? 'bg-yellow-500'
-                            : 'bg-green-600'
+                              ? "bg-yellow-500"
+                              : "bg-green-600"
                         }`}
                         role="progressbar"
                         aria-label={`Capacit\u00e0: ${recap.capacityUsed.toFixed(0)}%`}

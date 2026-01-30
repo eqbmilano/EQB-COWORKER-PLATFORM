@@ -1,32 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { useAuthStore } from '@/store/authStore';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Alert } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 export default function NewUserForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    role: 'OPERATOR' as 'ADMIN' | 'OPERATOR',
-    specialization: '',
-    hourlyRate: '25',
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    role: "OPERATOR" as "ADMIN" | "OPERATOR",
+    specialization: "",
+    hourlyRate: "25",
   });
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
   const { token } = useAuthStore();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -43,9 +41,9 @@ export default function NewUserForm() {
       };
 
       const response = await fetch(`${apiUrl}/api/admin/users`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(payload),
@@ -53,12 +51,12 @@ export default function NewUserForm() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Errore nella creazione dell\'utente');
+        throw new Error(data.message || "Errore nella creazione dell'utente");
       }
 
-      router.push('/dashboard/admin/users');
+      router.push("/dashboard/admin/users");
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -169,15 +167,16 @@ export default function NewUserForm() {
         </div>
       </Card>
 
-      {formData.role === 'OPERATOR' && (
+      {formData.role === "OPERATOR" && (
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Informazioni Operatore
-            </h3>
+            <h3 className="text-lg font-semibold mb-4">Informazioni Operatore</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="specialization"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Specializzazione
                 </label>
                 <input
@@ -192,7 +191,10 @@ export default function NewUserForm() {
               </div>
 
               <div>
-                <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="hourlyRate"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Tariffa Oraria (€)
                 </label>
                 <input
@@ -212,16 +214,11 @@ export default function NewUserForm() {
       )}
 
       <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => router.back()}
-          disabled={loading}
-        >
+        <Button type="button" variant="secondary" onClick={() => router.back()} disabled={loading}>
           Annulla
         </Button>
         <Button type="submit" variant="primary" disabled={loading}>
-          {loading ? 'Creazione...' : 'Crea Utente'}
+          {loading ? "Creazione..." : "Crea Utente"}
         </Button>
       </div>
     </form>

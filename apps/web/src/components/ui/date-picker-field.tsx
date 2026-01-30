@@ -1,25 +1,15 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { cn } from '@/lib/utils';
-import type { Control, FieldValues, Path } from 'react-hook-form';
+import { format } from "date-fns";
+import { it } from "date-fns/locale";
+import { Calendar as CalendarIcon } from "lucide-react";
+import * as React from "react";
+import type { Control, FieldValues, Path } from "react-hook-form";
+import { Button } from "@/components/ui/Button";
+import { Calendar } from "@/components/ui/calendar";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface DatePickerFieldProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -41,7 +31,7 @@ export function DatePickerField<
   control,
   name,
   label,
-  placeholder = 'Seleziona una data',
+  placeholder = "Seleziona una data",
   disabled = false,
   minDate,
   maxDate,
@@ -60,13 +50,11 @@ export function DatePickerField<
                   variant="outline"
                   disabled={disabled}
                   className={cn(
-                    'w-full pl-3 text-left font-normal',
-                    !field.value && 'text-muted-foreground'
+                    "w-full pl-3 text-left font-normal",
+                    !field.value && "text-muted-foreground",
                   )}
                 >
-                  {field.value
-                    ? format(new Date(field.value), 'PPP', { locale: it })
-                    : placeholder}
+                  {field.value ? format(new Date(field.value), "PPP", { locale: it }) : placeholder}
                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </FormControl>

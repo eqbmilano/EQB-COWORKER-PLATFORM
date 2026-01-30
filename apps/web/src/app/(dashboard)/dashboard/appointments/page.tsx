@@ -1,26 +1,26 @@
 /**
  * Appointments List Component - MVP
  */
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useAppointments, type Appointment } from '@/hooks/useAppointments';
-import { useClients } from '@/hooks/useClients';
-import { format, parseISO } from 'date-fns';
-import { it } from 'date-fns/locale';
+import { format, parseISO } from "date-fns";
+import { it } from "date-fns/locale";
 import {
-  Calendar,
-  Clock,
-  MapPin,
-  Plus,
-  Trash2,
-  Edit,
   AlertCircle,
+  Calendar,
   ChevronLeft,
   ChevronRight,
+  Clock,
+  Edit,
+  MapPin,
+  Plus,
   Search,
-} from 'lucide-react';
+  Trash2,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { type Appointment, useAppointments } from "@/hooks/useAppointments";
+import { useClients } from "@/hooks/useClients";
 
 export default function AppointmentsListPage() {
   const { appointments, loading, error, fetchAppointments, deleteAppointment, clearError } =
@@ -45,7 +45,7 @@ export default function AppointmentsListPage() {
   }, [currentDate, fetchAppointments]);
 
   useEffect(() => {
-    if (searchParams?.get('new') === '1') {
+    if (searchParams?.get("new") === "1") {
       setShowForm(true);
     }
   }, [searchParams]);
@@ -65,7 +65,7 @@ export default function AppointmentsListPage() {
   }, [appointments, currentDate]);
 
   const handleDelete = async (id: string) => {
-    if (confirm('Sei sicuro di voler cancellare questo appuntamento?')) {
+    if (confirm("Sei sicuro di voler cancellare questo appuntamento?")) {
       await deleteAppointment(id);
     }
   };
@@ -109,10 +109,7 @@ export default function AppointmentsListPage() {
           <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-red-300 font-medium">{error}</p>
-            <button
-              onClick={clearError}
-              className="text-xs text-red-200 hover:text-red-100 mt-1"
-            >
+            <button onClick={clearError} className="text-xs text-red-200 hover:text-red-100 mt-1">
               Chiudi
             </button>
           </div>
@@ -145,7 +142,7 @@ export default function AppointmentsListPage() {
         <div className="flex flex-col items-center">
           <p className="text-sm text-slate-300">Data selezionata</p>
           <h2 className="text-2xl font-bold text-white">
-            {format(currentDate, 'EEEE, dd MMMM yyyy', { locale: it })}
+            {format(currentDate, "EEEE, dd MMMM yyyy", { locale: it })}
           </h2>
         </div>
 
@@ -221,7 +218,7 @@ function AppointmentCard({ appointment, onEdit, onDelete }: AppointmentCardProps
           <div className="flex items-center gap-2 text-slate-200">
             <Clock className="w-4 h-4 text-indigo-400" />
             <span className="font-medium">
-              {format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')}
+              {format(startTime, "HH:mm")} - {format(endTime, "HH:mm")}
             </span>
           </div>
 
@@ -229,7 +226,9 @@ function AppointmentCard({ appointment, onEdit, onDelete }: AppointmentCardProps
           <div className="flex items-center gap-4">
             <div>
               <p className="text-xs text-slate-400 uppercase tracking-wide">Cliente</p>
-              <p className="text-slate-50 font-medium">{appointment.clientName || appointment.clientId}</p>
+              <p className="text-slate-50 font-medium">
+                {appointment.clientName || appointment.clientId}
+              </p>
             </div>
             <div>
               <p className="text-xs text-slate-400 uppercase tracking-wide">Tipo</p>
@@ -283,24 +282,28 @@ interface AppointmentFormProps {
 }
 
 function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
-  const { createAppointment, loading: appointmentLoading, error: appointmentError } = useAppointments();
+  const {
+    createAppointment,
+    loading: appointmentLoading,
+    error: appointmentError,
+  } = useAppointments();
   const { clients, fetchClients, loading: clientsLoading, error: clientsError } = useClients();
   const [filteredClients, setFilteredClients] = useState<typeof clients>([]);
   const [showClientList, setShowClientList] = useState(false);
-  const [clientSearch, setClientSearch] = useState('');
-  
+  const [clientSearch, setClientSearch] = useState("");
+
   const [formData, setFormData] = useState({
-    clientId: '',
-    clientName: '',
-    startTime: '',
-    endTime: '',
-    type: 'Consulenza',
-    roomType: 'Treatment' as const,
-    roomNumber: '',
-    notes: '',
+    clientId: "",
+    clientName: "",
+    startTime: "",
+    endTime: "",
+    type: "Consulenza",
+    roomType: "Treatment" as const,
+    roomNumber: "",
+    notes: "",
   });
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Load clients on mount
@@ -317,34 +320,34 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
     const term = clientSearch.toLowerCase();
     setFilteredClients(
-      clients.filter((client) =>
-        client.name.toLowerCase().includes(term) ||
-        client.email?.toLowerCase().includes(term)
-      )
+      clients.filter(
+        (client) =>
+          client.name.toLowerCase().includes(term) || client.email?.toLowerCase().includes(term),
+      ),
     );
   }, [clientSearch, clients]);
 
-  const handleClientSelect = (client: typeof clients[0]) => {
+  const handleClientSelect = (client: (typeof clients)[0]) => {
     setFormData((prev) => ({
       ...prev,
       clientId: client.id,
       clientName: client.name,
     }));
     setShowClientList(false);
-    setClientSearch('');
+    setClientSearch("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!formData.clientId.trim()) {
-      setError('Seleziona un cliente');
+      setError("Seleziona un cliente");
       return;
     }
 
     if (!formData.startTime || !formData.endTime) {
-      setError('Inserisci data e ora inizio/fine');
+      setError("Inserisci data e ora inizio/fine");
       return;
     }
 
@@ -363,7 +366,7 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
       setLoading(false);
       onSuccess();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Errore nel salvataggio';
+      const message = err instanceof Error ? err.message : "Errore nel salvataggio";
       setError(message);
       setLoading(false);
     }
@@ -394,8 +397,8 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
                 onClick={() => {
                   setFormData((prev) => ({
                     ...prev,
-                    clientId: '',
-                    clientName: '',
+                    clientId: "",
+                    clientName: "",
                   }));
                   setShowClientList(true);
                 }}
@@ -444,7 +447,10 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Type */}
           <div>
-            <label htmlFor="appointmentType" className="block text-sm font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="appointmentType"
+              className="block text-sm font-medium text-slate-300 mb-1"
+            >
               Tipo Appuntamento
             </label>
             <select
@@ -530,7 +536,10 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
 
         {/* Notes */}
         <div>
-          <label htmlFor="appointmentNotes" className="block text-sm font-medium text-slate-300 mb-1">
+          <label
+            htmlFor="appointmentNotes"
+            className="block text-sm font-medium text-slate-300 mb-1"
+          >
             Note
           </label>
           <textarea
@@ -551,7 +560,7 @@ function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
             disabled={loading || appointmentLoading}
             className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-600 text-white rounded-lg transition font-medium"
           >
-            {loading || appointmentLoading ? 'Salvataggio...' : 'Salva Appuntamento'}
+            {loading || appointmentLoading ? "Salvataggio..." : "Salva Appuntamento"}
           </button>
           <button
             type="button"

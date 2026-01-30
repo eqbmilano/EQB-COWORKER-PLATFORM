@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { useAuthStore } from '@/store/authStore';
+import { useState } from "react";
+import { Alert } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface DocumentUploadProps {
   clientId: string;
@@ -17,35 +17,32 @@ interface DocumentType {
 }
 
 const DOCUMENT_TYPES: DocumentType[] = [
-  { value: 'identity_card', label: 'Carta d\'Identità' },
-  { value: 'tax_code', label: 'Codice Fiscale' },
-  { value: 'medical_certificate', label: 'Certificato Medico' },
-  { value: 'consent_form', label: 'Consenso Informato' },
-  { value: 'contract', label: 'Contratto' },
-  { value: 'invoice', label: 'Fattura' },
-  { value: 'other', label: 'Altro' },
+  { value: "identity_card", label: "Carta d'Identità" },
+  { value: "tax_code", label: "Codice Fiscale" },
+  { value: "medical_certificate", label: "Certificato Medico" },
+  { value: "consent_form", label: "Consenso Informato" },
+  { value: "contract", label: "Contratto" },
+  { value: "invoice", label: "Fattura" },
+  { value: "other", label: "Altro" },
 ];
 
-export default function DocumentUpload({
-  clientId,
-  onUploadSuccess,
-}: DocumentUploadProps) {
+export default function DocumentUpload({ clientId, onUploadSuccess }: DocumentUploadProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [documentType, setDocumentType] = useState('');
-  const [notes, setNotes] = useState('');
+  const [documentType, setDocumentType] = useState("");
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const { token } = useAuthStore();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      
+
       // Validate file size (max 10MB)
       if (selectedFile.size > 10 * 1024 * 1024) {
-        setError('Il file non può superare i 10MB');
+        setError("Il file non può superare i 10MB");
         return;
       }
 
@@ -58,12 +55,12 @@ export default function DocumentUpload({
     e.preventDefault();
 
     if (!file) {
-      setError('Seleziona un file da caricare');
+      setError("Seleziona un file da caricare");
       return;
     }
 
     if (!documentType) {
-      setError('Seleziona il tipo di documento');
+      setError("Seleziona il tipo di documento");
       return;
     }
 
@@ -73,14 +70,14 @@ export default function DocumentUpload({
 
     try {
       const formData = new FormData();
-      formData.append('document', file);
-      formData.append('documentType', documentType);
+      formData.append("document", file);
+      formData.append("documentType", documentType);
       if (notes) {
-        formData.append('notes', notes);
+        formData.append("notes", notes);
       }
 
       const response = await fetch(`${apiUrl}/api/clients/${clientId}/documents`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -89,20 +86,18 @@ export default function DocumentUpload({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Errore nel caricamento del documento');
+        throw new Error(data.message || "Errore nel caricamento del documento");
       }
 
       setSuccess(true);
       setFile(null);
-      setDocumentType('');
-      setNotes('');
+      setDocumentType("");
+      setNotes("");
 
       // Reset file input
-      const fileInput = document.getElementById(
-        'file-upload'
-      ) as HTMLInputElement;
+      const fileInput = document.getElementById("file-upload") as HTMLInputElement;
       if (fileInput) {
-        fileInput.value = '';
+        fileInput.value = "";
       }
 
       if (onUploadSuccess) {
@@ -111,7 +106,7 @@ export default function DocumentUpload({
 
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -124,9 +119,7 @@ export default function DocumentUpload({
         <h3 className="text-lg font-semibold mb-4">Carica Documento</h3>
 
         {error && <Alert type="error" message={error} />}
-        {success && (
-          <Alert type="success" message="Documento caricato con successo!" />
-        )}
+        {success && <Alert type="success" message="Documento caricato con successo!" />}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -167,8 +160,7 @@ export default function DocumentUpload({
             {file && (
               <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
                 <p className="text-sm text-gray-700">
-                  <span className="font-medium">File selezionato:</span>{' '}
-                  {file.name}
+                  <span className="font-medium">File selezionato:</span> {file.name}
                 </p>
                 <p className="text-xs text-gray-500">
                   Dimensione: {(file.size / 1024).toFixed(2)} KB
@@ -178,9 +170,7 @@ export default function DocumentUpload({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Note
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -192,7 +182,7 @@ export default function DocumentUpload({
 
           <div className="flex justify-end">
             <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? 'Caricamento...' : 'Carica Documento'}
+              {loading ? "Caricamento..." : "Carica Documento"}
             </Button>
           </div>
         </form>

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Alert } from '@/components/ui/Alert';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
-import { useAuthStore } from '@/store/authStore';
+import { endOfMonth, format, startOfMonth } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { Alert } from "@/components/ui/Alert";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface BacklogStatistics {
   totalHours: number;
@@ -26,11 +26,9 @@ export default function BacklogDashboard() {
   const [capacity, setCapacity] = useState<CapacityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState(
-    format(startOfMonth(new Date()), 'yyyy-MM-dd')
-  );
-  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'));
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
   const { token } = useAuthStore();
 
   const fetchBacklogData = useCallback(async () => {
@@ -42,14 +40,14 @@ export default function BacklogDashboard() {
         `${apiUrl}/api/backlog/statistics?startDate=${startDate}&endDate=${endDate}`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
+        },
       );
 
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStatistics(statsData.data);
       } else {
-        setError('Impossibile caricare le statistiche del backlog');
+        setError("Impossibile caricare le statistiche del backlog");
       }
 
       // Fetch capacity
@@ -61,10 +59,10 @@ export default function BacklogDashboard() {
         const capacityData = await capacityResponse.json();
         setCapacity(capacityData.data);
       } else {
-        setError('Impossibile caricare la capacità del backlog');
+        setError("Impossibile caricare la capacità del backlog");
       }
     } catch (error) {
-      setError('Errore nel caricamento dei dati del backlog');
+      setError("Errore nel caricamento dei dati del backlog");
     } finally {
       setLoading(false);
     }
@@ -129,25 +127,26 @@ export default function BacklogDashboard() {
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    Ore Utilizzate
-                  </span>
+                  <span className="text-sm font-medium text-gray-700">Ore Utilizzate</span>
                   <span className="text-sm font-medium text-gray-900">
                     {capacity.usedHours.toFixed(1)}h / {capacity.totalCapacity}h
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-4">
                   {(() => {
-                    const progressValue = Math.min(Math.round(capacity.capacityUsedPercentage), 100);
+                    const progressValue = Math.min(
+                      Math.round(capacity.capacityUsedPercentage),
+                      100,
+                    );
                     const progressWidth = Math.min(capacity.capacityUsedPercentage, 100);
                     return (
                       <div
                         className={`h-4 rounded-full transition-all ${
                           capacity.isOverCapacity
-                            ? 'bg-red-600'
+                            ? "bg-red-600"
                             : capacity.capacityUsedPercentage > 80
-                            ? 'bg-yellow-500'
-                            : 'bg-green-600'
+                              ? "bg-yellow-500"
+                              : "bg-green-600"
                         }`}
                         role="progressbar"
                         aria-label="Capacit\u00e0 utilizzata"
@@ -164,9 +163,7 @@ export default function BacklogDashboard() {
                     {capacity.capacityUsedPercentage.toFixed(1)}% utilizzato
                   </span>
                   {capacity.isOverCapacity && (
-                    <span className="text-xs text-red-600 font-semibold">
-                      ⚠️ Capacità superata
-                    </span>
+                    <span className="text-xs text-red-600 font-semibold">⚠️ Capacità superata</span>
                   )}
                 </div>
               </div>

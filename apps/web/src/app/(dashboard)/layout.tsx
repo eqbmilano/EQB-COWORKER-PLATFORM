@@ -1,31 +1,17 @@
 /**
  * Dashboard Layout
  */
-'use client';
+"use client";
 
-import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
-import Link from 'next/link';
-import { useAuthStore } from '@/store/authStore';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import {
-  Home,
-  Calendar,
-  Users,
-  FileText,
-  User,
-  LogOut,
-  Menu,
-  X,
-  Shield,
-} from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, FileText, Home, LogOut, Menu, Shield, User, Users, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ProtectedRoute } from "@/components/shared/ProtectedRoute";
+import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/store/authStore";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { logout } = useAuthStore();
   const { isAdmin } = useAuth();
@@ -33,17 +19,17 @@ export default function DashboardLayout({
 
   const handleLogout = () => {
     logout();
-    router.push('/');
+    router.push("/");
   };
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: Home },
-    { href: '/dashboard/appointments', label: 'Appuntamenti', icon: Calendar },
-    { href: '/dashboard/clients', label: 'Clienti', icon: Users },
-    { href: '/dashboard/calendar', label: 'Calendario', icon: Calendar },
-    { href: '/dashboard/invoices', label: 'Fatture', icon: FileText },
-    { href: '/dashboard/profile', label: 'Profilo', icon: User },
-    ...(isAdmin() ? [{ href: '/dashboard/admin', label: 'Admin', icon: Shield }] : []),
+    { href: "/dashboard", label: "Dashboard", icon: Home },
+    { href: "/dashboard/appointments", label: "Appuntamenti", icon: Calendar },
+    { href: "/dashboard/clients", label: "Clienti", icon: Users },
+    { href: "/dashboard/calendar", label: "Calendario", icon: Calendar },
+    { href: "/dashboard/invoices", label: "Fatture", icon: FileText },
+    { href: "/dashboard/profile", label: "Profilo", icon: User },
+    ...(isAdmin() ? [{ href: "/dashboard/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   return (
@@ -84,7 +70,7 @@ export default function DashboardLayout({
         {/* Sidebar */}
         <div
           className={`fixed left-0 top-16 bottom-0 w-64 bg-white/10 backdrop-blur border-r border-white/20 transform transition-transform md:translate-x-0 ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } md:relative md:top-0 z-30`}
         >
           <nav className="p-4 space-y-2">

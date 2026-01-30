@@ -1,10 +1,10 @@
 /**
  * Auth Store for JWT-based authentication
  */
-'use client';
+"use client";
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface User {
   id: string;
@@ -51,21 +51,22 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
           const response = await fetch(`${apiUrl}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
           });
 
           if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.error?.message || error.message || 'Login failed');
+            throw new Error(error.error?.message || error.message || "Login failed");
           }
 
           const result = await response.json();
           const { token, user } = result.data || result;
-          
+
           set({
             user,
             token,
@@ -73,7 +74,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Login failed';
+          const message = error instanceof Error ? error.message : "Login failed";
           set({ error: message, isLoading: false });
           throw error;
         }
@@ -82,21 +83,22 @@ export const useAuthStore = create<AuthState>()(
       signup: async (email: string, password: string, firstName: string, lastName: string) => {
         set({ isLoading: true, error: null });
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
           const response = await fetch(`${apiUrl}/api/auth/signup`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password, firstName, lastName }),
           });
 
           if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.error?.message || error.message || 'Signup failed');
+            throw new Error(error.error?.message || error.message || "Signup failed");
           }
 
           const result = await response.json();
           const { token, user } = result.data || result;
-          
+
           set({
             user,
             token,
@@ -104,7 +106,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Signup failed';
+          const message = error instanceof Error ? error.message : "Signup failed";
           set({ error: message, isLoading: false });
           throw error;
         }
@@ -122,21 +124,22 @@ export const useAuthStore = create<AuthState>()(
       loginWithGoogle: async (idToken: string) => {
         set({ isLoading: true, error: null });
         try {
-          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
           const response = await fetch(`${apiUrl}/api/auth/google`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ idToken }),
           });
 
           if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.error?.message || 'Google login failed');
+            throw new Error(error.error?.message || "Google login failed");
           }
 
           const result = await response.json();
           const { token, user } = result.data || result;
-          
+
           set({
             user,
             token,
@@ -144,17 +147,17 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Google login failed';
+          const message = error instanceof Error ? error.message : "Google login failed";
           set({ error: message, isLoading: false });
           throw error;
         }
       },
     }),
     {
-      name: 'auth-storage',
-      partialize: (state) => ({ 
-        token: state.token, 
-        user: state.user 
+      name: "auth-storage",
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
       }),
       onRehydrateStorage: () => (state) => {
         // After rehydration, set isAuthenticated based on token presence
@@ -162,6 +165,6 @@ export const useAuthStore = create<AuthState>()(
           state.isAuthenticated = true;
         }
       },
-    }
-  )
+    },
+  ),
 );

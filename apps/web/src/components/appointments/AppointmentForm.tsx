@@ -1,160 +1,185 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAppointments } from '@/hooks/useAppointments';
-import { useClients } from '@/hooks/useClients';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { SelectField } from '@/components/ui/select-field';
-import { DatePickerField } from '@/components/ui/date-picker-field';
+import type { Coworker } from '@eqb/shared-types';
+import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
-import { Card } from '@/components/ui/Card';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { DatePickerField } from '@/components/ui/date-picker-field';
+import { SelectField, type SelectOption } from '@/components/ui/select-field';
+import { useAuthStore } from '@/store/authStore';
 import { useToastNotifications } from '@/lib/toast';
 
+// Validation schema
 const appointmentSchema = z.object({
-  clientId: z.string().min(1, 'Seleziona un cliente'),
-  startTime: z.date({ message: 'Data inizio è obbligatoria' }),
-  endTime: z.date({ message: 'Data fine è obbligatoria' }),
-  type: z.string().min(1, 'Tipo è obbligatorio'),
-  roomType: z.enum(['Training', 'Treatment'], { message: 'Tipo stanza non valido' }),
-  roomNumber: z.string().optional(),
+  type: z.string().min(1, 'Tipo appuntamento è obbligatorio'),
+  clientName: z.string().min(1, 'Nome cliente è obbligatorio'),
+  startTime: z.string().min(1, 'Data/ora inizio è obbligatorio'),
+  endTime: z.string().min(1, 'Data/ora fine è obbligatorio'),
   notes: z.string().optional(),
-}).refine((data) => data.endTime > data.startTime, {
-  message: 'Data fine deve essere dopo data inizio',
-  path: ['endTime'],
+  coworkerId: z.string().min(1, 'Coworker è obbligatorio'),
 });
 
 type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
 interface AppointmentFormProps {
-  onClose: () => void;
-  onSuccess: () => void;
-  editingId?: string | null;
+  initialData?: Partial<AppointmentFormData> & { id?: string };
+  appointmentId?: string;
+  coworkers: Coworker[];
 }
 
-export default function AppointmentForm({ onClose, onSuccess }: AppointmentFormProps) {
-  const { createAppointment } = useAppointments();
-  const { clients, fetchClients } = useClients();
-  const { success, error: errorToast } = useToastNotifications();
-  const [error, setError] = useState<string | null>(null);
+export default function AppointmentForm({
+  initialData,
+  appointmentId,
+  coworkers,
+}: AppointmentFormProps) {
+  const router = useRouter();
+  const { token } = useAuthStore();
+  const { success, error: showError } = useToastNotifications();
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    'https://eqb-coworker-platform.onrender.com';
 
   const form = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      clientId: '',
-      startTime: undefined,
-      endTime: undefined,
-      type: 'Consulenza',
-      roomType: 'Treatment',
-      roomNumber: '',
-      notes: '',
+      type: initialData?.type || '',
+      clientName: initialData?.clientName || '',
+      startTime: initialData?.startTime || '',
+      endTime: initialData?.endTime || '',
+      notes: initialData?.notes || '',
+      coworkerId: initialData?.coworkerId || '',
     },
   });
 
-  // Load clients on mount
-  useEffect(() => {
-    fetchClients();
-  }, [fetchClients]);
-
-  const clientOptions = clients.map((client) => ({
-    value: client.id,
-    label: client.name,
+  const coworkerOptions: SelectOption[] = coworkers.map((c) => ({
+    value: c.id,
+    label: c.name,
   }));
-
-  const roomTypeOptions = [
-    { value: 'Training', label: 'Training' },
-    { value: 'Treatment', label: 'Trattamento' },
-  ];
-
-  const appointmentTypeOptions = [
-    { value: 'Consulenza', label: 'Consulenza' },
-    { value: 'Terapia', label: 'Terapia' },
-    { value: 'Valutazione', label: 'Valutazione' },
-    { value: 'Follow-up', label: 'Follow-up' },
-  ];
 
   const onSubmit = async (data: AppointmentFormData) => {
     try {
-      setError(null);
+      const url = appointmentId
+        ? `${apiUrl}/api/appointments/${appointmentId}`
+        : `${apiUrl}/api/appointments`;
+      const method = appointmentId ? 'PUT' : 'POST';
 
-      const result = await createAppointment({
-        clientId: data.clientId,
-        startTime: data.startTime.toISOString(),
-        endTime: data.endTime.toISOString(),
-        type: data.type,
-        roomType: data.roomType,
-        roomNumber: data.roomNumber || undefined,
-        notes: data.notes || undefined,
+      console.log('Sending appointment request:', { url, method, data, token });
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(data),
       });
 
-      if (result) {
-        success('Appuntamento creato con successo!');
-        onSuccess();
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error('API error:', errorData);
+        const message =
+          errorData?.message ||
+          errorData?.error ||
+          'Errore nel salvataggio dell\'appuntamento';
+        showError(message);
+        return;
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Errore nella creazione dell\'appuntamento';
-      setError(message);
-      errorToast(message);
+
+      const responseData = await response.json();
+      success('Appuntamento salvato con successo!');
+      router.push(`/dashboard/appointments`);
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Errore sconosciuto';
+      showError(errorMessage);
     }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {error && <Alert type="error" message={error} />}
+        {form.formState.errors.root && (
+          <Alert
+            type="error"
+            message={form.formState.errors.root.message || 'Errore'}
+          />
+        )}
 
+        {/* Dettagli Appuntamento */}
         <Card>
-          <div className="p-6 space-y-6">
-            <h3 className="text-lg font-semibold">Nuovo Appuntamento</h3>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">
+              Dettagli Appuntamento
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Tipo Appuntamento{' '}
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Es. Consulenza, Massaggio..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="clientName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Nome Cliente <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Mario Rossi" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="coworkerId"
+                render={({ field }) => (
+                  <SelectField
+                    control={form.control}
+                    name="coworkerId"
+                    label="Coworker Responsabile"
+                    options={coworkerOptions}
+                    required
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </Card>
 
-            {/* Client Selection */}
-            <SelectField
-              control={form.control}
-              name="clientId"
-              label="Cliente"
-              placeholder="Seleziona un cliente"
-              options={clientOptions}
-              required
-            />
-
-            {/* Appointment Type */}
-            <SelectField
-              control={form.control}
-              name="type"
-              label="Tipo Appuntamento"
-              options={appointmentTypeOptions}
-              required
-            />
-
-            {/* Room Type */}
-            <SelectField
-              control={form.control}
-              name="roomType"
-              label="Tipo Stanza"
-              options={roomTypeOptions}
-              required
-            />
-
-            {/* Room Number */}
-            <FormField
-              control={form.control}
-              name="roomNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Numero Stanza</FormLabel>
-                  <FormControl>
-                    <Input placeholder="es. 101" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Date/Time */}
+        {/* Data e Ora */}
+        <Card>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Data e Ora</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <DatePickerField
                 control={form.control}
@@ -169,18 +194,22 @@ export default function AppointmentForm({ onClose, onSuccess }: AppointmentFormP
                 minDate={new Date()}
               />
             </div>
+          </div>
+        </Card>
 
-            {/* Notes */}
+        {/* Note */}
+        <Card>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Note</h3>
             <FormField
               control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Note</FormLabel>
                   <FormControl>
                     <textarea
-                      placeholder="Note aggiuntive..."
-                      rows={3}
+                      placeholder="Note aggiuntive sull'appuntamento..."
+                      rows={4}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       {...field}
                     />
@@ -189,26 +218,31 @@ export default function AppointmentForm({ onClose, onSuccess }: AppointmentFormP
                 </FormItem>
               )}
             />
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={onClose}
-                disabled={form.formState.isSubmitting}
-              >
-                Annulla
-              </Button>
-              <Button
-                type="submit"
-                className="bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white hover:brightness-105"
-                disabled={form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting ? 'Salvataggio...' : 'Crea Appuntamento'}
-              </Button>
-            </div>
           </div>
         </Card>
+
+        {/* Submit Buttons */}
+        <div className="flex justify-end gap-3">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => router.back()}
+            disabled={form.formState.isSubmitting}
+          >
+            Annulla
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting
+              ? 'Salvataggio...'
+              : appointmentId
+                ? 'Aggiorna'
+                : 'Crea Appuntamento'}
+          </Button>
+        </div>
       </form>
     </Form>
   );

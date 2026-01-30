@@ -1,7 +1,7 @@
 /**
  * Coworker Dashboard Page
  */
-import OperatorDashboard from '@/components/dashboard/OperatorDashboard';
+import OperatorDashboard from "@/components/dashboard/OperatorDashboard";
 
 export default function DashboardPage() {
   return (

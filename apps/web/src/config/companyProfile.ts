@@ -4,25 +4,25 @@
  */
 
 export const companyProfile = {
-  name: 'EQB Milano - Cinque Giornate',
-  legalName: 'EQB Milano S.r.l.',
+  name: "EQB Milano - Cinque Giornate",
+  legalName: "EQB Milano S.r.l.",
   address: {
-    street: 'Viale Regina Margherita, 43',
-    city: 'Milano',
-    province: 'MI',
-    zipCode: '20122',
-    country: 'Italia',
-    full: 'Viale Regina Margherita, 43, 20122, Milano MI',
+    street: "Viale Regina Margherita, 43",
+    city: "Milano",
+    province: "MI",
+    zipCode: "20122",
+    country: "Italia",
+    full: "Viale Regina Margherita, 43, 20122, Milano MI",
   },
   contact: {
-    email: 'info@eqbmilano.it',
-    phone: '+39 02 XXXX XXXX', // TODO: Add real phone number
-    website: 'https://eqbmilano.it',
+    email: "info@eqbmilano.it",
+    phone: "+39 02 XXXX XXXX", // TODO: Add real phone number
+    website: "https://eqbmilano.it",
   },
   business: {
-    vatNumber: '', // TODO: Add P.IVA
-    fiscalCode: '', // TODO: Add Codice Fiscale
-    rea: '', // TODO: Add REA number
+    vatNumber: "", // TODO: Add P.IVA
+    fiscalCode: "", // TODO: Add Codice Fiscale
+    rea: "", // TODO: Add REA number
   },
   // Capacità centro (da documentazione)
   capacity: {

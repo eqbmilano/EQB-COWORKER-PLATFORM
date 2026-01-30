@@ -12,14 +12,14 @@
 /* EQB Brand CSS Variables */
 :root {
   /* Colors - Wood palette */
-  --eqb-wood-primary: #27201B;
-  --eqb-wood-secondary: #382D28;
-  --eqb-wood-dark: #392D28;
-  --eqb-warm-white: #F4F1EC;
+  --eqb-wood-primary: #27201b;
+  --eqb-wood-secondary: #382d28;
+  --eqb-wood-dark: #392d28;
+  --eqb-warm-white: #f4f1ec;
 
   /* Typography */
-  --font-logo: 'Chopard', serif;
-  --font-body: 'Manrope', 'system-ui', sans-serif;
+  --font-logo: "Chopard", serif;
+  --font-body: "Manrope", "system-ui", sans-serif;
 
   /* Spacing & sizing */
   --spacing-xs: 0.25rem;
@@ -54,7 +54,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   letter-spacing: -0.02em;
 }

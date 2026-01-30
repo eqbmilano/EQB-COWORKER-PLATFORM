@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Alert } from '@/components/ui/Alert';
-import ClientForm from '@/components/clients/ClientForm';
-import DocumentUpload from '@/components/clients/DocumentUpload';
-import { useAuthStore } from '@/store/authStore';
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import ClientForm from "@/components/clients/ClientForm";
+import DocumentUpload from "@/components/clients/DocumentUpload";
+import { Alert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface ClientDocument {
   id: string;
@@ -42,7 +42,7 @@ interface ClientData {
   postalCode?: string;
   taxCode?: string;
   notes?: string;
-  status?: 'ACTIVE' | 'INACTIVE';
+  status?: "ACTIVE" | "INACTIVE";
   companyName?: string;
   coworkers?: CoworkerRelationship[];
   createdAt?: string;
@@ -74,7 +74,7 @@ export default function ClientDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { token } = useAuthStore();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const fetchClientData = useCallback(async () => {
     try {
@@ -87,7 +87,7 @@ export default function ClientDetailPage() {
       });
 
       if (!clientResponse.ok) {
-        throw new Error('Cliente non trovato');
+        throw new Error("Cliente non trovato");
       }
 
       const clientData = await clientResponse.json();
@@ -104,19 +104,16 @@ export default function ClientDetailPage() {
       }
 
       // Fetch statistics
-      const statsResponse = await fetch(
-        `${apiUrl}/api/clients/${clientId}/statistics`,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
-      );
+      const statsResponse = await fetch(`${apiUrl}/api/clients/${clientId}/statistics`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
 
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStatistics(statsData.data);
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -130,26 +127,23 @@ export default function ClientDetailPage() {
   }, [clientId, fetchClientData]);
 
   const handleDeleteDocument = async (documentId: string) => {
-    if (!confirm('Sei sicuro di voler eliminare questo documento?')) {
+    if (!confirm("Sei sicuro di voler eliminare questo documento?")) {
       return;
     }
 
     try {
-      const response = await fetch(
-        `${apiUrl}/api/clients/${clientId}/documents/${documentId}`,
-        {
-          method: 'DELETE',
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/clients/${clientId}/documents/${documentId}`, {
+        method: "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
 
       if (!response.ok) {
-        throw new Error('Errore nell\'eliminazione del documento');
+        throw new Error("Errore nell'eliminazione del documento");
       }
 
       fetchClientData(); // Refresh data
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       alert(errorMessage);
     }
   };
@@ -157,7 +151,7 @@ export default function ClientDetailPage() {
   const handleDeleteClient = async () => {
     if (
       !confirm(
-        'Sei sicuro di voler eliminare questo cliente? Questa azione non può essere annullata.'
+        "Sei sicuro di voler eliminare questo cliente? Questa azione non può essere annullata.",
       )
     ) {
       return;
@@ -165,17 +159,17 @@ export default function ClientDetailPage() {
 
     try {
       const response = await fetch(`${apiUrl}/api/clients/${clientId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
-        throw new Error('Errore nell\'eliminazione del cliente');
+        throw new Error("Errore nell'eliminazione del cliente");
       }
 
-      router.push('/dashboard/clients');
+      router.push("/dashboard/clients");
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       alert(errorMessage);
     }
   };
@@ -191,7 +185,7 @@ export default function ClientDetailPage() {
   if (error || !client) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Alert type="error" message={error || 'Cliente non trovato'} />
+        <Alert type="error" message={error || "Cliente non trovato"} />
         <Link href="/dashboard/clients">
           <Button variant="secondary" className="mt-4">
             Torna ai Clienti
@@ -206,9 +200,7 @@ export default function ClientDetailPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Modifica Cliente</h1>
-          <p className="mt-2 text-gray-600">
-            Aggiorna le informazioni del cliente
-          </p>
+          <p className="mt-2 text-gray-600">Aggiorna le informazioni del cliente</p>
         </div>
 
         <ClientForm initialData={client} clientId={clientId} />
@@ -232,16 +224,12 @@ export default function ClientDetailPage() {
               <h1 className="text-3xl font-bold text-gray-900">
                 {client.firstName} {client.lastName}
               </h1>
-              <Badge
-                variant={client.status === 'ACTIVE' ? 'success' : 'warning'}
-              >
+              <Badge variant={client.status === "ACTIVE" ? "success" : "warning"}>
                 {client.status}
               </Badge>
             </div>
             <Link href="/dashboard/clients">
-              <span className="text-blue-600 hover:text-blue-800">
-                ← Torna ai Clienti
-              </span>
+              <span className="text-blue-600 hover:text-blue-800">← Torna ai Clienti</span>
             </Link>
           </div>
           <div className="flex gap-3">
@@ -277,9 +265,7 @@ export default function ClientDetailPage() {
           <Card>
             <div className="p-4">
               <p className="text-sm text-gray-600">Ore Totali</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">
-                {statistics.totalHours}h
-              </p>
+              <p className="text-2xl font-bold text-blue-600 mt-1">{statistics.totalHours}h</p>
             </div>
           </Card>
           <Card>
@@ -287,10 +273,8 @@ export default function ClientDetailPage() {
               <p className="text-sm text-gray-600">Ultimo Appuntamento</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">
                 {statistics.lastAppointmentDate
-                  ? new Date(statistics.lastAppointmentDate).toLocaleDateString(
-                      'it-IT'
-                    )
-                  : 'N/A'}
+                  ? new Date(statistics.lastAppointmentDate).toLocaleDateString("it-IT")
+                  : "N/A"}
               </p>
             </div>
           </Card>
@@ -302,9 +286,7 @@ export default function ClientDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Informazioni Personali
-              </h2>
+              <h2 className="text-xl font-semibold mb-4">Informazioni Personali</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {client.email && (
                   <div>
@@ -322,7 +304,7 @@ export default function ClientDetailPage() {
                   <div>
                     <p className="text-sm text-gray-600">Data di Nascita</p>
                     <p className="text-gray-900">
-                      {new Date(client.birthDate).toLocaleDateString('it-IT')}
+                      {new Date(client.birthDate).toLocaleDateString("it-IT")}
                     </p>
                   </div>
                 )}
@@ -356,9 +338,7 @@ export default function ClientDetailPage() {
             <Card>
               <div className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Note</h2>
-                <p className="text-gray-700 whitespace-pre-wrap">
-                  {client.notes}
-                </p>
+                <p className="text-gray-700 whitespace-pre-wrap">{client.notes}</p>
               </div>
             </Card>
           )}
@@ -377,26 +357,15 @@ export default function ClientDetailPage() {
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                     >
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">
-                          {doc.fileName}
-                        </p>
+                        <p className="font-medium text-gray-900">{doc.fileName}</p>
                         <p className="text-sm text-gray-600">
-                          {doc.documentType} •{' '}
-                          {(doc.fileSize / 1024).toFixed(2)} KB •{' '}
-                          {new Date(doc.uploadedAt).toLocaleDateString('it-IT')}
+                          {doc.documentType} • {(doc.fileSize / 1024).toFixed(2)} KB •{" "}
+                          {new Date(doc.uploadedAt).toLocaleDateString("it-IT")}
                         </p>
-                        {doc.notes && (
-                          <p className="text-sm text-gray-500 mt-1">
-                            {doc.notes}
-                          </p>
-                        )}
+                        {doc.notes && <p className="text-sm text-gray-500 mt-1">{doc.notes}</p>}
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <a
-                          href={doc.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
                           <Button variant="secondary" size="sm">
                             Scarica
                           </Button>
@@ -426,14 +395,10 @@ export default function ClientDetailPage() {
                 <h2 className="text-xl font-semibold mb-4">Operatori</h2>
                 <div className="space-y-3">
                   {client.coworkers.map((rel: CoworkerRelationship) => (
-                    <div
-                      key={rel.id}
-                      className="flex items-center justify-between"
-                    >
+                    <div key={rel.id} className="flex items-center justify-between">
                       <div>
                         <p className="font-medium text-gray-900">
-                          {rel.coworker?.user?.firstName}{' '}
-                          {rel.coworker?.user?.lastName}
+                          {rel.coworker?.user?.firstName} {rel.coworker?.user?.lastName}
                         </p>
                         {rel.isPrimary && (
                           <Badge variant="success" className="mt-1">

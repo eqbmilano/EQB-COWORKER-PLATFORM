@@ -1,13 +1,13 @@
 /**
  * Appointment Calendar Component for React
  */
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import type { Appointment } from '@eqb/shared-types';
+import type { Appointment } from "@eqb/shared-types";
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 export const AppointmentCalendar: React.FC = () => {
   const [appointments, _setAppointments] = useState<Appointment[]>([]);
@@ -45,14 +45,14 @@ export const AppointmentCalendar: React.FC = () => {
           onClick={() => setSelectedDate(date)}
           className={`p-2 text-center rounded border ${
             isSelected
-              ? 'bg-blue-600 text-white'
+              ? "bg-blue-600 text-white"
               : isToday
-              ? 'bg-blue-100 border-blue-300'
-              : 'border-gray-200'
+                ? "bg-blue-100 border-blue-300"
+                : "border-gray-200"
           }`}
         >
           {day}
-        </button>
+        </button>,
       );
     }
 
@@ -60,15 +60,11 @@ export const AppointmentCalendar: React.FC = () => {
   };
 
   const handlePrevMonth = () => {
-    setSelectedDate(
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1)
-    );
+    setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1));
   };
 
   const handleNextMonth = () => {
-    setSelectedDate(
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1)
-    );
+    setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
   };
 
   return (
@@ -88,9 +84,9 @@ export const AppointmentCalendar: React.FC = () => {
             ← Mese Precedente
           </Button>
           <h3 className="text-lg font-semibold">
-            {selectedDate.toLocaleDateString('it-IT', {
-              month: 'long',
-              year: 'numeric',
+            {selectedDate.toLocaleDateString("it-IT", {
+              month: "long",
+              year: "numeric",
             })}
           </h3>
           <Button onClick={handleNextMonth} variant="secondary" size="sm">
@@ -100,7 +96,7 @@ export const AppointmentCalendar: React.FC = () => {
 
         {/* Calendar Grid */}
         <div className="grid grid-cols-7 gap-2 mb-6">
-          {['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'].map(day => (
+          {["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"].map((day) => (
             <div key={day} className="font-bold text-center text-gray-600">
               {day}
             </div>
@@ -111,20 +107,23 @@ export const AppointmentCalendar: React.FC = () => {
         {/* Appointments for Selected Date */}
         <div>
           <h4 className="text-lg font-semibold mb-2">
-            Appuntamenti per {selectedDate.toLocaleDateString('it-IT')}
+            Appuntamenti per {selectedDate.toLocaleDateString("it-IT")}
           </h4>
           <div className="bg-gray-50 p-4 rounded border border-gray-200 min-h-24">
             {appointments.length === 0 ? (
               <p className="text-gray-500">Nessun appuntamento per questo giorno</p>
             ) : (
               <ul className="space-y-2">
-                {appointments.map(apt => (
-                  <li key={apt.id} className="flex justify-between items-center p-2 bg-white rounded border">
+                {appointments.map((apt) => (
+                  <li
+                    key={apt.id}
+                    className="flex justify-between items-center p-2 bg-white rounded border"
+                  >
                     <div>
                       <p className="font-semibold">{apt.type}</p>
                       <p className="text-sm text-gray-600">
-                        {new Date(apt.startTime).toLocaleTimeString('it-IT')} -{' '}
-                        {new Date(apt.endTime).toLocaleTimeString('it-IT')}
+                        {new Date(apt.startTime).toLocaleTimeString("it-IT")} -{" "}
+                        {new Date(apt.endTime).toLocaleTimeString("it-IT")}
                       </p>
                     </div>
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">

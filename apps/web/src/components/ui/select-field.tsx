@@ -1,20 +1,14 @@
-'use client';
+"use client";
 
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import type { Control, FieldValues, Path } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import type { Control, FieldValues, Path } from 'react-hook-form';
+} from "@/components/ui/select";
 
 export interface SelectOption {
   value: string;
@@ -41,7 +35,7 @@ export function SelectField<
   control,
   name,
   label,
-  placeholder = 'Seleziona una opzione',
+  placeholder = "Seleziona una opzione",
   options,
   disabled = false,
   required = false,

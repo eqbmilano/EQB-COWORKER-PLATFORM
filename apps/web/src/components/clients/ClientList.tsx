@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Alert } from '@/components/ui/Alert';
-import type { Client } from '@eqb/shared-types';
-import { useAuthStore } from '@/store/authStore';
+import type { Client } from "@eqb/shared-types";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { Alert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface ClientListProps {
   coworkerId?: string;
@@ -17,26 +17,26 @@ export default function ClientList({ coworkerId }: ClientListProps) {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { token } = useAuthStore();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const fetchClients = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '20',
+        limit: "20",
       });
 
       if (searchTerm) {
-        params.append('search', searchTerm);
+        params.append("search", searchTerm);
       }
 
       if (coworkerId) {
-        params.append('coworkerId', coworkerId);
+        params.append("coworkerId", coworkerId);
       }
 
       const response = await fetch(`${apiUrl}/api/clients?${params}`, {
@@ -45,7 +45,7 @@ export default function ClientList({ coworkerId }: ClientListProps) {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.message || data?.error || 'Impossibile caricare i clienti');
+        throw new Error(data?.message || data?.error || "Impossibile caricare i clienti");
       }
 
       const data = await response.json();
@@ -53,7 +53,7 @@ export default function ClientList({ coworkerId }: ClientListProps) {
       setTotalPages(data.pagination.totalPages);
       setError(null);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Impossibile caricare i clienti';
+      const message = error instanceof Error ? error.message : "Impossibile caricare i clienti";
       setError(message);
     } finally {
       setLoading(false);
@@ -128,14 +128,8 @@ export default function ClientList({ coworkerId }: ClientListProps) {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {client.name}
-                      </h3>
-                      <Badge
-                        variant={
-                          client.status === 'ACTIVE' ? 'success' : 'warning'
-                        }
-                      >
+                      <h3 className="text-lg font-semibold text-gray-900">{client.name}</h3>
+                      <Badge variant={client.status === "ACTIVE" ? "success" : "warning"}>
                         {client.status}
                       </Badge>
                     </div>

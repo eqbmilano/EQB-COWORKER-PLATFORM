@@ -1,20 +1,27 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Alert } from '@/components/ui/Alert';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useAuthStore } from '@/store/authStore';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Alert } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/store/authStore";
 
 // Validation schema
 const clientSchema = z.object({
-  name: z.string().min(1, 'Nome è obbligatorio'),
-  email: z.string().email('Email non valida').optional().or(z.literal('')),
+  name: z.string().min(1, "Nome è obbligatorio"),
+  email: z.string().email("Email non valida").optional().or(z.literal("")),
   phone: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -32,51 +39,52 @@ interface ClientFormProps {
 export default function ClientForm({ initialData, clientId }: ClientFormProps) {
   const router = useRouter();
   const { token } = useAuthStore();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: initialData?.name || '',
-      email: initialData?.email || '',
-      phone: initialData?.phone || '',
-      address: initialData?.address || '',
-      city: initialData?.city || '',
-      zipCode: initialData?.zipCode || initialData?.postalCode || '',
-      notes: initialData?.notes || '',
+      name: initialData?.name || "",
+      email: initialData?.email || "",
+      phone: initialData?.phone || "",
+      address: initialData?.address || "",
+      city: initialData?.city || "",
+      zipCode: initialData?.zipCode || initialData?.postalCode || "",
+      notes: initialData?.notes || "",
     },
   });
 
   const onSubmit = async (data: ClientFormData) => {
     try {
       const url = clientId ? `${apiUrl}/api/clients/${clientId}` : `${apiUrl}/api/clients`;
-      const method = clientId ? 'PUT' : 'POST';
+      const method = clientId ? "PUT" : "POST";
 
-      console.log('Sending request:', { url, method, data, token });
+      console.log("Sending request:", { url, method, data, token });
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(data),
       });
-      console.log('Response status:', response.status);
+      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        console.error('API error:', errorData);
-        const message = errorData?.message || errorData?.error || 'Errore nel salvataggio del cliente';
-        form.setError('root', { message });
+        console.error("API error:", errorData);
+        const message =
+          errorData?.message || errorData?.error || "Errore nel salvataggio del cliente";
+        form.setError("root", { message });
         return;
       }
 
       const responseData = await response.json();
       router.push(`/dashboard/clients/${responseData.data.id}`);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
-      form.setError('root', { message: errorMessage });
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
+      form.setError("root", { message: errorMessage });
     }
   };
 
@@ -97,7 +105,9 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome e Cognome <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel>
+                      Nome e Cognome <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Mario Rossi" {...field} />
                     </FormControl>
@@ -220,7 +230,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
             Annulla
           </Button>
           <Button type="submit" variant="primary" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? 'Salvataggio...' : clientId ? 'Aggiorna' : 'Crea Cliente'}
+            {form.formState.isSubmitting
+              ? "Salvataggio..."
+              : clientId
+                ? "Aggiorna"
+                : "Crea Cliente"}
           </Button>
         </div>
       </form>

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Alert } from '@/components/ui/Alert';
-import { useAuthStore } from '@/store/authStore';
+import { useCallback, useEffect, useState } from "react";
+import { Alert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface User {
   id: string;
@@ -13,8 +13,8 @@ interface User {
   firstName: string;
   lastName: string;
   phoneNumber?: string;
-  role: 'ADMIN' | 'OPERATOR';
-  status: 'ACTIVE' | 'INACTIVE';
+  role: "ADMIN" | "OPERATOR";
+  status: "ACTIVE" | "INACTIVE";
   coworker?: {
     id: string;
     specialization?: string;
@@ -29,28 +29,25 @@ export default function UserManagement() {
   const [error, setError] = useState<string | null>(null);
   const [includeInactive, setIncludeInactive] = useState(false);
   const { token } = useAuthStore();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(
-        `${apiUrl}/api/admin/users?includeInactive=${includeInactive}`,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/admin/users?includeInactive=${includeInactive}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
 
       const data = await response.json();
       setUsers(data.data);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -64,86 +61,78 @@ export default function UserManagement() {
   const handleActivateUser = async (userId: string) => {
     try {
       const response = await fetch(`${apiUrl}/api/admin/users/${userId}/activate`, {
-        method: 'POST',
+        method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to activate user');
+        throw new Error("Failed to activate user");
       }
 
       fetchUsers();
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       alert(errorMessage);
     }
   };
 
   const handleDeactivateUser = async (userId: string) => {
-    if (!confirm('Sei sicuro di voler disattivare questo utente?')) {
+    if (!confirm("Sei sicuro di voler disattivare questo utente?")) {
       return;
     }
 
     try {
       const response = await fetch(`${apiUrl}/api/admin/users/${userId}/deactivate`, {
-        method: 'POST',
+        method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to deactivate user');
+        throw new Error("Failed to deactivate user");
       }
 
       fetchUsers();
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       alert(errorMessage);
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (
-      !confirm(
-        'ATTENZIONE: Questa azione eliminerà permanentemente l\'utente. Sei sicuro?'
-      )
-    ) {
+    if (!confirm("ATTENZIONE: Questa azione eliminerà permanentemente l'utente. Sei sicuro?")) {
       return;
     }
 
     try {
       const response = await fetch(`${apiUrl}/api/admin/users/${userId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Failed to delete user');
+        throw new Error(data.message || "Failed to delete user");
       }
 
       fetchUsers();
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       alert(errorMessage);
     }
   };
 
   const handleChangeRole = async (userId: string, currentRole: string) => {
-    const newRole = currentRole === 'ADMIN' ? 'OPERATOR' : 'ADMIN';
+    const newRole = currentRole === "ADMIN" ? "OPERATOR" : "ADMIN";
 
-    if (
-      !confirm(
-        `Vuoi cambiare il ruolo di questo utente a ${newRole}?`
-      )
-    ) {
+    if (!confirm(`Vuoi cambiare il ruolo di questo utente a ${newRole}?`)) {
       return;
     }
 
     try {
       const response = await fetch(`${apiUrl}/api/admin/users/${userId}/change-role`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ role: newRole }),
@@ -151,12 +140,12 @@ export default function UserManagement() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Failed to change role');
+        throw new Error(data.message || "Failed to change role");
       }
 
       fetchUsers();
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Errore sconosciuto';
+      const errorMessage = err instanceof Error ? err.message : "Errore sconosciuto";
       alert(errorMessage);
     }
   };
@@ -179,9 +168,7 @@ export default function UserManagement() {
       {/* Header with filters */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Gestione Utenti ({users.length})
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900">Gestione Utenti ({users.length})</h2>
           <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -208,18 +195,10 @@ export default function UserManagement() {
                     <h3 className="text-lg font-semibold text-gray-900">
                       {user.firstName} {user.lastName}
                     </h3>
-                    <Badge
-                      variant={
-                        user.role === 'ADMIN' ? 'success' : 'default'
-                      }
-                    >
+                    <Badge variant={user.role === "ADMIN" ? "success" : "default"}>
                       {user.role}
                     </Badge>
-                    <Badge
-                      variant={
-                        user.status === 'ACTIVE' ? 'success' : 'warning'
-                      }
-                    >
+                    <Badge variant={user.status === "ACTIVE" ? "success" : "warning"}>
                       {user.status}
                     </Badge>
                   </div>
@@ -251,9 +230,7 @@ export default function UserManagement() {
                     )}
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Creato il:</span>
-                      <span>
-                        {new Date(user.createdAt).toLocaleDateString('it-IT')}
-                      </span>
+                      <span>{new Date(user.createdAt).toLocaleDateString("it-IT")}</span>
                     </div>
                   </div>
                 </div>
@@ -271,7 +248,7 @@ export default function UserManagement() {
                   >
                     Cambia Ruolo
                   </Button>
-                  {user.status === 'ACTIVE' ? (
+                  {user.status === "ACTIVE" ? (
                     <Button
                       variant="secondary"
                       size="sm"
@@ -280,19 +257,11 @@ export default function UserManagement() {
                       Disattiva
                     </Button>
                   ) : (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleActivateUser(user.id)}
-                    >
+                    <Button variant="primary" size="sm" onClick={() => handleActivateUser(user.id)}>
                       Attiva
                     </Button>
                   )}
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDeleteUser(user.id)}
-                  >
+                  <Button variant="danger" size="sm" onClick={() => handleDeleteUser(user.id)}>
                     Elimina
                   </Button>
                 </div>

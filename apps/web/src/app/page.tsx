@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
-import { useAuthStore } from '@/store/authStore';
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -11,7 +11,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   }, [isAuthenticated, router]);
 
@@ -48,9 +48,9 @@ export default function Home() {
           {/* Features */}
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
             {[
-              { icon: '📅', title: 'Appuntamenti', desc: 'Prenota e gestisci facilmente' },
-              { icon: '👥', title: 'Clienti', desc: 'Profili e storico completi' },
-              { icon: '💼', title: 'Fatture', desc: 'Automatizza e controlla i pagamenti' },
+              { icon: "📅", title: "Appuntamenti", desc: "Prenota e gestisci facilmente" },
+              { icon: "👥", title: "Clienti", desc: "Profili e storico completi" },
+              { icon: "💼", title: "Fatture", desc: "Automatizza e controlla i pagamenti" },
             ].map((item) => (
               <div
                 key={item.title}

@@ -1,10 +1,10 @@
 /**
  * Hook per gestire appuntamenti via API
  */
-'use client';
+"use client";
 
-import { useState, useCallback, useMemo } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useCallback, useMemo, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
 
 export interface Appointment {
   id: string;
@@ -14,10 +14,10 @@ export interface Appointment {
   startTime: string;
   endTime: string;
   type: string;
-  roomType: 'Training' | 'Treatment';
+  roomType: "Training" | "Treatment";
   roomNumber?: number;
   notes?: string;
-  status?: 'scheduled' | 'completed' | 'cancelled';
+  status?: "scheduled" | "completed" | "cancelled";
   createdAt: string;
   updatedAt: string;
 }
@@ -27,7 +27,7 @@ export interface CreateAppointmentInput {
   startTime: string;
   endTime: string;
   type: string;
-  roomType: 'Training' | 'Treatment';
+  roomType: "Training" | "Treatment";
   roomNumber?: string;
   notes?: string;
 }
@@ -51,22 +51,25 @@ export function useAppointments(): UseAppointmentsReturn {
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuthStore();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const getErrorMessage = (data: any, fallback: string) => {
     if (!data) return fallback;
     return data.message || data.error || data.error?.message || fallback;
   };
 
-  const headers = useMemo(() => ({
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  }), [token]);
+  const headers = useMemo(
+    () => ({
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    }),
+    [token],
+  );
 
   const fetchAppointments = useCallback(
     async (filters?: { startDate?: string; endDate?: string }) => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return;
       }
 
@@ -75,36 +78,37 @@ export function useAppointments(): UseAppointmentsReturn {
 
       try {
         const queryParams = new URLSearchParams();
-        if (filters?.startDate) queryParams.append('startDate', filters.startDate);
-        if (filters?.endDate) queryParams.append('endDate', filters.endDate);
+        if (filters?.startDate) queryParams.append("startDate", filters.startDate);
+        if (filters?.endDate) queryParams.append("endDate", filters.endDate);
 
-        const response = await fetch(
-          `${apiUrl}/api/appointments?${queryParams.toString()}`,
-          { headers }
-        );
+        const response = await fetch(`${apiUrl}/api/appointments?${queryParams.toString()}`, {
+          headers,
+        });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile caricare gli appuntamenti'));
+          throw new Error(getErrorMessage(data, "Impossibile caricare gli appuntamenti"));
         }
 
         const data = await response.json();
-        const appointmentsArray = Array.isArray(data.data) ? data.data : (data.data?.appointments || []);
+        const appointmentsArray = Array.isArray(data.data)
+          ? data.data
+          : data.data?.appointments || [];
         setAppointments(appointmentsArray);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, headers]
+    [token, apiUrl, headers],
   );
 
   const createAppointment = useCallback(
     async (input: CreateAppointmentInput): Promise<Appointment | null> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return null;
       }
 
@@ -113,14 +117,14 @@ export function useAppointments(): UseAppointmentsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/appointments`, {
-          method: 'POST',
+          method: "POST",
           headers,
           body: JSON.stringify(input),
         });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile creare l\'appuntamento'));
+          throw new Error(getErrorMessage(data, "Impossibile creare l'appuntamento"));
         }
 
         const data = await response.json();
@@ -132,20 +136,20 @@ export function useAppointments(): UseAppointmentsReturn {
 
         return newAppointment || null;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return null;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, appointments, headers]
+    [token, apiUrl, appointments, headers],
   );
 
   const updateAppointment = useCallback(
     async (id: string, input: UpdateAppointmentInput): Promise<Appointment | null> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return null;
       }
 
@@ -154,14 +158,14 @@ export function useAppointments(): UseAppointmentsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/appointments/${id}`, {
-          method: 'PATCH',
+          method: "PATCH",
           headers,
           body: JSON.stringify(input),
         });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile aggiornare l\'appuntamento'));
+          throw new Error(getErrorMessage(data, "Impossibile aggiornare l'appuntamento"));
         }
 
         const data = await response.json();
@@ -173,20 +177,20 @@ export function useAppointments(): UseAppointmentsReturn {
 
         return updated || null;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return null;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, appointments, headers]
+    [token, apiUrl, appointments, headers],
   );
 
   const deleteAppointment = useCallback(
     async (id: string): Promise<boolean> => {
       if (!token) {
-        setError('Not authenticated');
+        setError("Not authenticated");
         return false;
       }
 
@@ -195,26 +199,26 @@ export function useAppointments(): UseAppointmentsReturn {
 
       try {
         const response = await fetch(`${apiUrl}/api/appointments/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers,
         });
 
         if (!response.ok) {
           const data = await response.json().catch(() => null);
-          throw new Error(getErrorMessage(data, 'Impossibile eliminare l\'appuntamento'));
+          throw new Error(getErrorMessage(data, "Impossibile eliminare l'appuntamento"));
         }
 
         setAppointments(appointments.filter((a) => a.id !== id));
         return true;
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'An error occurred';
+        const message = err instanceof Error ? err.message : "An error occurred";
         setError(message);
         return false;
       } finally {
         setLoading(false);
       }
     },
-    [token, apiUrl, appointments, headers]
+    [token, apiUrl, appointments, headers],
   );
 
   const clearError = useCallback(() => setError(null), []);

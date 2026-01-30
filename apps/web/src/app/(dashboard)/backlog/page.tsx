@@ -1,11 +1,11 @@
-import BacklogDashboard from '@/components/backlog/BacklogDashboard';
-import BacklogEntriesList from '@/components/backlog/BacklogEntriesList';
-import MonthlyRecapList from '@/components/backlog/MonthlyRecapList';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { endOfMonth, format, startOfMonth } from "date-fns";
+import BacklogDashboard from "@/components/backlog/BacklogDashboard";
+import BacklogEntriesList from "@/components/backlog/BacklogEntriesList";
+import MonthlyRecapList from "@/components/backlog/MonthlyRecapList";
 
 export default function BacklogPage() {
-  const startDate = format(startOfMonth(new Date()), 'yyyy-MM-dd');
-  const endDate = format(endOfMonth(new Date()), 'yyyy-MM-dd');
+  const startDate = format(startOfMonth(new Date()), "yyyy-MM-dd");
+  const endDate = format(endOfMonth(new Date()), "yyyy-MM-dd");
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

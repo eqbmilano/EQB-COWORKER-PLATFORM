@@ -1,19 +1,19 @@
 /**
  * Clients List Page
  */
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useClients, type CreateClientInput } from '@/hooks/useClients';
-import { format, parseISO } from 'date-fns';
-import { it } from 'date-fns/locale';
-import { Users, Plus, Trash2, Edit, AlertCircle, Search } from 'lucide-react';
-import Link from 'next/link';
+import { format, parseISO } from "date-fns";
+import { it } from "date-fns/locale";
+import { AlertCircle, Edit, Plus, Search, Trash2, Users } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { type CreateClientInput, useClients } from "@/hooks/useClients";
 
 export default function ClientsPage() {
   const { clients, loading, error, fetchClients, deleteClient } = useClients();
   const [showForm, setShowForm] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function ClientsPage() {
   }, [searchTerm, fetchClients]);
 
   const handleDelete = async (id: string) => {
-    if (confirm('Sei sicuro di voler eliminare questo cliente?')) {
+    if (confirm("Sei sicuro di voler eliminare questo cliente?")) {
       await deleteClient(id);
     }
   };
@@ -131,7 +131,7 @@ export default function ClientsPage() {
                 )}
 
                 <p className="text-xs text-slate-500">
-                  Aggiunto il {format(parseISO(client.createdAt), 'dd MMM yyyy', { locale: it })}
+                  Aggiunto il {format(parseISO(client.createdAt), "dd MMM yyyy", { locale: it })}
                 </p>
 
                 <div className="flex gap-2 pt-2">
@@ -171,17 +171,17 @@ interface ClientFormProps {
 function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
   const { createClient, updateClient, loading, error: hookError } = useClients();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    companyName: '',
-    address: '',
-    city: '',
-    zipCode: '',
-    notes: '',
+    name: "",
+    email: "",
+    phone: "",
+    companyName: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    notes: "",
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -190,11 +190,11 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!formData.name.trim()) {
-      setError('Il nome del cliente è obbligatorio');
+      setError("Il nome del cliente è obbligatorio");
       return;
     }
 
@@ -212,24 +212,26 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
       if (editingId) {
         await updateClient(editingId, clientData);
-        setSuccess('Cliente aggiornato con successo!');
+        setSuccess("Cliente aggiornato con successo!");
       } else {
         await createClient(clientData);
-        setSuccess('Cliente creato con successo!');
+        setSuccess("Cliente creato con successo!");
       }
 
       setTimeout(() => {
         onSuccess();
       }, 500);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Errore nel salvataggio';
+      const message = err instanceof Error ? err.message : "Errore nel salvataggio";
       setError(message);
     }
   };
 
   return (
     <div className="bg-white/10 backdrop-blur border border-white/20 rounded-lg p-6 space-y-4">
-      <h3 className="text-xl font-bold text-slate-50">{editingId ? 'Modifica Cliente' : 'Nuovo Cliente'}</h3>
+      <h3 className="text-xl font-bold text-slate-50">
+        {editingId ? "Modifica Cliente" : "Nuovo Cliente"}
+      </h3>
 
       {(error || hookError) && (
         <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
@@ -247,9 +249,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Nome */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Nome Cliente *
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Nome Cliente *</label>
             <input
               type="text"
               name="name"
@@ -264,9 +264,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
             <input
               type="email"
               name="email"
@@ -280,9 +278,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
           {/* Telefono */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Telefono
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Telefono</label>
             <input
               type="tel"
               name="phone"
@@ -296,9 +292,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
           {/* Azienda */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Azienda
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Azienda</label>
             <input
               type="text"
               name="companyName"
@@ -312,9 +306,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
           {/* Indirizzo */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Indirizzo
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Indirizzo</label>
             <input
               type="text"
               name="address"
@@ -328,9 +320,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
           {/* Città */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Città
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Città</label>
             <input
               type="text"
               name="city"
@@ -344,9 +334,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
           {/* CAP */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              CAP
-            </label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">CAP</label>
             <input
               type="text"
               name="zipCode"
@@ -361,9 +349,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
 
         {/* Note */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
-            Note
-          </label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Note</label>
           <textarea
             name="notes"
             value={formData.notes}
@@ -382,7 +368,7 @@ function ClientForm({ onClose, onSuccess, editingId }: ClientFormProps) {
             disabled={loading}
             className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-600 text-white rounded-lg transition font-medium"
           >
-            {loading ? 'Salvataggio...' : 'Salva Cliente'}
+            {loading ? "Salvataggio..." : "Salva Cliente"}
           </button>
           <button
             type="button"

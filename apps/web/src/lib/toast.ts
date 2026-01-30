@@ -1,4 +1,4 @@
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from "@/hooks/use-toast";
 
 export function useToastNotifications() {
   const { toast } = useToast();
@@ -6,33 +6,33 @@ export function useToastNotifications() {
   return {
     success: (message: string, description?: string) =>
       toast({
-        title: '✓ Successo',
+        title: "✓ Successo",
         description: description || message,
-        variant: 'default',
+        variant: "default",
         duration: 3000,
       }),
 
     error: (message: string, description?: string) =>
       toast({
-        title: '✗ Errore',
+        title: "✗ Errore",
         description: description || message,
-        variant: 'destructive',
+        variant: "destructive",
         duration: 4000,
       }),
 
     info: (message: string, description?: string) =>
       toast({
-        title: 'ℹ Informazione',
+        title: "ℹ Informazione",
         description: description || message,
-        variant: 'default',
+        variant: "default",
         duration: 3000,
       }),
 
     warning: (message: string, description?: string) =>
       toast({
-        title: '⚠ Attenzione',
+        title: "⚠ Attenzione",
         description: description || message,
-        variant: 'default',
+        variant: "default",
         duration: 3500,
       }),
   };

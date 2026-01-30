@@ -1,11 +1,7 @@
 /**
  * Authentication Layout - Glass Morphism Design
  */
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 flex items-center justify-center px-4 py-8 sm:py-12">
       {/* Animated background blur elements */}
@@ -15,9 +11,7 @@ export default function AuthLayout({
       </div>
 
       {/* Content Container */}
-      <div className="relative w-full max-w-md z-10">
-        {children}
-      </div>
+      <div className="relative w-full max-w-md z-10">{children}</div>
     </div>
   );
 }

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { Card } from '@/components/ui/Card';
-import { format } from 'date-fns';
-import { useAuthStore } from '@/store/authStore';
+import { format } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface BacklogEntry {
   id: string;
@@ -24,14 +24,11 @@ interface BacklogEntriesListProps {
   endDate: string;
 }
 
-export default function BacklogEntriesList({
-  startDate,
-  endDate,
-}: BacklogEntriesListProps) {
+export default function BacklogEntriesList({ startDate, endDate }: BacklogEntriesListProps) {
   const [entries, setEntries] = useState<BacklogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuthStore();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
 
   const fetchEntries = useCallback(async () => {
     try {
@@ -41,7 +38,7 @@ export default function BacklogEntriesList({
         `${apiUrl}/api/backlog/entries?startDate=${startDate}&endDate=${endDate}`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
+        },
       );
 
       if (response.ok) {
@@ -49,7 +46,7 @@ export default function BacklogEntriesList({
         setEntries(data.data);
       }
     } catch (error) {
-      console.error('Error fetching backlog entries:', error);
+      console.error("Error fetching backlog entries:", error);
     } finally {
       setLoading(false);
     }
@@ -107,7 +104,7 @@ export default function BacklogEntriesList({
               {entries.map((entry) => (
                 <tr key={entry.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {format(new Date(entry.date), 'dd/MM/yyyy')}
+                    {format(new Date(entry.date), "dd/MM/yyyy")}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {entry.coworker.user.firstName} {entry.coworker.user.lastName}

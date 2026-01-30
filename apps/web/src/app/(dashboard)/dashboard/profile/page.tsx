@@ -1,35 +1,35 @@
 /**
  * User Profile Page
  */
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
-import { useRouter } from 'next/navigation';
-import { User, Lock, AlertCircle, Check } from 'lucide-react';
+import { AlertCircle, Check, Lock, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, token, isAuthenticated } = useAuthStore();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
+    firstName: "",
+    lastName: "",
+    email: "",
   });
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [isAuthenticated, router]);
 
@@ -37,9 +37,9 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
       });
     }
   }, [user]);
@@ -47,15 +47,16 @@ export default function ProfilePage() {
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
       const response = await fetch(`${apiUrl}/api/auth/me`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -66,14 +67,14 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error?.message || 'Failed to update profile');
+        throw new Error(data.error?.message || "Failed to update profile");
       }
 
       const data = await response.json();
       useAuthStore.setState({ user: data.data?.user });
-      setSuccess('Profilo aggiornato con successo!');
+      setSuccess("Profilo aggiornato con successo!");
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'An error occurred';
+      const message = err instanceof Error ? err.message : "An error occurred";
       setError(message);
     } finally {
       setLoading(false);
@@ -83,27 +84,28 @@ export default function ProfilePage() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setError('Le password non coincidono');
+      setError("Le password non coincidono");
       setLoading(false);
       return;
     }
 
     if (passwordData.newPassword.length < 8) {
-      setError('La password deve avere almeno 8 caratteri');
+      setError("La password deve avere almeno 8 caratteri");
       setLoading(false);
       return;
     }
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
       const response = await fetch(`${apiUrl}/api/auth/change-password`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -114,17 +116,17 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error?.message || 'Failed to change password');
+        throw new Error(data.error?.message || "Failed to change password");
       }
 
-      setSuccess('Password aggiornata con successo!');
+      setSuccess("Password aggiornata con successo!");
       setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'An error occurred';
+      const message = err instanceof Error ? err.message : "An error occurred";
       setError(message);
     } finally {
       setLoading(false);
@@ -185,9 +187,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* First Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Nome
-                </label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Nome</label>
                 <input
                   type="text"
                   value={formData.firstName}
@@ -200,9 +200,7 @@ export default function ProfilePage() {
 
               {/* Last Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Cognome
-                </label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Cognome</label>
                 <input
                   type="text"
                   value={formData.lastName}
@@ -233,7 +231,7 @@ export default function ProfilePage() {
               disabled={loading}
               className="w-full px-4 py-3 bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-600 text-white rounded-lg transition font-medium"
             >
-              {loading ? 'Salvataggio...' : 'Salva Modifiche'}
+              {loading ? "Salvataggio..." : "Salva Modifiche"}
             </button>
           </form>
         </div>
@@ -254,7 +252,7 @@ export default function ProfilePage() {
                 Password Attuale
               </label>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={passwordData.currentPassword}
                 onChange={(e) =>
                   setPasswordData({ ...passwordData, currentPassword: e.target.value })
@@ -272,7 +270,7 @@ export default function ProfilePage() {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={passwordData.newPassword}
                   onChange={(e) =>
                     setPasswordData({ ...passwordData, newPassword: e.target.value })
@@ -286,7 +284,7 @@ export default function ProfilePage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-3 text-slate-400 hover:text-white transition"
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
             </div>
@@ -297,7 +295,7 @@ export default function ProfilePage() {
                 Conferma Password
               </label>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={passwordData.confirmPassword}
                 onChange={(e) =>
                   setPasswordData({ ...passwordData, confirmPassword: e.target.value })
@@ -313,7 +311,7 @@ export default function ProfilePage() {
               disabled={loading}
               className="w-full px-4 py-3 bg-indigo-500 hover:bg-indigo-600 disabled:bg-slate-600 text-white rounded-lg transition font-medium"
             >
-              {loading ? 'Aggiornamento...' : 'Aggiorna Password'}
+              {loading ? "Aggiornamento..." : "Aggiorna Password"}
             </button>
           </form>
         </div>
@@ -322,10 +320,11 @@ export default function ProfilePage() {
       {/* Additional Info */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6 text-sm text-slate-400">
         <p>
-          <strong>Membro dal:</strong> {user.id ? new Date(user.id).toLocaleDateString('it-IT') : 'N/A'}
+          <strong>Membro dal:</strong>{" "}
+          {user.id ? new Date(user.id).toLocaleDateString("it-IT") : "N/A"}
         </p>
         <p className="mt-2">
-          <strong>Ruolo:</strong> {user.role || 'Utente'}
+          <strong>Ruolo:</strong> {user.role || "Utente"}
         </p>
       </div>
     </div>

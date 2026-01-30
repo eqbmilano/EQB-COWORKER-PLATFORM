@@ -1,13 +1,13 @@
 /**
  * Calendar View Component
  */
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { it } from 'date-fns/locale';
-import { useAppointments } from '@/hooks/useAppointments';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { eachDayOfInterval, endOfMonth, format, startOfMonth } from "date-fns";
+import { it } from "date-fns/locale";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAppointments } from "@/hooks/useAppointments";
 
 export default function CalendarView() {
   const { appointments, fetchAppointments } = useAppointments();
@@ -51,7 +51,7 @@ export default function CalendarView() {
     });
   };
 
-  const weekDays = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+  const weekDays = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 
   return (
     <div className="space-y-6">
@@ -70,7 +70,7 @@ export default function CalendarView() {
         </button>
 
         <h2 className="text-2xl font-bold text-white">
-          {format(currentDate, 'MMMM yyyy', { locale: it })}
+          {format(currentDate, "MMMM yyyy", { locale: it })}
         </h2>
 
         <button
@@ -100,18 +100,20 @@ export default function CalendarView() {
         <div className="grid grid-cols-7 gap-0">
           {monthDays.map((day) => {
             const dayAppointments = getDayAppointments(day);
-            const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+            const isToday = format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
             const isCurrentMonth = day.getMonth() === currentDate.getMonth();
 
             return (
               <div
                 key={day.toISOString()}
                 className={`min-h-24 border-b border-r border-white/10 p-2 ${
-                  isCurrentMonth ? 'bg-white/5' : 'bg-white/[0.02]'
-                } ${isToday ? 'ring-inset ring-2 ring-indigo-500' : ''}`}
+                  isCurrentMonth ? "bg-white/5" : "bg-white/[0.02]"
+                } ${isToday ? "ring-inset ring-2 ring-indigo-500" : ""}`}
               >
-                <div className={`text-xs font-medium mb-1 ${isToday ? 'text-indigo-400' : 'text-slate-400'}`}>
-                  {format(day, 'd')}
+                <div
+                  className={`text-xs font-medium mb-1 ${isToday ? "text-indigo-400" : "text-slate-400"}`}
+                >
+                  {format(day, "d")}
                 </div>
 
                 <div className="space-y-1">
@@ -119,9 +121,9 @@ export default function CalendarView() {
                     <div
                       key={apt.id}
                       className="text-xs bg-indigo-500/20 border border-indigo-500/50 text-indigo-300 rounded px-1 py-0.5 truncate hover:bg-indigo-500/30 transition cursor-pointer"
-                      title={`${format(new Date(apt.startTime), 'HH:mm')} - ${apt.clientName || apt.clientId}`}
+                      title={`${format(new Date(apt.startTime), "HH:mm")} - ${apt.clientName || apt.clientId}`}
                     >
-                      {format(new Date(apt.startTime), 'HH:mm')} {apt.type}
+                      {format(new Date(apt.startTime), "HH:mm")} {apt.type}
                     </div>
                   ))}
 

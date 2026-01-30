@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/Card';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 interface SystemStatistics {
   totalUsers: number;
@@ -19,7 +19,7 @@ interface SystemStatistics {
 export default function AdminStatistics() {
   const [statistics, setStatistics] = useState<SystemStatistics | null>(null);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://eqb-coworker-platform.onrender.com";
   const { token } = useAuthStore();
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function AdminStatistics() {
         setStatistics(data.data);
       }
     } catch (error) {
-      console.error('Error fetching statistics:', error);
+      console.error("Error fetching statistics:", error);
     } finally {
       setLoading(false);
     }
@@ -73,30 +73,22 @@ export default function AdminStatistics() {
         <Card>
           <div className="p-6">
             <p className="text-sm text-gray-600">Utenti Totali</p>
-            <p className="text-3xl font-bold text-blue-600 mt-2">
-              {statistics.totalUsers}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              {statistics.activeUsers} attivi
-            </p>
+            <p className="text-3xl font-bold text-blue-600 mt-2">{statistics.totalUsers}</p>
+            <p className="text-xs text-gray-500 mt-1">{statistics.activeUsers} attivi</p>
           </div>
         </Card>
 
         <Card>
           <div className="p-6">
             <p className="text-sm text-gray-600">Operatori</p>
-            <p className="text-3xl font-bold text-purple-600 mt-2">
-              {statistics.totalCoworkers}
-            </p>
+            <p className="text-3xl font-bold text-purple-600 mt-2">{statistics.totalCoworkers}</p>
           </div>
         </Card>
 
         <Card>
           <div className="p-6">
             <p className="text-sm text-gray-600">Clienti</p>
-            <p className="text-3xl font-bold text-green-600 mt-2">
-              {statistics.totalClients}
-            </p>
+            <p className="text-3xl font-bold text-green-600 mt-2">{statistics.totalClients}</p>
           </div>
         </Card>
 
@@ -129,9 +121,7 @@ export default function AdminStatistics() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Tasso di Completamento</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">
-                {completionRate.toFixed(1)}%
-              </p>
+              <p className="text-2xl font-bold text-blue-600 mt-1">{completionRate.toFixed(1)}%</p>
             </div>
           </div>
         </div>
@@ -156,16 +146,22 @@ export default function AdminStatistics() {
               <div className="mt-3">
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   {(() => {
-                    const progressValue = Math.min(Math.round((statistics.monthlyHoursWorked / 1500) * 100), 100);
-                    const progressWidth = Math.min((statistics.monthlyHoursWorked / 1500) * 100, 100);
+                    const progressValue = Math.min(
+                      Math.round((statistics.monthlyHoursWorked / 1500) * 100),
+                      100,
+                    );
+                    const progressWidth = Math.min(
+                      (statistics.monthlyHoursWorked / 1500) * 100,
+                      100,
+                    );
                     return (
                       <div
                         className={`h-3 rounded-full ${
                           statistics.monthlyHoursWorked > 1500
-                            ? 'bg-red-600'
+                            ? "bg-red-600"
                             : statistics.monthlyHoursWorked > 1200
-                            ? 'bg-yellow-500'
-                            : 'bg-green-600'
+                              ? "bg-yellow-500"
+                              : "bg-green-600"
                         }`}
                         role="progressbar"
                         aria-label={`Ore mese corrente: ${statistics.monthlyHoursWorked.toFixed(1)}h`}
@@ -178,8 +174,8 @@ export default function AdminStatistics() {
                   })()}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {((statistics.monthlyHoursWorked / 1500) * 100).toFixed(1)}%
-                  della capacità mensile (1,500h)
+                  {((statistics.monthlyHoursWorked / 1500) * 100).toFixed(1)}% della capacità
+                  mensile (1,500h)
                 </p>
               </div>
             </div>

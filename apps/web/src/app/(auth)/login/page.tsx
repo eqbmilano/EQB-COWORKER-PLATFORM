@@ -1,40 +1,40 @@
 /**
  * Login Page - Custom JWT + Social OAuth (Google, Instagram, LinkedIn)
  */
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { useAuthStore } from '@/store/authStore';
-import SocialLoginButtons from '@/components/auth/SocialLoginButtons';
-import { Mail, Lock, AlertCircle, Check } from 'lucide-react';
+import { AlertCircle, Check, Lock, Mail } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error, clearError } = useAuthStore();
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
 
     if (!email || !password) {
-      useAuthStore.setState({ error: 'Compila tutti i campi' });
+      useAuthStore.setState({ error: "Compila tutti i campi" });
       return;
     }
 
     try {
       await login(email, password);
-      setSuccessMessage('Login riuscito! Reindirizzamento...');
-      setTimeout(() => router.push('/dashboard'), 500);
+      setSuccessMessage("Login riuscito! Reindirizzamento...");
+      setTimeout(() => router.push("/dashboard"), 500);
     } catch (err) {
-      console.error('Login error:', err);
+      console.error("Login error:", err);
     }
   };
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
             <Lock className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" />
             <input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-10 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition backdrop-blur"
@@ -106,7 +106,7 @@ export default function LoginPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3.5 top-3.5 text-slate-400 hover:text-white transition"
             >
-              {showPassword ? '👁️' : '👁️‍🗨️'}
+              {showPassword ? "👁️" : "👁️‍🗨️"}
             </button>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function LoginPage() {
               Accesso in corso...
             </span>
           ) : (
-            'Accedi'
+            "Accedi"
           )}
         </Button>
       </form>
@@ -144,8 +144,11 @@ export default function LoginPage() {
       {/* Footer */}
       <div className="mt-8 pt-6 border-t border-white/10">
         <p className="text-center text-slate-300 text-sm">
-          Non hai un account?{' '}
-          <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 font-medium transition">
+          Non hai un account?{" "}
+          <Link
+            href="/signup"
+            className="text-indigo-400 hover:text-indigo-300 font-medium transition"
+          >
             Registrati
           </Link>
         </p>

@@ -2,50 +2,61 @@
  * Invoices Page
  * Gestione completa fatture con CRUD e PDF export
  */
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { formatDate } from "date-fns";
+import { it } from "date-fns/locale";
 import {
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Edit,
   FileText,
   Plus,
-  Edit,
   Trash2,
-  Download,
-  DollarSign,
-  CheckCircle,
-  AlertCircle,
-  Clock,
   XCircle,
-} from 'lucide-react';
-import { useInvoices, type Invoice, type CreateInvoiceInput } from '@/hooks/useInvoices';
-import { useAppointments } from '@/hooks/useAppointments';
-import { formatDate } from 'date-fns';
-import { it } from 'date-fns/locale';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAppointments } from "@/hooks/useAppointments";
+import { type CreateInvoiceInput, type Invoice, useInvoices } from "@/hooks/useInvoices";
 
-type InvoiceStatus = 'DRAFT' | 'SENT' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+type InvoiceStatus = "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "CANCELLED";
 
-const statusConfig: Record<InvoiceStatus, { color: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
-  DRAFT: { color: 'bg-slate-500', icon: Clock, label: 'Bozza' },
-  SENT: { color: 'bg-blue-500', icon: CheckCircle, label: 'Inviata' },
-  PAID: { color: 'bg-green-500', icon: CheckCircle, label: 'Pagata' },
-  OVERDUE: { color: 'bg-red-500', icon: AlertCircle, label: 'Scaduta' },
-  CANCELLED: { color: 'bg-slate-600', icon: XCircle, label: 'Annullata' },
+const statusConfig: Record<
+  InvoiceStatus,
+  { color: string; icon: React.ComponentType<{ className?: string }>; label: string }
+> = {
+  DRAFT: { color: "bg-slate-500", icon: Clock, label: "Bozza" },
+  SENT: { color: "bg-blue-500", icon: CheckCircle, label: "Inviata" },
+  PAID: { color: "bg-green-500", icon: CheckCircle, label: "Pagata" },
+  OVERDUE: { color: "bg-red-500", icon: AlertCircle, label: "Scaduta" },
+  CANCELLED: { color: "bg-slate-600", icon: XCircle, label: "Annullata" },
 };
 
 export default function InvoicesPage() {
-  const { invoices, loading, error, fetchInvoices, createInvoice, updateInvoice, deleteInvoice, downloadPDF } =
-    useInvoices();
+  const {
+    invoices,
+    loading,
+    error,
+    fetchInvoices,
+    createInvoice,
+    updateInvoice,
+    deleteInvoice,
+    downloadPDF,
+  } = useInvoices();
   const { appointments } = useAppointments();
 
   const [showForm, setShowForm] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [formData, setFormData] = useState<CreateInvoiceInput>({
-    appointmentId: '',
+    appointmentId: "",
     amount: 0,
-    currency: 'EUR',
-    issueDate: new Date().toISOString().split('T')[0],
-    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    status: 'DRAFT',
+    currency: "EUR",
+    issueDate: new Date().toISOString().split("T")[0],
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    status: "DRAFT",
   });
 
   useEffect(() => {
@@ -68,16 +79,16 @@ export default function InvoicesPage() {
       setShowForm(false);
       setSelectedInvoice(null);
       setFormData({
-        appointmentId: '',
+        appointmentId: "",
         amount: 0,
-        currency: 'EUR',
-        issueDate: new Date().toISOString().split('T')[0],
-        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        status: 'DRAFT',
+        currency: "EUR",
+        issueDate: new Date().toISOString().split("T")[0],
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        status: "DRAFT",
       });
       await fetchInvoices();
     } catch (err) {
-      console.error('Error:', err);
+      console.error("Error:", err);
     }
   };
 
@@ -87,15 +98,15 @@ export default function InvoicesPage() {
       appointmentId: invoice.appointmentId,
       amount: invoice.amount,
       currency: invoice.currency,
-      issueDate: invoice.issueDate.split('T')[0],
-      dueDate: invoice.dueDate.split('T')[0],
+      issueDate: invoice.issueDate.split("T")[0],
+      dueDate: invoice.dueDate.split("T")[0],
       status: invoice.status,
     });
     setShowForm(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Sei sicuro di voler eliminare questa fattura?')) {
+    if (confirm("Sei sicuro di voler eliminare questa fattura?")) {
       await deleteInvoice(id);
       await fetchInvoices();
     }
@@ -105,14 +116,13 @@ export default function InvoicesPage() {
     try {
       await downloadPDF(id);
     } catch (err) {
-      console.error('Error downloading PDF:', err);
+      console.error("Error downloading PDF:", err);
     }
   };
 
   const getTotalAmount = () => invoices.reduce((sum, inv) => sum + inv.amount, 0);
-  const getPaidAmount = () => invoices
-    .filter((inv) => inv.status === 'PAID')
-    .reduce((sum, inv) => sum + inv.amount, 0);
+  const getPaidAmount = () =>
+    invoices.filter((inv) => inv.status === "PAID").reduce((sum, inv) => sum + inv.amount, 0);
 
   return (
     <div className="space-y-6">
@@ -174,12 +184,17 @@ export default function InvoicesPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-slate-900 border border-white/20 rounded-lg p-8 w-full max-w-md">
             <h2 className="text-2xl font-bold text-slate-50 mb-6">
-              {selectedInvoice ? 'Modifica Fattura' : 'Nuova Fattura'}
+              {selectedInvoice ? "Modifica Fattura" : "Nuova Fattura"}
             </h2>
             <form onSubmit={handleCreateOrUpdate} className="space-y-4">
               {/* Appointment Select */}
               <div>
-                <label htmlFor="appointmentId" className="block text-sm font-medium text-slate-300 mb-2">Appuntamento *</label>
+                <label
+                  htmlFor="appointmentId"
+                  className="block text-sm font-medium text-slate-300 mb-2"
+                >
+                  Appuntamento *
+                </label>
                 <select
                   id="appointmentId"
                   value={formData.appointmentId}
@@ -191,7 +206,8 @@ export default function InvoicesPage() {
                   <option value="">Seleziona appuntamento</option>
                   {appointments.map((apt) => (
                     <option key={apt.id} value={apt.id}>
-                      {apt.clientName} - {formatDate(new Date(apt.startTime), 'PPP', { locale: it })}
+                      {apt.clientName} -{" "}
+                      {formatDate(new Date(apt.startTime), "PPP", { locale: it })}
                     </option>
                   ))}
                 </select>
@@ -199,7 +215,9 @@ export default function InvoicesPage() {
 
               {/* Amount */}
               <div>
-                <label htmlFor="amount" className="block text-sm font-medium text-slate-300 mb-2">Importo (€) *</label>
+                <label htmlFor="amount" className="block text-sm font-medium text-slate-300 mb-2">
+                  Importo (€) *
+                </label>
                 <input
                   id="amount"
                   type="number"
@@ -214,7 +232,12 @@ export default function InvoicesPage() {
 
               {/* Issue Date */}
               <div>
-                <label htmlFor="issueDate" className="block text-sm font-medium text-slate-300 mb-2">Data Emissione *</label>
+                <label
+                  htmlFor="issueDate"
+                  className="block text-sm font-medium text-slate-300 mb-2"
+                >
+                  Data Emissione *
+                </label>
                 <input
                   id="issueDate"
                   type="date"
@@ -227,7 +250,9 @@ export default function InvoicesPage() {
 
               {/* Due Date */}
               <div>
-                <label htmlFor="dueDate" className="block text-sm font-medium text-slate-300 mb-2">Data Scadenza *</label>
+                <label htmlFor="dueDate" className="block text-sm font-medium text-slate-300 mb-2">
+                  Data Scadenza *
+                </label>
                 <input
                   id="dueDate"
                   type="date"
@@ -240,7 +265,9 @@ export default function InvoicesPage() {
 
               {/* Status */}
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-slate-300 mb-2">Stato</label>
+                <label htmlFor="status" className="block text-sm font-medium text-slate-300 mb-2">
+                  Stato
+                </label>
                 <select
                   id="status"
                   value={formData.status}
@@ -261,7 +288,7 @@ export default function InvoicesPage() {
                   type="submit"
                   className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition"
                 >
-                  {selectedInvoice ? 'Aggiorna' : 'Crea'}
+                  {selectedInvoice ? "Aggiorna" : "Crea"}
                 </button>
                 <button
                   type="button"
@@ -293,8 +320,10 @@ export default function InvoicesPage() {
         <div className="space-y-3">
           {invoices.map((invoice) => {
             const StatusIcon = statusConfig[invoice.status as InvoiceStatus]?.icon || FileText;
-            const statusColor = statusConfig[invoice.status as InvoiceStatus]?.color || 'bg-slate-500';
-            const statusLabel = statusConfig[invoice.status as InvoiceStatus]?.label || invoice.status;
+            const statusColor =
+              statusConfig[invoice.status as InvoiceStatus]?.color || "bg-slate-500";
+            const statusLabel =
+              statusConfig[invoice.status as InvoiceStatus]?.label || invoice.status;
 
             return (
               <div
@@ -310,7 +339,9 @@ export default function InvoicesPage() {
                     <div className="flex gap-4 text-sm text-slate-400">
                       <span>€{invoice.amount.toFixed(2)}</span>
                       <span>{statusLabel}</span>
-                      <span>Scadenza: {formatDate(new Date(invoice.dueDate), 'PPP', { locale: it })}</span>
+                      <span>
+                        Scadenza: {formatDate(new Date(invoice.dueDate), "PPP", { locale: it })}
+                      </span>
                     </div>
                   </div>
                 </div>

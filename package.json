@@ -8,9 +8,10 @@
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "test": "turbo run test",
-    "lint": "biome lint --write .",
+    "lint": "biome check --fix .",
+    "lint:check": "biome check .",
     "format": "biome format --write .",
-    "check": "biome check .",
+    "format:check": "biome format .",
     "db:migrate": "cd apps/api && pnpm run db:migrate",
     "db:seed": "cd apps/api && pnpm run db:seed",
     "db:studio": "cd apps/api && pnpm run db:studio"
