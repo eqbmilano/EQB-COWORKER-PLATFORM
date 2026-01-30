@@ -60,6 +60,7 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
       const payload = {
         ...formData,
       };
+      console.log('Sending request:', { url, method, payload, token });
 
       const response = await fetch(url, {
         method,
@@ -69,9 +70,11 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
         },
         body: JSON.stringify(payload),
       });
+      console.log('Response status:', response.status);
 
       if (!response.ok) {
         const data = await response.json();
+        console.error('API error:', data);
         throw new Error(data.message || 'Errore nel salvataggio del cliente');
       }
 
