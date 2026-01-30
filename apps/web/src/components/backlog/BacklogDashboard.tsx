@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/Card';
+import { Alert } from '@/components/ui/Alert';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { useAuthStore } from '@/store/authStore';
 
@@ -24,6 +25,7 @@ export default function BacklogDashboard() {
   const [statistics, setStatistics] = useState<BacklogStatistics | null>(null);
   const [capacity, setCapacity] = useState<CapacityData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(
     format(startOfMonth(new Date()), 'yyyy-MM-dd')
   );
@@ -46,6 +48,8 @@ export default function BacklogDashboard() {
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStatistics(statsData.data);
+      } else {
+        setError('Impossibile caricare le statistiche del backlog');
       }
 
       // Fetch capacity
@@ -56,9 +60,11 @@ export default function BacklogDashboard() {
       if (capacityResponse.ok) {
         const capacityData = await capacityResponse.json();
         setCapacity(capacityData.data);
+      } else {
+        setError('Impossibile caricare la capacità del backlog');
       }
     } catch (error) {
-      console.error('Error fetching backlog data:', error);
+      setError('Errore nel caricamento dei dati del backlog');
     } finally {
       setLoading(false);
     }
@@ -81,6 +87,7 @@ export default function BacklogDashboard() {
 
   return (
     <div className="space-y-6">
+      {error && <Alert type="error" message={error} />}
       {/* Date Range Filter */}
       <Card>
         <div className="p-6">

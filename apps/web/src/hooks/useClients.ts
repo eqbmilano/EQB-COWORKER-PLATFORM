@@ -52,7 +52,12 @@ export function useClients(): UseClientsReturn {
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuthStore();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
+
+  const getErrorMessage = (data: any, fallback: string) => {
+    if (!data) return fallback;
+    return data.message || data.error || data.error?.message || fallback;
+  };
 
   const headers = useMemo(() => ({
     'Content-Type': 'application/json',
@@ -79,12 +84,12 @@ export function useClients(): UseClientsReturn {
         );
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to fetch clients');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile caricare i clienti'));
         }
 
         const data = await response.json();
-        setClients(data.data?.clients || []);
+        setClients(data.data || []);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'An error occurred';
         setError(message);
@@ -106,12 +111,12 @@ export function useClients(): UseClientsReturn {
         const response = await fetch(`${apiUrl}/api/clients/${id}`, { headers });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to fetch client');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile caricare il cliente'));
         }
 
         const data = await response.json();
-        return data.data?.client || null;
+        return data.data || null;
       } catch (err) {
         const message = err instanceof Error ? err.message : 'An error occurred';
         setError(message);
@@ -139,12 +144,12 @@ export function useClients(): UseClientsReturn {
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to create client');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile creare il cliente'));
         }
 
         const data = await response.json();
-        const newClient = data.data?.client;
+        const newClient = data.data;
 
         if (newClient) {
           setClients([...clients, newClient]);
@@ -180,12 +185,12 @@ export function useClients(): UseClientsReturn {
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to update client');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile aggiornare il cliente'));
         }
 
         const data = await response.json();
-        const updated = data.data?.client;
+        const updated = data.data;
 
         if (updated) {
           setClients(clients.map((c) => (c.id === id ? updated : c)));
@@ -220,8 +225,8 @@ export function useClients(): UseClientsReturn {
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error?.message || 'Failed to delete client');
+          const data = await response.json().catch(() => null);
+          throw new Error(getErrorMessage(data, 'Impossibile eliminare il cliente'));
         }
 
         setClients(clients.filter((c) => c.id !== id));

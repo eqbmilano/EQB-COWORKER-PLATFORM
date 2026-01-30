@@ -73,9 +73,10 @@ export default function ClientForm({ initialData, clientId }: ClientFormProps) {
       console.log('Response status:', response.status);
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
         console.error('API error:', data);
-        throw new Error(data.message || 'Errore nel salvataggio del cliente');
+        const message = data?.message || data?.error || 'Errore nel salvataggio del cliente';
+        throw new Error(message);
       }
 
       const data = await response.json();

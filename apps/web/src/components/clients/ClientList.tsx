@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { Alert } from '@/components/ui/Alert';
 import type { Client } from '@eqb/shared-types';
 import { useAuthStore } from '@/store/authStore';
 
@@ -15,6 +16,7 @@ interface ClientListProps {
 export default function ClientList({ coworkerId }: ClientListProps) {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -42,14 +44,17 @@ export default function ClientList({ coworkerId }: ClientListProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch clients');
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.message || data?.error || 'Impossibile caricare i clienti');
       }
 
       const data = await response.json();
       setClients(data.data);
       setTotalPages(data.pagination.totalPages);
+      setError(null);
     } catch (error) {
-      console.error('Error fetching clients:', error);
+      const message = error instanceof Error ? error.message : 'Impossibile caricare i clienti';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -78,6 +83,7 @@ export default function ClientList({ coworkerId }: ClientListProps) {
 
   return (
     <div className="space-y-6">
+      {error && <Alert type="error" message={error} />}
       {/* Header with Search and Add Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex-1 w-full sm:w-auto">

@@ -6,7 +6,7 @@
 import { useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
 
 export interface AdminUser {
   id: string;

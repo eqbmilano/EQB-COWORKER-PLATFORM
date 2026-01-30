@@ -51,7 +51,7 @@ export default function ProfilePage() {
     setSuccess('');
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
       const response = await fetch(`${apiUrl}/api/auth/me`, {
         method: 'PATCH',
         headers: {
@@ -99,7 +99,7 @@ export default function ProfilePage() {
     }
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
       const response = await fetch(`${apiUrl}/api/auth/change-password`, {
         method: 'POST',
         headers: {

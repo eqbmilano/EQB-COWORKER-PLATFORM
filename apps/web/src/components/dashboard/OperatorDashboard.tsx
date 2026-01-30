@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Alert } from '@/components/ui/Alert';
 import Link from 'next/link';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { useAuthStore } from '@/store/authStore';
@@ -29,6 +30,7 @@ export default function OperatorDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [upcomingAppointments, setUpcomingAppointments] = useState<UpcomingAppointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://eqb-coworker-platform.onrender.com';
   const { token } = useAuthStore();
 
@@ -60,18 +62,24 @@ export default function OperatorDashboard() {
       if (backlogResponse.ok) {
         const backlogData = await backlogResponse.json();
         monthlyHours = backlogData.data.totalHours;
+      } else {
+        setError('Impossibile caricare le statistiche backlog');
       }
 
       let appointments: UpcomingAppointment[] = [];
       if (appointmentsResponse.ok) {
         const appointmentsData = await appointmentsResponse.json();
         appointments = appointmentsData.data.appointments || [];
+      } else {
+        setError('Impossibile caricare gli appuntamenti');
       }
 
       let totalClients = 0;
       if (clientsResponse.ok) {
         const clientsData = await clientsResponse.json();
         totalClients = clientsData.pagination?.total || 0;
+      } else {
+        setError('Impossibile caricare i clienti');
       }
 
       // Calculate today and week appointments
@@ -99,7 +107,7 @@ export default function OperatorDashboard() {
 
       setUpcomingAppointments(appointments.slice(0, 5));
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      setError('Errore nel caricamento della dashboard');
     } finally {
       setLoading(false);
     }
@@ -118,6 +126,7 @@ export default function OperatorDashboard() {
 
   return (
     <div className="space-y-6">
+      {error && <Alert type="error" message={error} />}
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -248,7 +257,7 @@ export default function OperatorDashboard() {
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-4">Azioni Rapide</h2>
             <div className="space-y-3">
-              <Link href="/dashboard/appointments/new">
+              <Link href="/dashboard/appointments?new=1">
                 <Button variant="primary" className="w-full">
                   📅 Nuovo Appuntamento
                 </Button>

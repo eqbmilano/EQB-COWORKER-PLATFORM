@@ -4,6 +4,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAppointments, Appointment } from '@/hooks/useAppointments';
 import { useClients } from '@/hooks/useClients';
 import { format, parseISO } from 'date-fns';
@@ -24,6 +25,7 @@ import {
 export default function AppointmentsListPage() {
   const { appointments, loading, error, fetchAppointments, deleteAppointment, clearError } =
     useAppointments();
+  const searchParams = useSearchParams();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -41,6 +43,12 @@ export default function AppointmentsListPage() {
       endDate: endOfDay.toISOString(),
     });
   }, [currentDate, fetchAppointments]);
+
+  useEffect(() => {
+    if (searchParams?.get('new') === '1') {
+      setShowForm(true);
+    }
+  }, [searchParams]);
 
   // Filter appointments by date
   useEffect(() => {
