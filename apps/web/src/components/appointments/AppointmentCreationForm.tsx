@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, parse, isBefore, startOfDay, addMinutes } from 'date-fns';
-import { it } from 'date-fns/locale';
-import type { CoworkerProfile, AvailabilitySlot } from '@eqb-platform/shared-types';
+import { format, isBefore, startOfDay } from 'date-fns';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import Alert from '@/components/ui/Alert';
-import Card from '@/components/ui/Card';
+import { Input } from '@/components/ui/input';
+import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/Card';
 
 interface AppointmentCreationFormProps {
   coworkerId?: string;
@@ -28,6 +26,11 @@ interface FormData {
 }
 
 interface AvailableSlot {
+  startTime: string;
+  endTime: string;
+}
+
+interface AvailabilitySlot {
   startTime: string;
   endTime: string;
 }

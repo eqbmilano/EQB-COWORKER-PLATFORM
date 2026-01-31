@@ -3,11 +3,20 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
-import type { Appointment } from '@eqb-platform/shared-types';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import Alert from '@/components/ui/Alert';
-import Card from '@/components/ui/Card';
+import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/Card';
+
+interface Appointment {
+  id: string;
+  title: string;
+  startTime: string | Date;
+  endTime: string | Date;
+  client?: {
+    firstName: string;
+    lastName: string;
+  };
+}
 
 interface CancellationRequestFormProps {
   appointment: Appointment;
@@ -166,23 +175,27 @@ export default function CancellationRequestForm({
 
           {/* Warning */}
           {!canCancelDirectly && (
-            <Alert
-              type="warning"
-              message={`⚠️ Rimangono meno di 12 ore. La tua richiesta di cancellazione dovrà essere approvata da un amministratore.`}
-              className="mb-6"
-            />
+            <div className="mb-6">
+              <Alert
+                type="warning"
+                message={`⚠️ Rimangono meno di 12 ore. La tua richiesta di cancellazione dovrà essere approvata da un amministratore.`}
+              />
+            </div>
           )}
 
           {error && (
-            <Alert type="error" message={error} onClose={() => setError(null)} className="mb-6" />
+            <div className="mb-6">
+              <Alert type="error" message={error} onClose={() => setError(null)} />
+            </div>
           )}
           {success && (
-            <Alert
-              type="success"
-              message={success}
-              onClose={() => setSuccess(null)}
-              className="mb-6"
-            />
+            <div className="mb-6">
+              <Alert
+                type="success"
+                message={success}
+                onClose={() => setSuccess(null)}
+              />
+            </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">

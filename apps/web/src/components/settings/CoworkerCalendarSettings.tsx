@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import Alert from '@/components/ui/Alert';
-import Card from '@/components/ui/Card';
+import { Input } from '@/components/ui/input';
+import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/Card';
 
 interface WorkingHoursSlot {
   start: string;
@@ -274,20 +274,22 @@ export default function CoworkerCalendarSettings() {
       </div>
 
       {error && (
-        <Alert
-          type="error"
-          message={error}
-          onClose={() => setError(null)}
-          className="mb-6"
-        />
+        <div className="mb-6">
+          <Alert
+            type="error"
+            message={error}
+            onClose={() => setError(null)}
+          />
+        </div>
       )}
       {success && (
-        <Alert
-          type="success"
-          message={success}
-          onClose={() => setSuccess(null)}
-          className="mb-6"
-        />
+        <div className="mb-6">
+          <Alert
+            type="success"
+            message={success}
+            onClose={() => setSuccess(null)}
+          />
+        </div>
       )}
 
       {/* Google Calendar Connection */}
@@ -373,7 +375,7 @@ export default function CoworkerCalendarSettings() {
 
               <div className="flex gap-2">
                 <Button
-                  variant={settings.allowOnlineBooking ? 'success' : 'secondary'}
+                  variant={settings.allowOnlineBooking ? 'primary' : 'secondary'}
                   onClick={handleToggleOnlineBooking}
                   disabled={saving}
                 >

@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
-import type { AvailabilitySlot } from '@eqb-platform/shared-types';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import Alert from '@/components/ui/Alert';
-import Card from '@/components/ui/Card';
+import { Input } from '@/components/ui/input';
+import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/Card';
+
+interface AvailabilitySlot {
+  startTime: string;
+  endTime: string;
+}
 
 interface CoworkerInfo {
   coworkerId: string;
@@ -295,20 +298,22 @@ export default function PublicBookingPage() {
         </div>
 
         {error && (
-          <Alert
-            type="error"
-            message={error}
-            onClose={() => setError(null)}
-            className="mb-6"
-          />
+          <div className="mb-6">
+            <Alert
+              type="error"
+              message={error}
+              onClose={() => setError(null)}
+            />
+          </div>
         )}
         {success && (
-          <Alert
-            type="success"
-            message={success}
-            onClose={() => setSuccess(null)}
-            className="mb-6"
-          />
+          <div className="mb-6">
+            <Alert
+              type="success"
+              message={success}
+              onClose={() => setSuccess(null)}
+            />
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">

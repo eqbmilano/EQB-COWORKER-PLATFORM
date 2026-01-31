@@ -3,10 +3,45 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
-import type { CancellationRequest } from '@eqb-platform/shared-types';
 import { Button } from '@/components/ui/Button';
-import Alert from '@/components/ui/Alert';
-import Card from '@/components/ui/Card';
+import { Alert } from '@/components/ui/Alert';
+import { Card } from '@/components/ui/Card';
+
+interface CancellationRequest {
+  id: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reason: string;
+  urgency: 'low' | 'medium' | 'high';
+  notes?: string;
+  requestedAt: string | Date;
+  hoursUntilAppointment?: number;
+  reviewedAt?: string | Date;
+  reviewedBy?: string;
+  adminMessage?: string;
+  appointment?: {
+    id: string;
+    title: string;
+    startTime: string;
+    endTime: string;
+    client?: {
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+    coworker?: {
+      companyName: string;
+    };
+  };
+  coworker?: {
+    id: string;
+    companyName: string;
+  };
+  client?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
 
 interface CancellationRequestWithDetails extends CancellationRequest {
   appointment?: {
@@ -36,12 +71,6 @@ interface CancellationRequestWithDetails extends CancellationRequest {
 
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
-interface ReviewAction {
-  requestId: string;
-  action: 'approve' | 'reject';
-  message?: string;
-}
-
 export default function AdminCancellationDashboard() {
   const [requests, setRequests] = useState<CancellationRequestWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +79,6 @@ export default function AdminCancellationDashboard() {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('pending');
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [reviewMessage, setReviewMessage] = useState('');
-  const [reviewingAction, setReviewingAction] = useState<'approve' | 'reject' | null>(null);
 
   // Carica richieste di cancellazione
   useEffect(() => {
@@ -117,7 +145,6 @@ export default function AdminCancellationDashboard() {
 
       setReviewingId(null);
       setReviewMessage('');
-      setReviewingAction(null);
 
       // Ricarica richieste
       setTimeout(() => {
@@ -198,20 +225,22 @@ export default function AdminCancellationDashboard() {
       </div>
 
       {error && (
-        <Alert
-          type="error"
-          message={error}
-          onClose={() => setError(null)}
-          className="mb-6"
-        />
+        <div className="mb-6">
+          <Alert
+            type="error"
+            message={error}
+            onClose={() => setError(null)}
+          />
+        </div>
       )}
       {success && (
-        <Alert
-          type="success"
-          message={success}
-          onClose={() => setSuccess(null)}
-          className="mb-6"
-        />
+        <div className="mb-6">
+          <Alert
+            type="success"
+            message={success}
+            onClose={() => setSuccess(null)}
+          />
+        </div>
       )}
 
       {/* Filters */}
@@ -337,7 +366,7 @@ export default function AdminCancellationDashboard() {
                           Annulla
                         </Button>
                         <Button
-                          variant="success"
+                          variant="primary"
                           onClick={() => handleReview(request.id, 'approve')}
                         >
                           ✓ Approva
