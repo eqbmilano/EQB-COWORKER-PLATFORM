@@ -15,6 +15,10 @@ config(); // Also load from default .env
 // Import routes
 import authRouter from './routes/auth.js';
 import appointmentsRouter from './routes/appointments.js';
+import appointmentsEnhancedRouter from './routes/appointmentsEnhanced.js';
+import cancellationRequestsRouter from './routes/cancellationRequests.js';
+import publicBookingRouter from './routes/publicBooking.js';
+import oauthRouter from './routes/oauth.js';
 import clientsRouter from './routes/clients.js';
 import invoicesRouter from './routes/invoices.js';
 import backlogRouter from './routes/backlog.js';
@@ -89,7 +93,11 @@ app.get('/health', (_req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/auth', authRouter);
+app.use('/api/auth', oauthRouter); // Google OAuth routes
 app.use('/api/appointments', appointmentsRouter);
+app.use('/api/appointments', appointmentsEnhancedRouter); // Enhanced appointments with Google Calendar
+app.use('/api/cancellation-requests', cancellationRequestsRouter);
+app.use('/api/public', publicBookingRouter); // Public booking endpoints
 app.use('/api/clients', clientsRouter);
 app.use('/api/invoices', invoicesRouter);
 app.use('/api/backlog', backlogRouter);
