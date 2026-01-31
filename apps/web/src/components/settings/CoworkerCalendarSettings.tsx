@@ -355,9 +355,10 @@ export default function CoworkerCalendarSettings() {
           {settings.bookingUrl ? (
             <div className="space-y-3">
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-900 font-medium mb-2">Il tuo link di prenotazione:</p>
+                <label htmlFor="booking-url" className="text-sm text-blue-900 font-medium mb-2 block">Il tuo link di prenotazione:</label>
                 <div className="flex items-center gap-2">
                   <input
+                    id="booking-url"
                     type="text"
                     value={settings.bookingUrl}
                     readOnly

@@ -1,12 +1,22 @@
 import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
-import type { PublicBookingRequest } from '@eqb-platform/shared-types';
 import {
   createOAuth2Client,
   createCalendarEvent,
   checkTimeConflicts,
 } from '../services/googleCalendar';
+
+// Define local type instead of importing from shared-types
+interface PublicBookingRequest {
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  notes?: string;
+}
 
 const router = Router();
 const prisma = new PrismaClient();

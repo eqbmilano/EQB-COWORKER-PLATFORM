@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { google } from 'googleapis';
 import crypto from 'crypto';
 import { logger } from '../utils/logger';
-import { requireAuth } from '../middleware/auth';
+import authMiddleware from '../middleware/auth';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -50,7 +50,7 @@ function createOAuth2Client() {
  * GET /api/auth/google/connect
  * Inizia il flow OAuth per connettere Google Calendar
  */
-router.get('/google/connect', requireAuth, async (req: Request, res: Response) => {
+router.get('/google/connect', authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
 
@@ -183,7 +183,7 @@ router.get('/google/callback', async (req: Request, res: Response) => {
  * DELETE /api/auth/google/disconnect
  * Disconnetti Google Calendar
  */
-router.delete('/google/disconnect', requireAuth, async (req: Request, res: Response) => {
+router.delete('/google/disconnect', authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
 
@@ -245,7 +245,7 @@ router.delete('/google/disconnect', requireAuth, async (req: Request, res: Respo
  * GET /api/auth/google/status
  * Verifica stato connessione Google Calendar
  */
-router.get('/google/status', requireAuth, async (req: Request, res: Response) => {
+router.get('/google/status', authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
 
@@ -293,7 +293,7 @@ router.get('/google/status', requireAuth, async (req: Request, res: Response) =>
  * POST /api/coworkers/booking-link/generate
  * Genera o rigenera il booking link token
  */
-router.post('/booking-link/generate', requireAuth, async (req: Request, res: Response) => {
+router.post('/booking-link/generate', authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
 
@@ -350,7 +350,7 @@ router.post('/booking-link/generate', requireAuth, async (req: Request, res: Res
  * PATCH /api/coworkers/booking-link/toggle
  * Abilita/disabilita booking online
  */
-router.patch('/booking-link/toggle', requireAuth, async (req: Request, res: Response) => {
+router.patch('/booking-link/toggle', authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
     const { enabled } = req.body;

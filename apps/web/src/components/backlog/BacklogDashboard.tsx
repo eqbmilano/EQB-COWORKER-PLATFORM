@@ -153,8 +153,6 @@ export default function BacklogDashboard() {
                         aria-valuenow={progressValue}
                         aria-valuemin={0}
                         aria-valuemax={100}
-                        // biome-ignore lint/security/noInlineStyles: Dynamic width requires inline styles
-                        // biome-ignore lint/a11y/ariaUnsupportedElementAttributes: aria-valuenow must be dynamic
                         style={{
                           width: `${progressWidth}%`,
                         }}

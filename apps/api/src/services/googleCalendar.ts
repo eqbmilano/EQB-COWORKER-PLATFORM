@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import type { OAuth2Client } from 'google-auth-library';
+import type { OAuth2Client } from 'googleapis-common';
 import { logger } from '../utils/logger';
 
 const calendar = google.calendar('v3');
