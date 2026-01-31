@@ -46,6 +46,17 @@ model Coworker {
   isActive           Boolean @default(true)
   hasRestriction     Boolean @default(false)
   restrictionReason  String?
+  
+  // Google Calendar Integration
+  googleCalendarId       String?
+  googleCalendarToken    String? // Encrypted OAuth token
+  bookingLinkToken       String? @unique // Unique token for public booking link
+  allowOnlineBooking     Boolean @default(false)
+  bufferTimeMinutes      Int     @default(15)
+  
+  // Working Hours (JSON)
+  workingHours       String? // JSON: {monday: [{start, end, enabled}], ...}
+  
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -55,9 +66,11 @@ model Coworker {
   bookingRestrictions BookingRestriction[]
   backlogEntries     BacklogEntry[]
   modificationRequests ModificationRequest[]
+  cancellationRequests CancellationRequest[]
 
   @@index([isActive])
   @@index([hasRestriction])
+  @@index([bookingLinkToken])
 }
 
 model Admin {
@@ -136,22 +149,36 @@ model Appointment {
   durationHours Float
   type          String
   notes         String?
-  status        String @default("SCHEDULED")
+  status        String @default("SCHEDULED") // SCHEDULED, PENDING, COMPLETED, CANCELLED, MODIFIED
   cancelledAt   DateTime?
   cancelledBy   String?
   roomType      String
   roomNumber    Int?
+  
+  // Google Calendar Integration
+  googleEventId      String?
+  googleMeetLink     String?
+  bookingSource      String @default("manual") // manual, link
+  isOnline           Boolean @default(false)
+  bufferEndTime      DateTime?
+  reminderSent       Boolean @default(false)
+  
+  // Cancellation Request (JSON)
+  cancellationRequest String? // JSON: {requestedAt, reason, notes, status, reviewedBy, ...}
+  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   modificationRequests ModificationRequest[]
   backlogEntry  BacklogEntry?
   invoices      AppointmentInvoice[]
+  cancellationRequests CancellationRequest[]
 
   @@index([coworkerId])
   @@index([clientId])
   @@index([status])
   @@index([startTime])
+  @@index([googleEventId])
 }
 
 model ModificationRequest {
@@ -308,6 +335,44 @@ model CommunicationRead {
   readAt          DateTime @default(now())
 
   @@unique([communicationId, readBy])
+}
+
+model CancellationRequest {
+  id                    String   @id @default(cuid())
+  appointmentId         String
+  coworkerId            String
+  clientId              String
+  appointment           Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  coworker              Coworker    @relation(fields: [coworkerId], references: [id], onDelete: Cascade)
+  
+  requestedAt           DateTime
+  appointmentDate       DateTime
+  hoursUntilAppointment Float
+  reason                String
+  notes                 String?
+  urgency               String @default("normal") // normal, urgent
+  status                String @default("pending") // pending, approved, rejected
+  reviewedBy            String?
+  reviewedAt            DateTime?
+  adminMessage          String?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([status])
+  @@index([coworkerId])
+  @@index([appointmentId])
+}
+
+model GoogleCalendarSettings {
+  id                        String   @id @default(cuid())
+  organizationCalendarId    String   @unique
+  organizationCalendarToken String   // Encrypted OAuth token
+  webhookUrl                String?
+  syncEnabled               Boolean  @default(true)
+  lastSyncAt                DateTime?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 }
 
 model AuditLog {

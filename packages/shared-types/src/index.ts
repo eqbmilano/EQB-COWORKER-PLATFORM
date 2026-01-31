@@ -17,6 +17,12 @@ export interface User {
   updatedAt: Date;
 }
 
+export interface WorkingHours {
+  start: string; // "09:00"
+  end: string;   // "18:00"
+  enabled: boolean;
+}
+
 export interface CoworkerProfile {
   id: string;
   userId: string;
@@ -30,6 +36,22 @@ export interface CoworkerProfile {
   isActive: boolean;
   hasRestriction: boolean;
   restrictionReason?: string;
+  // Google Calendar Integration
+  googleCalendarId?: string;
+  googleCalendarToken?: string; // Encrypted OAuth token
+  bookingLinkToken?: string; // Unique token for public booking
+  allowOnlineBooking: boolean;
+  bufferTimeMinutes: number; // Default 15
+  // Working Hours
+  workingHours: {
+    monday: WorkingHours[];
+    tuesday: WorkingHours[];
+    wednesday: WorkingHours[];
+    thursday: WorkingHours[];
+    friday: WorkingHours[];
+    saturday: WorkingHours[];
+    sunday: WorkingHours[];
+  };
 }
 
 // ============================================================================
@@ -54,6 +76,17 @@ export interface Client {
   updatedAt: Date;
 }
 
+export interface CancellationRequestData {
+  requestedAt: Date;
+  reason: string;
+  notes?: string;
+  urgency: 'normal' | 'urgent';
+  status: 'pending' | 'approved' | 'rejected';
+  reviewedBy?: string;
+  reviewedAt?: Date;
+  adminMessage?: string;
+}
+
 export interface Appointment {
   id: string;
   coworkerId: string;
@@ -63,9 +96,18 @@ export interface Appointment {
   durationHours: number;
   type: string;
   notes?: string;
-  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'MODIFIED';
+  status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED' | 'MODIFIED' | 'PENDING';
   roomType: 'Training' | 'Treatment';
   roomNumber?: number;
+  // Google Calendar Integration
+  googleEventId?: string;
+  googleMeetLink?: string;
+  bookingSource: 'manual' | 'link';
+  isOnline: boolean;
+  bufferEndTime?: Date;
+  reminderSent: boolean;
+  // Cancellation
+  cancellationRequest?: CancellationRequestData;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -153,6 +195,44 @@ export interface Invoice {
 }
 
 // ============================================================================
+// CANCELLATION REQUESTS
+// ============================================================================
+
+export interface CancellationRequest {
+  id: string;
+  appointmentId: string;
+  coworkerId: string;
+  clientId: string;
+  requestedAt: Date;
+  appointmentDate: Date;
+  hoursUntilAppointment: number;
+  reason: string;
+  notes?: string;
+  urgency: 'normal' | 'urgent';
+  status: 'pending' | 'approved' | 'rejected';
+  reviewedBy?: string;
+  reviewedAt?: Date;
+  adminMessage?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ============================================================================
+// GOOGLE CALENDAR SETTINGS
+// ============================================================================
+
+export interface GoogleCalendarSettings {
+  id: string;
+  organizationCalendarId: string;
+  organizationCalendarToken: string; // Encrypted
+  webhookUrl?: string;
+  syncEnabled: boolean;
+  lastSyncAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ============================================================================
 // API REQUEST/RESPONSE TYPES
 // ============================================================================
 
@@ -165,6 +245,31 @@ export interface CreateAppointmentRequest {
   roomType: 'Training' | 'Treatment';
   roomNumber?: number;
   notes?: string;
+  isOnline: boolean;
+  bookingSource: 'manual' | 'link';
+}
+
+export interface PublicBookingRequest {
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  startTime: string;
+  endTime: string;
+  type: string;
+  notes?: string;
+}
+
+export interface AvailabilitySlot {
+  start: string;
+  end: string;
+  available: boolean;
+}
+
+export interface CancellationRequestInput {
+  appointmentId: string;
+  reason: string;
+  notes?: string;
+  urgency: 'normal' | 'urgent';
 }
 
 export interface ModifyAppointmentRequest {
