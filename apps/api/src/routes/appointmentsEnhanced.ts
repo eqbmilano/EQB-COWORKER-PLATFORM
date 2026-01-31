@@ -37,19 +37,19 @@ const cancelRequestSchema = z.object({
 router.post('/enhanced', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) {
-      return res.status(401).json(createResponse(false, 401, undefined, { code: 'UNAUTHORIZED' }));
+      return res.status(401).json(createResponse(false, 401, undefined, { code: 'UNAUTHORIZED', message: 'User not authenticated' }));
     }
 
     const data = createEnhancedAppointmentSchema.parse(req.body);
     
     // Get coworker profile
     const coworker = await prisma.coworker.findUnique({
-      where: { userId: req.user.userId },
+      where: { userId: req.user.sub },
       include: { user: true },
     });
 
     if (!coworker) {
-      return res.status(404).json(createResponse(false, 404, undefined, { message: 'Coworker profile not found' }));
+      return res.status(404).json(createResponse(false, 404, undefined, { code: 'ERROR', message: 'Coworker profile not found' }));
     }
 
     const startTime = new Date(data.startTime);
@@ -66,7 +66,7 @@ router.post('/enhanced', authMiddleware, async (req: AuthenticatedRequest, res: 
     });
 
     if (!calendarSettings) {
-      return res.status(500).json(createResponse(false, 500, undefined, { message: 'Google Calendar not configured' }));
+      return res.status(500).json(createResponse(false, 500, undefined, { code: 'ERROR', message: 'Google Calendar not configured' }));
     }
 
     // Check conflicts
@@ -79,13 +79,13 @@ router.post('/enhanced', authMiddleware, async (req: AuthenticatedRequest, res: 
     );
 
     if (hasConflict) {
-      return res.status(409).json(createResponse(false, 409, undefined, { message: 'Time slot not available' }));
+      return res.status(409).json(createResponse(false, 409, undefined, { code: 'ERROR', message: 'Time slot not available' }));
     }
 
     // Get client
     const client = await prisma.client.findUnique({ where: { id: data.clientId } });
     if (!client) {
-      return res.status(404).json(createResponse(false, 404, undefined, { message: 'Client not found' }));
+      return res.status(404).json(createResponse(false, 404, undefined, { code: 'ERROR', message: 'Client not found' }));
     }
 
     // Create Google Calendar event
@@ -118,7 +118,7 @@ router.post('/enhanced', authMiddleware, async (req: AuthenticatedRequest, res: 
       data: {
         coworkerId: coworker.id,
         clientId: data.clientId,
-        userId: req.user.userId,
+        userId: req.user.sub,
         startTime,
         endTime,
         durationHours,
@@ -145,9 +145,9 @@ router.post('/enhanced', authMiddleware, async (req: AuthenticatedRequest, res: 
   } catch (error) {
     logger.error('Failed to create enhanced appointment', { error });
     if (error instanceof z.ZodError) {
-      return res.status(400).json(createResponse(false, 400, undefined, { details: error.errors }));
+      return res.status(400).json(createResponse(false, 400, undefined, { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors }));
     }
-    res.status(500).json(createResponse(false, 500, undefined, { message: 'Failed to create appointment' }));
+    res.status(500).json(createResponse(false, 500, undefined, { code: 'ERROR', message: 'Failed to create appointment' }));
   }
 });
 
@@ -161,15 +161,15 @@ router.get('/availability/:coworkerId', async (req, res: Response) => {
     const { date } = req.query;
 
     if (!date) {
-      return res.status(400).json(createResponse(false, 400, undefined, { message: 'Date parameter required' }));
+      return res.status(400).json(createResponse(false, 400, undefined, { code: 'ERROR', message: 'Date parameter required' }));
     }
 
     const targetDate = new Date(date as string);
-    const dayOfWeek = targetDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
+    const dayOfWeek = targetDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
     const coworker = await prisma.coworker.findUnique({ where: { id: coworkerId } });
     if (!coworker) {
-      return res.status(404).json(createResponse(false, 404, undefined, { message: 'Coworker not found' }));
+      return res.status(404).json(createResponse(false, 404, undefined, { code: 'ERROR', message: 'Coworker not found' }));
     }
 
     const workingHours = coworker.workingHours ? JSON.parse(coworker.workingHours) : null;
@@ -179,7 +179,7 @@ router.get('/availability/:coworkerId', async (req, res: Response) => {
 
     const calendarSettings = await prisma.googleCalendarSettings.findFirst({ where: { syncEnabled: true } });
     if (!calendarSettings) {
-      return res.status(500).json(createResponse(false, 500, undefined, { message: 'Calendar not configured' }));
+      return res.status(500).json(createResponse(false, 500, undefined, { code: 'ERROR', message: 'Calendar not configured' }));
     }
 
     const auth = googleCalendar.createOAuth2Client(calendarSettings.organizationCalendarToken);
@@ -222,7 +222,7 @@ router.get('/availability/:coworkerId', async (req, res: Response) => {
     }));
   } catch (error) {
     logger.error('Failed to get availability', { error });
-    res.status(500).json(createResponse(false, 500, undefined, { message: 'Failed to get availability' }));
+    res.status(500).json(createResponse(false, 500, undefined, { code: 'ERROR', message: 'Failed to get availability' }));
   }
 });
 
@@ -233,7 +233,7 @@ router.get('/availability/:coworkerId', async (req, res: Response) => {
 router.post('/:id/cancel-request', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (!req.user) {
-      return res.status(401).json(createResponse(false, 401, undefined, { code: 'UNAUTHORIZED' }));
+      return res.status(401).json(createResponse(false, 401, undefined, { code: 'UNAUTHORIZED', message: 'User not authenticated' }));
     }
 
     const { id } = req.params;
@@ -245,11 +245,11 @@ router.post('/:id/cancel-request', authMiddleware, async (req: AuthenticatedRequ
     });
 
     if (!appointment) {
-      return res.status(404).json(createResponse(false, 404, undefined, { message: 'Appointment not found' }));
+      return res.status(404).json(createResponse(false, 404, undefined, { code: 'ERROR', message: 'Appointment not found' }));
     }
 
-    if (appointment.coworker.userId !== req.user.userId) {
-      return res.status(403).json(createResponse(false, 403, undefined, { message: 'Unauthorized' }));
+    if (appointment.coworker.userId !== req.user.sub) {
+      return res.status(403).json(createResponse(false, 403, undefined, { code: 'ERROR', message: 'Unauthorized' }));
     }
 
     const now = new Date();
@@ -284,9 +284,9 @@ router.post('/:id/cancel-request', authMiddleware, async (req: AuthenticatedRequ
   } catch (error) {
     logger.error('Failed to create cancellation request', { error });
     if (error instanceof z.ZodError) {
-      return res.status(400).json(createResponse(false, 400, undefined, { details: error.errors }));
+      return res.status(400).json(createResponse(false, 400, undefined, { code: 'VALIDATION_ERROR', message: 'Invalid input', details: error.errors }));
     }
-    res.status(500).json(createResponse(false, 500, undefined, { message: 'Failed to create request' }));
+    res.status(500).json(createResponse(false, 500, undefined, { code: 'ERROR', message: 'Failed to create request' }));
   }
 });
 

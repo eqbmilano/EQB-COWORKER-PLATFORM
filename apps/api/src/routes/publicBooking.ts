@@ -16,6 +16,8 @@ interface PublicBookingRequest {
   startTime: string;
   endTime: string;
   notes?: string;
+  title?: string;
+  isOnline?: boolean;
 }
 
 const router = Router();
@@ -129,11 +131,8 @@ router.post('/book/:token', async (req: Request, res: Response) => {
       client = await prisma.client.create({
         data: {
           email: bookingData.clientEmail,
-          firstName: bookingData.clientName.split(' ')[0] || bookingData.clientName,
-          lastName: bookingData.clientName.split(' ').slice(1).join(' ') || '',
+          name: bookingData.clientName,
           phone: bookingData.clientPhone || '',
-          assignedToId: coworker.userId,
-          source: 'PUBLIC_BOOKING',
         },
       });
     }
@@ -171,7 +170,7 @@ router.post('/book/:token', async (req: Request, res: Response) => {
         }
 
         // Crea evento su Google Calendar (in stato TENTATIVE)
-        const eventData = {
+        const eventData: any = {
           summary: `[PENDING] ${bookingData.title || 'Nuovo appuntamento'}`,
           description: `Richiesta di prenotazione da: ${bookingData.clientName}\nEmail: ${bookingData.clientEmail}\nTelefono: ${bookingData.clientPhone || 'N/A'}\n\nNote: ${bookingData.notes || 'Nessuna nota'}`,
           start: { dateTime: startTime.toISOString(), timeZone: 'Europe/Rome' },
@@ -179,12 +178,12 @@ router.post('/book/:token', async (req: Request, res: Response) => {
           status: 'tentative',
           attendees: [
             { email: bookingData.clientEmail, displayName: bookingData.clientName },
-            { email: coworker.user.email, displayName: coworker.companyName || coworker.user.username },
+            { email: coworker.user.email, displayName: coworker.companyName || coworker.user.name || 'Coworker' },
           ],
         };
 
         if (bookingData.isOnline) {
-          eventData['conferenceData'] = {
+          eventData.conferenceData = {
             createRequest: {
               requestId: `booking-${Date.now()}`,
               conferenceSolutionKey: { type: 'hangoutsMeet' },
@@ -195,10 +194,17 @@ router.post('/book/:token', async (req: Request, res: Response) => {
         const createdEvent = await createCalendarEvent(
           auth,
           calendarSettings.organizationCalendarId,
-          eventData
+          {
+            summary: eventData.summary,
+            description: eventData.description,
+            startTime: startTime,
+            endTime: endTime,
+            isOnline: bookingData.isOnline || false,
+            attendees: [bookingData.clientEmail, coworker.user.email],
+          }
         );
 
-        googleEventId = createdEvent.id;
+        googleEventId = createdEvent;
       } catch (calendarError) {
         logger.error('Error creating calendar event:', calendarError);
         // Continua comunque con la creazione dell'appuntamento
@@ -211,15 +217,16 @@ router.post('/book/:token', async (req: Request, res: Response) => {
     // Crea appuntamento con status PENDING
     const appointment = await prisma.appointment.create({
       data: {
-        title: bookingData.title || 'Appuntamento',
-        description: bookingData.notes || '',
+        notes: bookingData.notes || '',
         startTime,
         endTime,
+        durationHours: (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60),
         status: 'PENDING',
         type: bookingData.isOnline ? 'ONLINE' : 'IN_PERSON',
+        roomType: bookingData.isOnline ? 'ONLINE' : 'ROOM_A',
         clientId: client.id,
         coworkerId: coworker.id,
-        createdById: coworker.userId,
+        userId: coworker.userId,
         googleEventId,
         bookingSource: 'link',
         isOnline: bookingData.isOnline || false,
@@ -250,7 +257,7 @@ router.post('/book/:token', async (req: Request, res: Response) => {
         startTime: appointment.startTime,
         endTime: appointment.endTime,
         coworker: {
-          name: appointment.coworker.companyName || 'Coworker',
+          name: coworker.companyName || coworker.user.name || 'Coworker',
         },
       },
     });
