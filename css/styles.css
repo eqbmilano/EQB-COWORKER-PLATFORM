@@ -90,6 +90,7 @@ img {
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: 10px;
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     color: #f6ede6;
 }
