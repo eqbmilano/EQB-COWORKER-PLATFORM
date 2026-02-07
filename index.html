@@ -4,84 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EQB - Sito WEB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Header con Logo e Menu Navigazione -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <div class="globe-icon">🌐</div>
-                <h1>EQB</h1>
+    <main class="landing">
+        <section class="hero">
+            <div class="hero-left">
+                <div class="eqb-wordmark">EQB</div>
+                <p class="hero-approach">Il nostro approccio si basa su tre principi chiave</p>
+                <div class="hero-year">2026</div>
             </div>
-            
-            <nav class="navbar">
-                <ul class="nav-menu">
-                    <li><a href="#home" class="nav-link">🏠 HOME</a></li>
-                    <li><a href="#spazio" class="nav-link">💼 LO SPAZIO</a></li>
-                    <li><a href="#professionista" class="nav-link">👤 SEI UN PROFESSIONISTA?</a></li>
-                    <li><a href="#cerchi" class="nav-link">🔍 CERCHI UN PROFESSIONISTA?</a></li>
-                    <li><a href="#vision" class="nav-link">📋 VISION</a></li>
-                    <li><a href="#contatti" class="nav-link">☎️ CONTATTI</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+            <div class="hero-right">
+                <img src="assets/hero.jpg" alt="Spazio EQB" class="hero-image">
+                <div class="principles-card">
+                    <div class="principle">
+                        <h3>Terapia</h3>
+                        <p>Ascolto competente e presenza. Il corpo come storia, non ferita.</p>
+                    </div>
+                    <div class="principle">
+                        <h3>Movimento</h3>
+                        <p>Allenamento consapevole, continuo alla persona. Funzione prima della performance.</p>
+                    </div>
+                    <div class="principle">
+                        <h3>Benessere</h3>
+                        <p>Equilibrio globale tra tempo, ritmo interno, stile di vita, cura e desiderio.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- Sezione HOME -->
-    <section id="home" class="section home-section">
-        <div class="container">
-            <h2>Benvenuto su EQB</h2>
-            <p>Scopri il nostro spazio e i nostri servizi</p>
-        </div>
-    </section>
+        <section class="manifesto">
+            <div class="manifesto-inner">
+                <div class="manifesto-label">About</div>
+                <div class="manifesto-copy">
+                    <p class="manifesto-quote">"EQB e un coworking dedicato al benessere e al movimento. Pensato per professionisti che cercano qualita, continuita e visione, in un ecosistema che supporta il lavoro, la crescita e le relazioni."</p>
+                    <p class="manifesto-signature">EQB Team</p>
+                </div>
+            </div>
+            <div class="coming-soon">COMING SOON</div>
+        </section>
 
-    <!-- Sezione LO SPAZIO -->
-    <section id="spazio" class="section">
-        <div class="container">
-            <h2>Lo Spazio</h2>
-            <p>Descrizione dello spazio EQB</p>
-        </div>
-    </section>
-
-    <!-- Sezione SEI UN PROFESSIONISTA -->
-    <section id="professionista" class="section">
-        <div class="container">
-            <h2>Sei un Professionista?</h2>
-            <p>Unisciti al nostro network di professionisti</p>
-        </div>
-    </section>
-
-    <!-- Sezione CERCHI UN PROFESSIONISTA -->
-    <section id="cerchi" class="section">
-        <div class="container">
-            <h2>Cerchi un Professionista?</h2>
-            <p>Trova il professionista che fa per te</p>
-        </div>
-    </section>
-
-    <!-- Sezione VISION -->
-    <section id="vision" class="section">
-        <div class="container">
-            <h2>La Nostra Vision</h2>
-            <p>Scopri la nostra visione e i nostri valori</p>
-        </div>
-    </section>
-
-    <!-- Sezione CONTATTI -->
-    <section id="contatti" class="section">
-        <div class="container">
-            <h2>Contatti</h2>
-            <p>Mettiti in contatto con noi</p>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 EQB. Tutti i diritti riservati.</p>
-        </div>
-    </footer>
+        <section class="contacts">
+            <div class="contacts-top">
+                <div class="contacts-left">
+                    <h4>Contatti</h4>
+                    <p>info@eqbmilano.it</p>
+                    <p>+39 3751845590</p>
+                </div>
+                <div class="contacts-right">
+                    <div class="socials">
+                        <a class="social" href="#" aria-label="Instagram">IG</a>
+                        <a class="social" href="#" aria-label="LinkedIn">IN</a>
+                        <a class="social" href="#" aria-label="WhatsApp">WA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery">
+                <img src="assets/grid-1.jpg" alt="Pilates">
+                <img src="assets/grid-2.jpg" alt="Massaggio">
+                <img src="assets/grid-3.jpg" alt="Osteopatia">
+                <img src="assets/grid-4.jpg" alt="Riflessologia">
+            </div>
+        </section>
+    </main>
 
     <script src="js/script.js"></script>
 </body>
